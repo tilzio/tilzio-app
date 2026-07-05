@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "工作區",
+    "addSpace": "新增工作區",
+    "toggle": "切換",
+    "addTab": "新增分頁",
+    "close": "關閉"
+  },
+  "header": {
+    "unsaved": "未儲存",
+    "closeFile": "關閉 {name}",
+    "openFile": "開啟檔案",
+    "markdownView": "Markdown 檢視",
+    "sourceView": "原始碼檢視",
+    "source": "原始碼",
+    "splitView": "分割檢視",
+    "split": "分割",
+    "previewView": "預覽檢視",
+    "preview": "預覽",
+    "restartShell": "重新啟動 Shell",
+    "restart": "重新啟動 (⌘R)",
+    "splitRight": "向右分割",
+    "splitRightTitle": "向右分割 → (右鍵 = 選單)",
+    "splitDown": "向下分割",
+    "splitDownTitle": "向下分割 ↓ (右鍵 = 選單)",
+    "zoom": "縮放",
+    "zoomTitle": "縮放 (⌘↵)",
+    "closePane": "關閉面板",
+    "close": "關閉",
+    "splitMenu": "分割選單"
+  },
+  "status": {
+    "toggleBottomPanel": "切換底部面板",
+    "bottomPanelTitle": "底部面板 (⌘J)",
+    "resizeBottomPanel": "調整底部面板大小"
+  },
+  "activityBar": {
+    "toggleSidebar": "切換側邊欄",
+    "navigationSidebar": "導覽側邊欄 (⌘B)",
+    "extensions": "擴充功能",
+    "settings": "設定"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "切換右側面板",
+    "rightPanelTitle": "右側面板 (⌘⌥B)",
+    "addTab": "新增分頁",
+    "newTab": "新分頁",
+    "tabButton": "＋ 分頁",
+    "gridConsoles": "網格主控台",
+    "columns": "欄",
+    "rows": "列"
+  },
+  "settings": {
+    "language": "語言",
+    "title": "設定",
+    "closeAria": "關閉設定",
+    "livePreview": "即時預覽",
+    "familySize": "字型 · 大小",
+    "reset": "重設為預設值",
+    "done": "完成",
+    "cat": {
+      "appearance": "外觀",
+      "terminal": "終端機",
+      "editor": "編輯器",
+      "keymap": "按鍵對應",
+      "extensions": "擴充功能",
+      "about": "關於"
+    },
+    "section": {
+      "stateColors": "狀態顏色",
+      "labelFont": "標籤字型",
+      "language": "語言",
+      "contentFontSize": "內容字型大小"
+    },
+    "color": {
+      "active": "使用中面板",
+      "exit": "已結束主控台",
+      "notifications": "通知"
+    },
+    "field": {
+      "terminal": "終端機",
+      "editor": "編輯器"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "唯讀"
+    },
+    "km": {
+      "newTab": "新分頁",
+      "closePane": "關閉面板",
+      "splitRight": "向右分割",
+      "splitDown": "向下分割",
+      "newSpace": "新工作區",
+      "restartPane": "重新啟動面板",
+      "zoomPane": "縮放面板",
+      "openFile": "開啟檔案",
+      "save": "儲存",
+      "toggleSidebar": "切換側邊欄",
+      "toggleBottomPanel": "切換底部面板",
+      "toggleRightArea": "切換右側區域",
+      "collapseNavigator": "收合導覽器",
+      "focusNeighbor": "聚焦相鄰面板",
+      "switchSpace": "切換工作區",
+      "selectTab": "選擇分頁"
+    },
+    "ext": {
+      "desc": "管理已安裝於 Tilzio 的外掛與擴充功能。",
+      "open": "開啟擴充功能"
+    },
+    "about": {
+      "tagline": "終端機工作區"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "分割為…",
+      "terminal": "終端機",
+      "editor": "編輯器（空白）",
+      "openFile": "開啟檔案…"
+    }
+  },
+  "editor": {
+    "terminal": "終端機",
+    "terminalDesc": "在此面板開啟新終端機",
+    "openFile": "開啟檔案",
+    "openFileDesc": "在編輯器中開啟檔案",
+    "dragHint": "或從 Finder 拖曳檔案",
+    "failedOpen": "開啟檔案失敗"
+  },
+  "ext": {
+    "title": "擴充功能",
+    "install": "安裝",
+    "refresh": "重新整理",
+    "close": "關閉",
+    "filterAria": "篩選擴充功能",
+    "filterPlaceholder": "篩選已安裝的擴充功能…",
+    "emptyNoExtensions": "沒有擴充功能。請將擴充功能資料夾放入 Tilzio 外掛目錄（與 layout.json 同一層），然後點按「重新整理」。",
+    "noMatches": "沒有符合的擴充功能",
+    "detailsAria": "詳情：{name}",
+    "error": "錯誤",
+    "enabled": "已啟用",
+    "disabled": "已停用",
+    "requestsNoPermissions": "未要求任何權限",
+    "activationError": "啟用錯誤",
+    "toggleAria": "切換 {name}",
+    "deleteAria": "刪除 {name}",
+    "disabledGroup": "已停用",
+    "footerSummary": "已安裝 {installed} 個 · 已啟用 {enabled} 個",
+    "openFolderAria": "開啟外掛資料夾",
+    "pluginsFolder": "外掛資料夾",
+    "extensionAria": "擴充功能 {name}",
+    "back": "返回",
+    "oneItem": "1 個項目",
+    "nItems": "{n} 個項目",
+    "contribActivityBar": "活動列 — {icon} {label}",
+    "contribPanel": "面板（{location}）— {label}",
+    "locationRight": "右側",
+    "locationBottom": "底部",
+    "contribStatusBar": "狀態列 — {items}",
+    "contribBreadcrumb": "導覽路徑 — {items}",
+    "sectionError": "錯誤",
+    "sectionPermissions": "權限",
+    "sectionContributes": "貢獻至 UI",
+    "contributesNothing": "無任何貢獻",
+    "sectionData": "資料",
+    "keys": "鍵",
+    "bytes": "位元組",
+    "resetToDefaults": "重設為預設值",
+    "resetDescription": "重設擴充功能已儲存的設定/資料；其啟用狀態與權限不受影響。刪除時會保留資料（儲存內容）",
+    "sectionPath": "路徑",
+    "installTitle": "安裝擴充功能",
+    "closeLabel": "關閉",
+    "conflictTitle": "擴充功能已安裝",
+    "conflictMsg": "「{id}」已安裝。要以新版本取代已安裝的版本嗎？",
+    "cancel": "取消",
+    "replace": "取代",
+    "dropPrefix": "拖放 ",
+    "dropSuffix": " 至此處",
+    "dropSub": "或點按以選擇檔案",
+    "orFromUrl": "或從 URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "下載",
+    "installing": "安裝中…"
+  },
+  "plugin": {
+    "consentAria": "權限要求",
+    "consentTitle": "啟用擴充功能「{name}」？",
+    "consentPermissions": "要求的權限",
+    "consentNoPermissions": "未要求任何特殊權限。",
+    "consentNote": "Tilzio 信任已安裝的擴充功能（如同 VS Code）。顯示權限僅為透明化說明——執行時它們並不會限制外掛，但 exec 二進位檔允許清單除外（由主機強制執行）。",
+    "cancel": "取消",
+    "enable": "啟用",
+    "viewUnavailable": "檢視無法使用",
+    "viewMissingMsg": "外掛「{name}」不再宣告此檢視 ",
+    "closePane": "關閉面板",
+    "notFoundTitle": "找不到外掛",
+    "notFoundMsg": "開啟此面板的擴充功能尚未安裝。",
+    "extensionsBtn": "擴充功能…",
+    "disabledTitle": "擴充功能已停用",
+    "disabledMsg": "「{name}」已停用。啟用後即可讓面板重新顯示。",
+    "loading": "擴充功能無法使用（載入中…）",
+    "noPanels": "沒有使用中的面板",
+    "toastDismiss": "忽略",
+    "toastClose": "關閉"
+  },
+  "dialog": {
+    "close": "關閉",
+    "cancel": "取消",
+    "discard": "捨棄",
+    "delete": "刪除",
+    "reset": "重設",
+    "closeTerminal": "要關閉終端機嗎？",
+    "closeTab": "要關閉分頁「{title}」嗎？",
+    "closeSpace": "要關閉工作區「{name}」嗎？",
+    "closeSpaceAlt": "要關閉工作區「{name}」嗎？",
+    "deleteExt": "要刪除「{name}」嗎？資料夾與程式碼將被刪除；資料（儲存內容）會保留。",
+    "resetExt": "要將「{name}」的設定重設為預設值嗎？該擴充功能所有已儲存的資料將被清除，並將重新啟動。",
+    "unsavedCloseOne": "「{name}」有未儲存的變更。要不儲存直接關閉嗎？",
+    "unsavedCloseMany": "有 {count} 個檔案含未儲存的變更。要不儲存直接關閉嗎？",
+    "fileFallback": "檔案"
+  },
+  "toast": {
+    "bellWaiting": "{label} · 等待輸入中",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "開啟面板",
+    "later": "稍後",
+    "paneFallback": "終端機",
+    "spaceFallback": "工作區"
+  },
+  "finder": {
+    "title": "放開後——檔案將在編輯器中開啟",
+    "subtitle": "於使用中的編輯器面板，否則會以新的分割開啟"
+  },
+  "perm": {
+    "exec": {
+      "title": "執行指令",
+      "detail": "允許執行：{bins}",
+      "badge": "執行：{bins}",
+      "noBinary": "未指定二進位檔"
+    },
+    "state:read": {
+      "title": "讀取版面配置",
+      "detail": "工作區、分頁、主控台——僅供讀取",
+      "badge": "讀取版面配置"
+    },
+    "terminal:write": {
+      "title": "貼上至主控台",
+      "detail": "將文字插入使用中的主控台——由你按下 Enter",
+      "badge": "貼上至主控台"
+    },
+    "terminal:read": {
+      "title": "讀取終端機輸出",
+      "detail": "讀取主控台中顯示的所有內容，包括曾出現在畫面上的密碼與權杖",
+      "badge": "讀取主控台"
+    },
+    "network": {
+      "title": "網路存取",
+      "detail": "外掛面板可連上網際網路（載入遠端內容或資料）",
+      "badge": "網路"
+    },
+    "unknown": {
+      "detail": "未知權限"
+    }
+  }
+}

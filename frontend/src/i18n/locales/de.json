@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "SPACES",
+    "addSpace": "Neuer Space",
+    "toggle": "umschalten",
+    "addTab": "Tab hinzufügen",
+    "close": "schließen"
+  },
+  "header": {
+    "unsaved": "ungespeichert",
+    "closeFile": "{name} schließen",
+    "openFile": "Datei öffnen",
+    "markdownView": "Markdown-Ansicht",
+    "sourceView": "Quelltextansicht",
+    "source": "Quelltext",
+    "splitView": "geteilte Ansicht",
+    "split": "teilen",
+    "previewView": "Vorschauansicht",
+    "preview": "Vorschau",
+    "restartShell": "Shell neu starten",
+    "restart": "neu starten (⌘R)",
+    "splitRight": "nach rechts teilen",
+    "splitRightTitle": "teilen → (Rechtsklick = Menü)",
+    "splitDown": "nach unten teilen",
+    "splitDownTitle": "teilen ↓ (Rechtsklick = Menü)",
+    "zoom": "zoomen",
+    "zoomTitle": "zoomen (⌘↵)",
+    "closePane": "Bereich schließen",
+    "close": "schließen",
+    "splitMenu": "Teilen-Menü"
+  },
+  "status": {
+    "toggleBottomPanel": "unteres Panel umschalten",
+    "bottomPanelTitle": "unteres Panel (⌘J)",
+    "resizeBottomPanel": "unteres Panel anpassen"
+  },
+  "activityBar": {
+    "toggleSidebar": "Seitenleiste umschalten",
+    "navigationSidebar": "Navigations-Seitenleiste (⌘B)",
+    "extensions": "Erweiterungen",
+    "settings": "Einstellungen"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "rechtes Panel umschalten",
+    "rightPanelTitle": "rechtes Panel (⌘⌥B)",
+    "addTab": "Tab hinzufügen",
+    "newTab": "Neuer Tab",
+    "tabButton": "＋ Tab",
+    "gridConsoles": "Raster-Konsolen",
+    "columns": "Spalten",
+    "rows": "Zeilen"
+  },
+  "settings": {
+    "language": "Sprache",
+    "title": "Einstellungen",
+    "closeAria": "Einstellungen schließen",
+    "livePreview": "LIVE-VORSCHAU",
+    "familySize": "Schriftart · Größe",
+    "reset": "Auf Standard zurücksetzen",
+    "done": "Fertig",
+    "cat": {
+      "appearance": "Darstellung",
+      "terminal": "Terminal",
+      "editor": "Editor",
+      "keymap": "Tastenbelegung",
+      "extensions": "Erweiterungen",
+      "about": "Über"
+    },
+    "section": {
+      "stateColors": "STATUSFARBEN",
+      "labelFont": "BESCHRIFTUNGSSCHRIFT",
+      "language": "SPRACHE",
+      "contentFontSize": "SCHRIFTGRÖSSE DES INHALTS"
+    },
+    "color": {
+      "active": "Aktiver Bereich",
+      "exit": "Beendete Konsole",
+      "notifications": "Benachrichtigungen"
+    },
+    "field": {
+      "terminal": "Terminal",
+      "editor": "Editor"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "Schreibgeschützt"
+    },
+    "km": {
+      "newTab": "Neuer Tab",
+      "closePane": "Bereich schließen",
+      "splitRight": "Nach rechts teilen",
+      "splitDown": "Nach unten teilen",
+      "newSpace": "Neuer Space",
+      "restartPane": "Bereich neu starten",
+      "zoomPane": "Bereich zoomen",
+      "openFile": "Datei öffnen",
+      "save": "Speichern",
+      "toggleSidebar": "Seitenleiste umschalten",
+      "toggleBottomPanel": "Unteres Panel umschalten",
+      "toggleRightArea": "Rechten Bereich umschalten",
+      "collapseNavigator": "Navigator einklappen",
+      "focusNeighbor": "Nachbarn fokussieren",
+      "switchSpace": "Space wechseln",
+      "selectTab": "Tab auswählen"
+    },
+    "ext": {
+      "desc": "Plugins und Erweiterungen verwalten, die in Tilzio installiert sind.",
+      "open": "Erweiterungen öffnen"
+    },
+    "about": {
+      "tagline": "Terminal-Arbeitsbereiche"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "teilen als…",
+      "terminal": "Terminal",
+      "editor": "Editor (leer)",
+      "openFile": "Datei öffnen…"
+    }
+  },
+  "editor": {
+    "terminal": "Terminal",
+    "terminalDesc": "neues Terminal in diesem Bereich",
+    "openFile": "Datei öffnen",
+    "openFileDesc": "eine Datei im Editor öffnen",
+    "dragHint": "oder eine Datei aus dem Finder ziehen",
+    "failedOpen": "Datei konnte nicht geöffnet werden"
+  },
+  "ext": {
+    "title": "Erweiterungen",
+    "install": "Installieren",
+    "refresh": "aktualisieren",
+    "close": "schließen",
+    "filterAria": "Erweiterungen filtern",
+    "filterPlaceholder": "Installierte Erweiterungen filtern…",
+    "emptyNoExtensions": "Keine Erweiterungen. Lege einen Erweiterungsordner im Tilzio-Plugin-Verzeichnis ab (neben layout.json) und klicke auf „Aktualisieren“.",
+    "noMatches": "Keine passenden Erweiterungen",
+    "detailsAria": "Details: {name}",
+    "error": "Fehler",
+    "enabled": "aktiviert",
+    "disabled": "deaktiviert",
+    "requestsNoPermissions": "fordert keine Berechtigungen an",
+    "activationError": "Aktivierungsfehler",
+    "toggleAria": "{name} umschalten",
+    "deleteAria": "{name} löschen",
+    "disabledGroup": "DEAKTIVIERT",
+    "footerSummary": "{installed} installiert · {enabled} aktiviert",
+    "openFolderAria": "Plugin-Ordner öffnen",
+    "pluginsFolder": "Plugin-Ordner",
+    "extensionAria": "Erweiterung {name}",
+    "back": "Zurück",
+    "oneItem": "1 Element",
+    "nItems": "{n} Elemente",
+    "contribActivityBar": "Aktivitätsleiste — {icon} {label}",
+    "contribPanel": "Panel ({location}) — {label}",
+    "locationRight": "rechts",
+    "locationBottom": "unten",
+    "contribStatusBar": "Statusleiste — {items}",
+    "contribBreadcrumb": "Brotkrumen — {items}",
+    "sectionError": "FEHLER",
+    "sectionPermissions": "BERECHTIGUNGEN",
+    "sectionContributes": "TRÄGT ZUR UI BEI",
+    "contributesNothing": "trägt nichts bei",
+    "sectionData": "DATEN",
+    "keys": "Schlüssel",
+    "bytes": "Bytes",
+    "resetToDefaults": "Auf Standard zurücksetzen",
+    "resetDescription": "setzt die gespeicherten Einstellungen/Daten der Erweiterung zurück; ihr Aktivierungsstatus und ihre Berechtigungen bleiben unberührt. Daten (Speicher) bleiben beim Löschen erhalten",
+    "sectionPath": "PFAD",
+    "installTitle": "Erweiterung installieren",
+    "closeLabel": "Schließen",
+    "conflictTitle": "Erweiterung bereits installiert",
+    "conflictMsg": "«{id}» ist bereits installiert. Die installierte Version durch die neue ersetzen?",
+    "cancel": "Abbrechen",
+    "replace": "Ersetzen",
+    "dropPrefix": "Ziehe ",
+    "dropSuffix": " hierher",
+    "dropSub": "oder klicke, um eine Datei auszuwählen",
+    "orFromUrl": "oder von URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "Herunterladen",
+    "installing": "Wird installiert…"
+  },
+  "plugin": {
+    "consentAria": "Berechtigungsanfrage",
+    "consentTitle": "Erweiterung «{name}» aktivieren?",
+    "consentPermissions": "ANGEFORDERTE BERECHTIGUNGEN",
+    "consentNoPermissions": "Fordert keine besonderen Berechtigungen an.",
+    "consentNote": "Tilzio vertraut installierten Erweiterungen (wie VS Code). Berechtigungen werden zur Transparenz angezeigt — zur Laufzeit schränken sie das Plugin nicht ein, mit Ausnahme der Positivliste für exec-Binärdateien (vom Host durchgesetzt).",
+    "cancel": "Abbrechen",
+    "enable": "Aktivieren",
+    "viewUnavailable": "Ansicht nicht verfügbar",
+    "viewMissingMsg": "Plugin «{name}» deklariert die Ansicht nicht mehr ",
+    "closePane": "Bereich schließen",
+    "notFoundTitle": "Plugin nicht gefunden",
+    "notFoundMsg": "Die Erweiterung, die diesen Bereich geöffnet hat, ist nicht installiert.",
+    "extensionsBtn": "Erweiterungen…",
+    "disabledTitle": "Erweiterung deaktiviert",
+    "disabledMsg": "«{name}» ist deaktiviert. Aktiviere sie, um den Bereich zurückzuholen.",
+    "loading": "Erweiterung nicht verfügbar (wird geladen…)",
+    "noPanels": "keine aktiven Panels",
+    "toastDismiss": "Ausblenden",
+    "toastClose": "Schließen"
+  },
+  "dialog": {
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "discard": "Verwerfen",
+    "delete": "Löschen",
+    "reset": "Zurücksetzen",
+    "closeTerminal": "Terminal schließen?",
+    "closeTab": "Tab „{title}“ schließen?",
+    "closeSpace": "Space „{name}“ schließen?",
+    "closeSpaceAlt": "Space „{name}“ schließen?",
+    "deleteExt": "«{name}» löschen? Der Ordner und der Code werden gelöscht; Daten (Speicher) bleiben erhalten.",
+    "resetExt": "Einstellungen von «{name}» auf Standard zurücksetzen? Alle gespeicherten Daten der Erweiterung werden gelöscht und die Erweiterung wird neu gestartet.",
+    "unsavedCloseOne": "«{name}» hat ungespeicherte Änderungen. Ohne Speichern schließen?",
+    "unsavedCloseMany": "{count} Dateien haben ungespeicherte Änderungen. Ohne Speichern schließen?",
+    "fileFallback": "Datei"
+  },
+  "toast": {
+    "bellWaiting": "{label} · wartet auf Eingabe",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "Bereich öffnen",
+    "later": "Später",
+    "paneFallback": "Terminal",
+    "spaceFallback": "Space"
+  },
+  "finder": {
+    "title": "Loslassen — die Datei wird im Editor geöffnet",
+    "subtitle": "im aktiven Editor-Bereich, andernfalls als neuer Split"
+  },
+  "perm": {
+    "exec": {
+      "title": "Befehle ausführen",
+      "detail": "darf ausführen: {bins}",
+      "badge": "ausführen: {bins}",
+      "noBinary": "Binärdatei nicht angegeben"
+    },
+    "state:read": {
+      "title": "Layout lesen",
+      "detail": "Spaces, Tabs, Konsolen — nur lesen",
+      "badge": "Layout lesen"
+    },
+    "terminal:write": {
+      "title": "In Konsole einfügen",
+      "detail": "fügt Text in die aktive Konsole ein — du drückst Enter",
+      "badge": "in Konsole einfügen"
+    },
+    "terminal:read": {
+      "title": "Terminalausgabe lesen",
+      "detail": "liest alles, was in deinen Konsolen angezeigt wird, einschließlich Passwörter und Tokens, die auf dem Bildschirm erschienen sind",
+      "badge": "Konsolen lesen"
+    },
+    "network": {
+      "title": "Netzwerkzugriff",
+      "detail": "das Plugin-Panel kann auf das Internet zugreifen (Laden von entfernten Inhalten oder Daten)",
+      "badge": "Netzwerk"
+    },
+    "unknown": {
+      "detail": "unbekannte Berechtigung"
+    }
+  }
+}

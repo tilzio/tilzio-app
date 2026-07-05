@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "ESPACES",
+    "addSpace": "Nouvel espace",
+    "toggle": "basculer",
+    "addTab": "ajouter un onglet",
+    "close": "fermer"
+  },
+  "header": {
+    "unsaved": "non enregistré",
+    "closeFile": "fermer {name}",
+    "openFile": "ouvrir un fichier",
+    "markdownView": "vue markdown",
+    "sourceView": "vue source",
+    "source": "source",
+    "splitView": "vue divisée",
+    "split": "diviser",
+    "previewView": "vue aperçu",
+    "preview": "aperçu",
+    "restartShell": "redémarrer le shell",
+    "restart": "redémarrer (⌘R)",
+    "splitRight": "diviser à droite",
+    "splitRightTitle": "diviser → (clic droit = menu)",
+    "splitDown": "diviser en bas",
+    "splitDownTitle": "diviser ↓ (clic droit = menu)",
+    "zoom": "zoom",
+    "zoomTitle": "zoom (⌘↵)",
+    "closePane": "fermer le panneau",
+    "close": "fermer",
+    "splitMenu": "menu de division"
+  },
+  "status": {
+    "toggleBottomPanel": "basculer le panneau inférieur",
+    "bottomPanelTitle": "panneau inférieur (⌘J)",
+    "resizeBottomPanel": "redimensionner le panneau inférieur"
+  },
+  "activityBar": {
+    "toggleSidebar": "basculer la barre latérale",
+    "navigationSidebar": "barre latérale de navigation (⌘B)",
+    "extensions": "extensions",
+    "settings": "paramètres"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "basculer le panneau droit",
+    "rightPanelTitle": "panneau droit (⌘⌥B)",
+    "addTab": "ajouter un onglet",
+    "newTab": "nouvel onglet",
+    "tabButton": "＋ onglet",
+    "gridConsoles": "grille de consoles",
+    "columns": "colonnes",
+    "rows": "lignes"
+  },
+  "settings": {
+    "language": "Langue",
+    "title": "Paramètres",
+    "closeAria": "Fermer les paramètres",
+    "livePreview": "APERÇU EN DIRECT",
+    "familySize": "Police · Taille",
+    "reset": "Réinitialiser par défaut",
+    "done": "Terminé",
+    "cat": {
+      "appearance": "Apparence",
+      "terminal": "Terminal",
+      "editor": "Éditeur",
+      "keymap": "Raccourcis clavier",
+      "extensions": "Extensions",
+      "about": "À propos"
+    },
+    "section": {
+      "stateColors": "COULEURS D'ÉTAT",
+      "labelFont": "POLICE DES ÉTIQUETTES",
+      "language": "LANGUE",
+      "contentFontSize": "TAILLE DE POLICE DU CONTENU"
+    },
+    "color": {
+      "active": "Panneau actif",
+      "exit": "Console quittée",
+      "notifications": "Notifications"
+    },
+    "field": {
+      "terminal": "Terminal",
+      "editor": "Éditeur"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "Lecture seule"
+    },
+    "km": {
+      "newTab": "Nouvel onglet",
+      "closePane": "Fermer le panneau",
+      "splitRight": "Diviser à droite",
+      "splitDown": "Diviser en bas",
+      "newSpace": "Nouvel espace",
+      "restartPane": "Redémarrer le panneau",
+      "zoomPane": "Zoomer le panneau",
+      "openFile": "Ouvrir un fichier",
+      "save": "Enregistrer",
+      "toggleSidebar": "Basculer la barre latérale",
+      "toggleBottomPanel": "Basculer le panneau inférieur",
+      "toggleRightArea": "Basculer la zone droite",
+      "collapseNavigator": "Réduire le navigateur",
+      "focusNeighbor": "Cibler le voisin",
+      "switchSpace": "Changer d'espace",
+      "selectTab": "Sélectionner l'onglet"
+    },
+    "ext": {
+      "desc": "Gérer les plugins et extensions installés dans Tilzio.",
+      "open": "Ouvrir les extensions"
+    },
+    "about": {
+      "tagline": "Espaces de travail terminal"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "diviser en tant que…",
+      "terminal": "Terminal",
+      "editor": "Éditeur (vide)",
+      "openFile": "Ouvrir un fichier…"
+    }
+  },
+  "editor": {
+    "terminal": "Terminal",
+    "terminalDesc": "nouveau terminal dans ce panneau",
+    "openFile": "Ouvrir un fichier",
+    "openFileDesc": "ouvrir un fichier dans l'éditeur",
+    "dragHint": "ou glissez un fichier depuis le Finder",
+    "failedOpen": "impossible d'ouvrir le fichier"
+  },
+  "ext": {
+    "title": "Extensions",
+    "install": "Installer",
+    "refresh": "actualiser",
+    "close": "fermer",
+    "filterAria": "filtrer les extensions",
+    "filterPlaceholder": "Filtrer les extensions installées…",
+    "emptyNoExtensions": "Aucune extension. Placez un dossier d'extension dans le répertoire des plugins Tilzio (à côté de layout.json) et cliquez sur « Actualiser ».",
+    "noMatches": "Aucune extension correspondante",
+    "detailsAria": "détails : {name}",
+    "error": "erreur",
+    "enabled": "activée",
+    "disabled": "désactivée",
+    "requestsNoPermissions": "ne demande aucune permission",
+    "activationError": "erreur d'activation",
+    "toggleAria": "basculer {name}",
+    "deleteAria": "supprimer {name}",
+    "disabledGroup": "DÉSACTIVÉES",
+    "footerSummary": "{installed} installées · {enabled} activées",
+    "openFolderAria": "ouvrir le dossier des plugins",
+    "pluginsFolder": "dossier des plugins",
+    "extensionAria": "Extension {name}",
+    "back": "Retour",
+    "oneItem": "1 élément",
+    "nItems": "{n} éléments",
+    "contribActivityBar": "Barre d'activité — {icon} {label}",
+    "contribPanel": "Panneau ({location}) — {label}",
+    "locationRight": "droit",
+    "locationBottom": "bas",
+    "contribStatusBar": "Barre d'état — {items}",
+    "contribBreadcrumb": "Fil d'Ariane — {items}",
+    "sectionError": "ERREUR",
+    "sectionPermissions": "PERMISSIONS",
+    "sectionContributes": "CONTRIBUTIONS À L'INTERFACE",
+    "contributesNothing": "ne contribue à rien",
+    "sectionData": "DONNÉES",
+    "keys": "clés",
+    "bytes": "octets",
+    "resetToDefaults": "Réinitialiser par défaut",
+    "resetDescription": "réinitialise les paramètres/données enregistrés de l'extension ; son état d'activation et ses permissions restent intacts. les données (stockage) sont conservées à la suppression",
+    "sectionPath": "CHEMIN",
+    "installTitle": "Installer une extension",
+    "closeLabel": "Fermer",
+    "conflictTitle": "Extension déjà installée",
+    "conflictMsg": "« {id} » est déjà installée. Remplacer la version installée par la nouvelle ?",
+    "cancel": "Annuler",
+    "replace": "Remplacer",
+    "dropPrefix": "Déposez ",
+    "dropSuffix": " ici",
+    "dropSub": "ou cliquez pour choisir un fichier",
+    "orFromUrl": "ou depuis une URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "Télécharger",
+    "installing": "Installation…"
+  },
+  "plugin": {
+    "consentAria": "Demande de permission",
+    "consentTitle": "Activer l'extension « {name} » ?",
+    "consentPermissions": "PERMISSIONS DEMANDÉES",
+    "consentNoPermissions": "Ne demande aucune permission particulière.",
+    "consentNote": "Tilzio fait confiance aux extensions installées (comme VS Code). Les permissions sont affichées pour la transparence — à l'exécution, elles ne restreignent pas le plugin, sauf la liste blanche des binaires exec (appliquée par l'hôte).",
+    "cancel": "Annuler",
+    "enable": "Activer",
+    "viewUnavailable": "Vue indisponible",
+    "viewMissingMsg": "Le plugin « {name} » ne déclare plus la vue ",
+    "closePane": "Fermer le panneau",
+    "notFoundTitle": "Plugin introuvable",
+    "notFoundMsg": "L'extension qui a ouvert ce panneau n'est pas installée.",
+    "extensionsBtn": "Extensions…",
+    "disabledTitle": "Extension désactivée",
+    "disabledMsg": "« {name} » est désactivée. Activez-la pour retrouver le panneau.",
+    "loading": "Extension indisponible (chargement…)",
+    "noPanels": "aucun panneau actif",
+    "toastDismiss": "Ignorer",
+    "toastClose": "Fermer"
+  },
+  "dialog": {
+    "close": "Fermer",
+    "cancel": "Annuler",
+    "discard": "Abandonner",
+    "delete": "Supprimer",
+    "reset": "Réinitialiser",
+    "closeTerminal": "Fermer le terminal ?",
+    "closeTab": "Fermer l'onglet « {title} » ?",
+    "closeSpace": "Fermer l'espace « {name} » ?",
+    "closeSpaceAlt": "Fermer l'espace « {name} » ?",
+    "deleteExt": "Supprimer « {name} » ? Le dossier et le code seront supprimés ; les données (stockage) sont conservées.",
+    "resetExt": "Réinitialiser les paramètres de « {name} » par défaut ? Toutes les données enregistrées de l'extension seront effacées et l'extension redémarrera.",
+    "unsavedCloseOne": "« {name} » comporte des modifications non enregistrées. Fermer sans enregistrer ?",
+    "unsavedCloseMany": "{count} fichiers comportent des modifications non enregistrées. Fermer sans enregistrer ?",
+    "fileFallback": "fichier"
+  },
+  "toast": {
+    "bellWaiting": "{label} · en attente d'une saisie",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "Ouvrir le panneau",
+    "later": "Plus tard",
+    "paneFallback": "terminal",
+    "spaceFallback": "espace"
+  },
+  "finder": {
+    "title": "Relâchez — le fichier s'ouvrira dans l'éditeur",
+    "subtitle": "dans le panneau d'éditeur actif, sinon dans une nouvelle division"
+  },
+  "perm": {
+    "exec": {
+      "title": "Exécuter des commandes",
+      "detail": "autorisé à exécuter : {bins}",
+      "badge": "exécuter : {bins}",
+      "noBinary": "binaire non spécifié"
+    },
+    "state:read": {
+      "title": "Lire la disposition",
+      "detail": "espaces, onglets, consoles — lecture seule",
+      "badge": "lire la disposition"
+    },
+    "terminal:write": {
+      "title": "Coller dans la console",
+      "detail": "insère du texte dans la console active — vous appuyez sur Entrée",
+      "badge": "coller dans la console"
+    },
+    "terminal:read": {
+      "title": "Lire la sortie du terminal",
+      "detail": "lit tout ce qui est affiché dans vos consoles, y compris les mots de passe et jetons apparus à l'écran",
+      "badge": "lire les consoles"
+    },
+    "network": {
+      "title": "Accès réseau",
+      "detail": "le panneau du plugin peut accéder à internet (chargement de contenu ou de données à distance)",
+      "badge": "réseau"
+    },
+    "unknown": {
+      "detail": "permission inconnue"
+    }
+  }
+}

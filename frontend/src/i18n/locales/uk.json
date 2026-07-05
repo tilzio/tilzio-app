@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "ПРОСТОРИ",
+    "addSpace": "Новий простір",
+    "toggle": "перемкнути",
+    "addTab": "додати вкладку",
+    "close": "закрити"
+  },
+  "header": {
+    "unsaved": "не збережено",
+    "closeFile": "закрити {name}",
+    "openFile": "відкрити файл",
+    "markdownView": "перегляд markdown",
+    "sourceView": "перегляд коду",
+    "source": "код",
+    "splitView": "розділений перегляд",
+    "split": "розділ",
+    "previewView": "режим перегляду",
+    "preview": "перегляд",
+    "restartShell": "перезапустити оболонку",
+    "restart": "перезапустити (⌘R)",
+    "splitRight": "розділити праворуч",
+    "splitRightTitle": "розділити → (права кнопка = меню)",
+    "splitDown": "розділити вниз",
+    "splitDownTitle": "розділити ↓ (права кнопка = меню)",
+    "zoom": "збільшити",
+    "zoomTitle": "збільшити (⌘↵)",
+    "closePane": "закрити панель",
+    "close": "закрити",
+    "splitMenu": "меню розділення"
+  },
+  "status": {
+    "toggleBottomPanel": "перемкнути нижню панель",
+    "bottomPanelTitle": "нижня панель (⌘J)",
+    "resizeBottomPanel": "змінити розмір нижньої панелі"
+  },
+  "activityBar": {
+    "toggleSidebar": "перемкнути бічну панель",
+    "navigationSidebar": "навігаційна бічна панель (⌘B)",
+    "extensions": "розширення",
+    "settings": "налаштування"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "перемкнути праву панель",
+    "rightPanelTitle": "права панель (⌘⌥B)",
+    "addTab": "додати вкладку",
+    "newTab": "нова вкладка",
+    "tabButton": "＋ вкладка",
+    "gridConsoles": "сітка консолей",
+    "columns": "стовпці",
+    "rows": "рядки"
+  },
+  "settings": {
+    "language": "Мова",
+    "title": "Налаштування",
+    "closeAria": "Закрити налаштування",
+    "livePreview": "ЖИВИЙ ПЕРЕГЛЯД",
+    "familySize": "Сімейство · Розмір",
+    "reset": "Скинути до типових",
+    "done": "Готово",
+    "cat": {
+      "appearance": "Вигляд",
+      "terminal": "Термінал",
+      "editor": "Редактор",
+      "keymap": "Клавіші",
+      "extensions": "Розширення",
+      "about": "Про програму"
+    },
+    "section": {
+      "stateColors": "КОЛЬОРИ СТАНІВ",
+      "labelFont": "ШРИФТ ПІДПИСІВ",
+      "language": "МОВА",
+      "contentFontSize": "РОЗМІР ШРИФТУ ВМІСТУ"
+    },
+    "color": {
+      "active": "Активна панель",
+      "exit": "Завершена консоль",
+      "notifications": "Сповіщення"
+    },
+    "field": {
+      "terminal": "Термінал",
+      "editor": "Редактор"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "Лише для читання"
+    },
+    "km": {
+      "newTab": "Нова вкладка",
+      "closePane": "Закрити панель",
+      "splitRight": "Розділити праворуч",
+      "splitDown": "Розділити вниз",
+      "newSpace": "Новий простір",
+      "restartPane": "Перезапустити панель",
+      "zoomPane": "Збільшити панель",
+      "openFile": "Відкрити файл",
+      "save": "Зберегти",
+      "toggleSidebar": "Перемкнути бічну панель",
+      "toggleBottomPanel": "Перемкнути нижню панель",
+      "toggleRightArea": "Перемкнути праву область",
+      "collapseNavigator": "Згорнути навігатор",
+      "focusNeighbor": "Фокус на сусіда",
+      "switchSpace": "Перемкнути простір",
+      "selectTab": "Вибрати вкладку"
+    },
+    "ext": {
+      "desc": "Керуйте плагінами та розширеннями, встановленими в Tilzio.",
+      "open": "Відкрити розширення"
+    },
+    "about": {
+      "tagline": "Термінальні робочі простори"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "розділити як…",
+      "terminal": "Термінал",
+      "editor": "Редактор (порожній)",
+      "openFile": "Відкрити файл…"
+    }
+  },
+  "editor": {
+    "terminal": "Термінал",
+    "terminalDesc": "новий термінал у цій панелі",
+    "openFile": "Відкрити файл",
+    "openFileDesc": "відкрити файл у редакторі",
+    "dragHint": "або перетягніть файл із Finder",
+    "failedOpen": "не вдалося відкрити файл"
+  },
+  "ext": {
+    "title": "Розширення",
+    "install": "Встановити",
+    "refresh": "оновити",
+    "close": "закрити",
+    "filterAria": "фільтрувати розширення",
+    "filterPlaceholder": "Фільтрувати встановлені розширення…",
+    "emptyNoExtensions": "Немає розширень. Помістіть теку розширення в каталог плагінів Tilzio (поруч із layout.json) і натисніть «Оновити».",
+    "noMatches": "Немає відповідних розширень",
+    "detailsAria": "деталі: {name}",
+    "error": "помилка",
+    "enabled": "увімкнено",
+    "disabled": "вимкнено",
+    "requestsNoPermissions": "не запитує дозволів",
+    "activationError": "помилка активації",
+    "toggleAria": "перемкнути {name}",
+    "deleteAria": "видалити {name}",
+    "disabledGroup": "ВИМКНЕНО",
+    "footerSummary": "{installed} встановлено · {enabled} увімкнено",
+    "openFolderAria": "відкрити теку плагінів",
+    "pluginsFolder": "тека плагінів",
+    "extensionAria": "Розширення {name}",
+    "back": "Назад",
+    "oneItem": "1 елемент",
+    "nItems": "{n} елементів",
+    "contribActivityBar": "Панель дій — {icon} {label}",
+    "contribPanel": "Панель ({location}) — {label}",
+    "locationRight": "праворуч",
+    "locationBottom": "внизу",
+    "contribStatusBar": "Рядок стану — {items}",
+    "contribBreadcrumb": "Навігаційний ланцюжок — {items}",
+    "sectionError": "ПОМИЛКА",
+    "sectionPermissions": "ДОЗВОЛИ",
+    "sectionContributes": "ДОДАЄ ДО ІНТЕРФЕЙСУ",
+    "contributesNothing": "нічого не додає",
+    "sectionData": "ДАНІ",
+    "keys": "ключі",
+    "bytes": "байтів",
+    "resetToDefaults": "Скинути до типових",
+    "resetDescription": "скидає збережені налаштування/дані розширення; його стан увімкнення та дозволи не змінюються. дані (сховище) зберігаються при видаленні",
+    "sectionPath": "ШЛЯХ",
+    "installTitle": "Встановити розширення",
+    "closeLabel": "Закрити",
+    "conflictTitle": "Розширення вже встановлено",
+    "conflictMsg": "«{id}» вже встановлено. Замінити встановлену версію новою?",
+    "cancel": "Скасувати",
+    "replace": "Замінити",
+    "dropPrefix": "Перетягніть ",
+    "dropSuffix": " сюди",
+    "dropSub": "або клацніть, щоб вибрати файл",
+    "orFromUrl": "або з URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "Завантажити",
+    "installing": "Встановлення…"
+  },
+  "plugin": {
+    "consentAria": "Запит дозволу",
+    "consentTitle": "Увімкнути розширення «{name}»?",
+    "consentPermissions": "ЗАПИТАНІ ДОЗВОЛИ",
+    "consentNoPermissions": "Не запитує особливих дозволів.",
+    "consentNote": "Tilzio довіряє встановленим розширенням (як VS Code). Дозволи показані для прозорості — під час роботи вони не обмежують плагін, окрім списку дозволених бінарних файлів для exec (контролюється хостом).",
+    "cancel": "Скасувати",
+    "enable": "Увімкнути",
+    "viewUnavailable": "Перегляд недоступний",
+    "viewMissingMsg": "Плагін «{name}» більше не оголошує перегляд ",
+    "closePane": "Закрити панель",
+    "notFoundTitle": "Плагін не знайдено",
+    "notFoundMsg": "Розширення, яке відкрило цю панель, не встановлено.",
+    "extensionsBtn": "Розширення…",
+    "disabledTitle": "Розширення вимкнено",
+    "disabledMsg": "«{name}» вимкнено. Увімкніть його, щоб повернути панель.",
+    "loading": "Розширення недоступне (завантаження…)",
+    "noPanels": "немає активних панелей",
+    "toastDismiss": "Відхилити",
+    "toastClose": "Закрити"
+  },
+  "dialog": {
+    "close": "Закрити",
+    "cancel": "Скасувати",
+    "discard": "Відкинути",
+    "delete": "Видалити",
+    "reset": "Скинути",
+    "closeTerminal": "Закрити термінал?",
+    "closeTab": "Закрити вкладку \"{title}\"?",
+    "closeSpace": "Закрити простір \"{name}\"?",
+    "closeSpaceAlt": "Закрити простір \"{name}\"?",
+    "deleteExt": "Видалити «{name}»? Теку та код буде видалено; дані (сховище) зберігаються.",
+    "resetExt": "Скинути налаштування «{name}» до типових? Усі збережені дані розширення буде стерто, і розширення перезапуститься.",
+    "unsavedCloseOne": "«{name}» має незбережені зміни. Закрити без збереження?",
+    "unsavedCloseMany": "{count} файлів мають незбережені зміни. Закрити без збереження?",
+    "fileFallback": "файл"
+  },
+  "toast": {
+    "bellWaiting": "{label} · очікує введення",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "Відкрити панель",
+    "later": "Пізніше",
+    "paneFallback": "термінал",
+    "spaceFallback": "простір"
+  },
+  "finder": {
+    "title": "Відпустіть — файл відкриється в редакторі",
+    "subtitle": "в активній панелі редактора, інакше — як новий розділ"
+  },
+  "perm": {
+    "exec": {
+      "title": "Виконувати команди",
+      "detail": "дозволено запускати: {bins}",
+      "badge": "запуск: {bins}",
+      "noBinary": "бінарний файл не вказано"
+    },
+    "state:read": {
+      "title": "Читати розкладку",
+      "detail": "простори, вкладки, консолі — лише читання",
+      "badge": "читати розкладку"
+    },
+    "terminal:write": {
+      "title": "Вставляти в консоль",
+      "detail": "вставляє текст в активну консоль — Enter натискаєте ви",
+      "badge": "вставити в консоль"
+    },
+    "terminal:read": {
+      "title": "Читати вивід термінала",
+      "detail": "читає все, що показано у ваших консолях, зокрема паролі та токени, що з'явилися на екрані",
+      "badge": "читати консолі"
+    },
+    "network": {
+      "title": "Доступ до мережі",
+      "detail": "панель плагіна може виходити в інтернет (завантаження віддаленого вмісту чи даних)",
+      "badge": "мережа"
+    },
+    "unknown": {
+      "detail": "невідомий дозвіл"
+    }
+  }
+}

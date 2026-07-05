@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "PRZESTRZENIE",
+    "addSpace": "Nowa przestrzeń",
+    "toggle": "przełącz",
+    "addTab": "dodaj kartę",
+    "close": "zamknij"
+  },
+  "header": {
+    "unsaved": "niezapisane",
+    "closeFile": "zamknij {name}",
+    "openFile": "otwórz plik",
+    "markdownView": "widok markdown",
+    "sourceView": "widok źródła",
+    "source": "źródło",
+    "splitView": "widok podziału",
+    "split": "podziel",
+    "previewView": "widok podglądu",
+    "preview": "podgląd",
+    "restartShell": "uruchom ponownie powłokę",
+    "restart": "uruchom ponownie (⌘R)",
+    "splitRight": "podziel w prawo",
+    "splitRightTitle": "podziel → (prawy przycisk = menu)",
+    "splitDown": "podziel w dół",
+    "splitDownTitle": "podziel ↓ (prawy przycisk = menu)",
+    "zoom": "powiększ",
+    "zoomTitle": "powiększ (⌘↵)",
+    "closePane": "zamknij panel",
+    "close": "zamknij",
+    "splitMenu": "menu podziału"
+  },
+  "status": {
+    "toggleBottomPanel": "przełącz dolny panel",
+    "bottomPanelTitle": "dolny panel (⌘J)",
+    "resizeBottomPanel": "zmień rozmiar dolnego panelu"
+  },
+  "activityBar": {
+    "toggleSidebar": "przełącz pasek boczny",
+    "navigationSidebar": "pasek nawigacji (⌘B)",
+    "extensions": "rozszerzenia",
+    "settings": "ustawienia"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "przełącz prawy panel",
+    "rightPanelTitle": "prawy panel (⌘⌥B)",
+    "addTab": "dodaj kartę",
+    "newTab": "nowa karta",
+    "tabButton": "＋ karta",
+    "gridConsoles": "siatka konsol",
+    "columns": "kolumny",
+    "rows": "wiersze"
+  },
+  "settings": {
+    "language": "Język",
+    "title": "Ustawienia",
+    "closeAria": "Zamknij ustawienia",
+    "livePreview": "PODGLĄD NA ŻYWO",
+    "familySize": "Krój · Rozmiar",
+    "reset": "Przywróć domyślne",
+    "done": "Gotowe",
+    "cat": {
+      "appearance": "Wygląd",
+      "terminal": "Terminal",
+      "editor": "Edytor",
+      "keymap": "Skróty klawiszowe",
+      "extensions": "Rozszerzenia",
+      "about": "O programie"
+    },
+    "section": {
+      "stateColors": "KOLORY STANÓW",
+      "labelFont": "CZCIONKA ETYKIET",
+      "language": "JĘZYK",
+      "contentFontSize": "ROZMIAR CZCIONKI TREŚCI"
+    },
+    "color": {
+      "active": "Aktywny panel",
+      "exit": "Zakończona konsola",
+      "notifications": "Powiadomienia"
+    },
+    "field": {
+      "terminal": "Terminal",
+      "editor": "Edytor"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "Tylko do odczytu"
+    },
+    "km": {
+      "newTab": "Nowa karta",
+      "closePane": "Zamknij panel",
+      "splitRight": "Podziel w prawo",
+      "splitDown": "Podziel w dół",
+      "newSpace": "Nowa przestrzeń",
+      "restartPane": "Uruchom panel ponownie",
+      "zoomPane": "Powiększ panel",
+      "openFile": "Otwórz plik",
+      "save": "Zapisz",
+      "toggleSidebar": "Przełącz pasek boczny",
+      "toggleBottomPanel": "Przełącz dolny panel",
+      "toggleRightArea": "Przełącz prawy obszar",
+      "collapseNavigator": "Zwiń nawigator",
+      "focusNeighbor": "Fokus na sąsiedni panel",
+      "switchSpace": "Przełącz przestrzeń",
+      "selectTab": "Wybierz kartę"
+    },
+    "ext": {
+      "desc": "Zarządzaj wtyczkami i rozszerzeniami zainstalowanymi w Tilzio.",
+      "open": "Otwórz rozszerzenia"
+    },
+    "about": {
+      "tagline": "Terminalowe przestrzenie robocze"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "podziel jako…",
+      "terminal": "Terminal",
+      "editor": "Edytor (pusty)",
+      "openFile": "Otwórz plik…"
+    }
+  },
+  "editor": {
+    "terminal": "Terminal",
+    "terminalDesc": "nowy terminal w tym panelu",
+    "openFile": "Otwórz plik",
+    "openFileDesc": "otwórz plik w edytorze",
+    "dragHint": "lub przeciągnij plik z Findera",
+    "failedOpen": "nie udało się otworzyć pliku"
+  },
+  "ext": {
+    "title": "Rozszerzenia",
+    "install": "Zainstaluj",
+    "refresh": "odśwież",
+    "close": "zamknij",
+    "filterAria": "filtruj rozszerzenia",
+    "filterPlaceholder": "Filtruj zainstalowane rozszerzenia…",
+    "emptyNoExtensions": "Brak rozszerzeń. Umieść folder rozszerzenia w katalogu wtyczek Tilzio (obok layout.json) i kliknij „Odśwież”.",
+    "noMatches": "Brak pasujących rozszerzeń",
+    "detailsAria": "szczegóły: {name}",
+    "error": "błąd",
+    "enabled": "włączone",
+    "disabled": "wyłączone",
+    "requestsNoPermissions": "nie wymaga uprawnień",
+    "activationError": "błąd aktywacji",
+    "toggleAria": "przełącz {name}",
+    "deleteAria": "usuń {name}",
+    "disabledGroup": "WYŁĄCZONE",
+    "footerSummary": "{installed} zainstalowanych · {enabled} włączonych",
+    "openFolderAria": "otwórz folder wtyczek",
+    "pluginsFolder": "folder wtyczek",
+    "extensionAria": "Rozszerzenie {name}",
+    "back": "Wstecz",
+    "oneItem": "1 element",
+    "nItems": "{n} elementów",
+    "contribActivityBar": "Pasek aktywności — {icon} {label}",
+    "contribPanel": "Panel ({location}) — {label}",
+    "locationRight": "prawo",
+    "locationBottom": "dół",
+    "contribStatusBar": "Pasek stanu — {items}",
+    "contribBreadcrumb": "Ścieżka nawigacji — {items}",
+    "sectionError": "BŁĄD",
+    "sectionPermissions": "UPRAWNIENIA",
+    "sectionContributes": "WKŁAD W INTERFEJS",
+    "contributesNothing": "brak wkładu",
+    "sectionData": "DANE",
+    "keys": "klucze",
+    "bytes": "bajty",
+    "resetToDefaults": "Przywróć domyślne",
+    "resetDescription": "przywraca zapisane ustawienia/dane rozszerzenia; stan włączenia i uprawnienia pozostają nienaruszone. dane (pamięć) są zachowywane przy usunięciu",
+    "sectionPath": "ŚCIEŻKA",
+    "installTitle": "Zainstaluj rozszerzenie",
+    "closeLabel": "Zamknij",
+    "conflictTitle": "Rozszerzenie już zainstalowane",
+    "conflictMsg": "«{id}» jest już zainstalowane. Zastąpić zainstalowaną wersję nową?",
+    "cancel": "Anuluj",
+    "replace": "Zastąp",
+    "dropPrefix": "Upuść ",
+    "dropSuffix": " tutaj",
+    "dropSub": "lub kliknij, aby wybrać plik",
+    "orFromUrl": "lub z adresu URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "Pobierz",
+    "installing": "Instalowanie…"
+  },
+  "plugin": {
+    "consentAria": "Prośba o uprawnienia",
+    "consentTitle": "Włączyć rozszerzenie «{name}»?",
+    "consentPermissions": "ŻĄDANE UPRAWNIENIA",
+    "consentNoPermissions": "Nie wymaga specjalnych uprawnień.",
+    "consentNote": "Tilzio ufa zainstalowanym rozszerzeniom (jak VS Code). Uprawnienia są pokazywane dla przejrzystości — w czasie działania nie ograniczają wtyczki, z wyjątkiem listy dozwolonych plików wykonywalnych (egzekwowanej przez hosta).",
+    "cancel": "Anuluj",
+    "enable": "Włącz",
+    "viewUnavailable": "Widok niedostępny",
+    "viewMissingMsg": "Wtyczka «{name}» nie deklaruje już widoku ",
+    "closePane": "Zamknij panel",
+    "notFoundTitle": "Nie znaleziono wtyczki",
+    "notFoundMsg": "Rozszerzenie, które otworzyło ten panel, nie jest zainstalowane.",
+    "extensionsBtn": "Rozszerzenia…",
+    "disabledTitle": "Rozszerzenie wyłączone",
+    "disabledMsg": "«{name}» jest wyłączone. Włącz je, aby przywrócić panel.",
+    "loading": "Rozszerzenie niedostępne (ładowanie…)",
+    "noPanels": "brak aktywnych paneli",
+    "toastDismiss": "Odrzuć",
+    "toastClose": "Zamknij"
+  },
+  "dialog": {
+    "close": "Zamknij",
+    "cancel": "Anuluj",
+    "discard": "Odrzuć",
+    "delete": "Usuń",
+    "reset": "Resetuj",
+    "closeTerminal": "Zamknąć terminal?",
+    "closeTab": "Zamknąć kartę „{title}”?",
+    "closeSpace": "Zamknąć przestrzeń „{name}”?",
+    "closeSpaceAlt": "Zamknąć przestrzeń „{name}”?",
+    "deleteExt": "Usunąć «{name}»? Folder i kod zostaną usunięte; dane (pamięć) są zachowywane.",
+    "resetExt": "Przywrócić domyślne ustawienia «{name}»? Wszystkie zapisane dane rozszerzenia zostaną usunięte, a rozszerzenie zostanie uruchomione ponownie.",
+    "unsavedCloseOne": "«{name}» ma niezapisane zmiany. Zamknąć bez zapisywania?",
+    "unsavedCloseMany": "{count} plików ma niezapisane zmiany. Zamknąć bez zapisywania?",
+    "fileFallback": "plik"
+  },
+  "toast": {
+    "bellWaiting": "{label} · czeka na dane wejściowe",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "Otwórz panel",
+    "later": "Później",
+    "paneFallback": "terminal",
+    "spaceFallback": "przestrzeń"
+  },
+  "finder": {
+    "title": "Puść — plik otworzy się w edytorze",
+    "subtitle": "w aktywnym panelu edytora, w przeciwnym razie jako nowy podział"
+  },
+  "perm": {
+    "exec": {
+      "title": "Uruchamianie poleceń",
+      "detail": "dozwolone uruchamianie: {bins}",
+      "badge": "uruchom: {bins}",
+      "noBinary": "nie określono pliku wykonywalnego"
+    },
+    "state:read": {
+      "title": "Odczyt układu",
+      "detail": "przestrzenie, karty, konsole — tylko do odczytu",
+      "badge": "odczyt układu"
+    },
+    "terminal:write": {
+      "title": "Wklejanie do konsoli",
+      "detail": "wstawia tekst do aktywnej konsoli — Enter naciskasz Ty",
+      "badge": "wklej do konsoli"
+    },
+    "terminal:read": {
+      "title": "Odczyt wyjścia terminala",
+      "detail": "odczytuje wszystko, co wyświetlane jest w Twoich konsolach, w tym hasła i tokeny, które pojawiły się na ekranie",
+      "badge": "odczyt konsol"
+    },
+    "network": {
+      "title": "Dostęp do sieci",
+      "detail": "panel wtyczki może łączyć się z internetem (ładowanie zdalnej treści lub danych)",
+      "badge": "sieć"
+    },
+    "unknown": {
+      "detail": "nieznane uprawnienie"
+    }
+  }
+}

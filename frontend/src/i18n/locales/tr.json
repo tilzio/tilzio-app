@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "ALANLAR",
+    "addSpace": "Yeni alan",
+    "toggle": "aç/kapat",
+    "addTab": "sekme ekle",
+    "close": "kapat"
+  },
+  "header": {
+    "unsaved": "kaydedilmedi",
+    "closeFile": "{name} kapat",
+    "openFile": "dosya aç",
+    "markdownView": "markdown görünümü",
+    "sourceView": "kaynak görünümü",
+    "source": "kaynak",
+    "splitView": "bölünmüş görünüm",
+    "split": "böl",
+    "previewView": "önizleme görünümü",
+    "preview": "önizleme",
+    "restartShell": "kabuğu yeniden başlat",
+    "restart": "yeniden başlat (⌘R)",
+    "splitRight": "sağa böl",
+    "splitRightTitle": "sağa böl → (sağ tık = menü)",
+    "splitDown": "aşağı böl",
+    "splitDownTitle": "aşağı böl ↓ (sağ tık = menü)",
+    "zoom": "yakınlaştır",
+    "zoomTitle": "yakınlaştır (⌘↵)",
+    "closePane": "paneli kapat",
+    "close": "kapat",
+    "splitMenu": "bölme menüsü"
+  },
+  "status": {
+    "toggleBottomPanel": "alt paneli aç/kapat",
+    "bottomPanelTitle": "alt panel (⌘J)",
+    "resizeBottomPanel": "alt paneli yeniden boyutlandır"
+  },
+  "activityBar": {
+    "toggleSidebar": "kenar çubuğunu aç/kapat",
+    "navigationSidebar": "gezinme kenar çubuğu (⌘B)",
+    "extensions": "uzantılar",
+    "settings": "ayarlar"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "sağ paneli aç/kapat",
+    "rightPanelTitle": "sağ panel (⌘⌥B)",
+    "addTab": "sekme ekle",
+    "newTab": "yeni sekme",
+    "tabButton": "＋ sekme",
+    "gridConsoles": "ızgara konsolları",
+    "columns": "sütunlar",
+    "rows": "satırlar"
+  },
+  "settings": {
+    "language": "Dil",
+    "title": "Ayarlar",
+    "closeAria": "Ayarları kapat",
+    "livePreview": "CANLI ÖNİZLEME",
+    "familySize": "Yazı tipi · Boyut",
+    "reset": "Varsayılanlara sıfırla",
+    "done": "Bitti",
+    "cat": {
+      "appearance": "Görünüm",
+      "terminal": "Terminal",
+      "editor": "Düzenleyici",
+      "keymap": "Tuş haritası",
+      "extensions": "Uzantılar",
+      "about": "Hakkında"
+    },
+    "section": {
+      "stateColors": "DURUM RENKLERİ",
+      "labelFont": "ETİKET YAZI TİPİ",
+      "language": "DİL",
+      "contentFontSize": "İÇERİK YAZI BOYUTU"
+    },
+    "color": {
+      "active": "Etkin panel",
+      "exit": "Çıkılan konsol",
+      "notifications": "Bildirimler"
+    },
+    "field": {
+      "terminal": "Terminal",
+      "editor": "Düzenleyici"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "Salt okunur"
+    },
+    "km": {
+      "newTab": "Yeni sekme",
+      "closePane": "Paneli kapat",
+      "splitRight": "Sağa böl",
+      "splitDown": "Aşağı böl",
+      "newSpace": "Yeni alan",
+      "restartPane": "Paneli yeniden başlat",
+      "zoomPane": "Paneli yakınlaştır",
+      "openFile": "Dosya aç",
+      "save": "Kaydet",
+      "toggleSidebar": "Kenar çubuğunu aç/kapat",
+      "toggleBottomPanel": "Alt paneli aç/kapat",
+      "toggleRightArea": "Sağ alanı aç/kapat",
+      "collapseNavigator": "Gezgini daralt",
+      "focusNeighbor": "Komşuya odaklan",
+      "switchSpace": "Alan değiştir",
+      "selectTab": "Sekme seç"
+    },
+    "ext": {
+      "desc": "Tilzio'da yüklü eklentileri ve uzantıları yönetin.",
+      "open": "Uzantıları aç"
+    },
+    "about": {
+      "tagline": "Terminal çalışma alanları"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "şu şekilde böl…",
+      "terminal": "Terminal",
+      "editor": "Düzenleyici (boş)",
+      "openFile": "Dosya aç…"
+    }
+  },
+  "editor": {
+    "terminal": "Terminal",
+    "terminalDesc": "bu panelde yeni terminal",
+    "openFile": "Dosya aç",
+    "openFileDesc": "düzenleyicide bir dosya aç",
+    "dragHint": "veya Finder'dan bir dosya sürükleyin",
+    "failedOpen": "dosya açılamadı"
+  },
+  "ext": {
+    "title": "Uzantılar",
+    "install": "Yükle",
+    "refresh": "yenile",
+    "close": "kapat",
+    "filterAria": "uzantıları filtrele",
+    "filterPlaceholder": "Yüklü uzantıları filtrele…",
+    "emptyNoExtensions": "Uzantı yok. Bir uzantı klasörünü Tilzio eklentiler dizinine (layout.json yanına) yerleştirin ve \"Yenile\"ye tıklayın.",
+    "noMatches": "Eşleşen uzantı yok",
+    "detailsAria": "ayrıntılar: {name}",
+    "error": "hata",
+    "enabled": "etkin",
+    "disabled": "devre dışı",
+    "requestsNoPermissions": "izin istemiyor",
+    "activationError": "etkinleştirme hatası",
+    "toggleAria": "{name} aç/kapat",
+    "deleteAria": "{name} sil",
+    "disabledGroup": "DEVRE DIŞI",
+    "footerSummary": "{installed} yüklü · {enabled} etkin",
+    "openFolderAria": "eklentiler klasörünü aç",
+    "pluginsFolder": "eklentiler klasörü",
+    "extensionAria": "Uzantı {name}",
+    "back": "Geri",
+    "oneItem": "1 öğe",
+    "nItems": "{n} öğe",
+    "contribActivityBar": "Etkinlik Çubuğu — {icon} {label}",
+    "contribPanel": "Panel ({location}) — {label}",
+    "locationRight": "sağ",
+    "locationBottom": "alt",
+    "contribStatusBar": "Durum çubuğu — {items}",
+    "contribBreadcrumb": "İçerik yolu — {items}",
+    "sectionError": "HATA",
+    "sectionPermissions": "İZİNLER",
+    "sectionContributes": "ARAYÜZE KATKILARI",
+    "contributesNothing": "katkısı yok",
+    "sectionData": "VERİ",
+    "keys": "anahtar",
+    "bytes": "bayt",
+    "resetToDefaults": "Varsayılanlara sıfırla",
+    "resetDescription": "uzantının kaydedilmiş ayarlarını/verilerini sıfırlar; etkinlik durumu ve izinleri değişmez. veri (depolama) silindiğinde korunur",
+    "sectionPath": "YOL",
+    "installTitle": "Uzantı yükle",
+    "closeLabel": "Kapat",
+    "conflictTitle": "Uzantı zaten yüklü",
+    "conflictMsg": "«{id}» zaten yüklü. Yüklü sürüm yenisiyle değiştirilsin mi?",
+    "cancel": "İptal",
+    "replace": "Değiştir",
+    "dropPrefix": "Bırak ",
+    "dropSuffix": " buraya",
+    "dropSub": "veya bir dosya seçmek için tıklayın",
+    "orFromUrl": "veya URL'den",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "İndir",
+    "installing": "Yükleniyor…"
+  },
+  "plugin": {
+    "consentAria": "İzin isteği",
+    "consentTitle": "«{name}» uzantısı etkinleştirilsin mi?",
+    "consentPermissions": "İSTENEN İZİNLER",
+    "consentNoPermissions": "Özel izin istemiyor.",
+    "consentNote": "Tilzio, yüklü uzantılara güvenir (VS Code gibi). İzinler şeffaflık için gösterilir — çalışma zamanında eklentiyi kısıtlamazlar; yalnızca exec ikili dosya izin listesi (ana uygulama tarafından uygulanır) hariç.",
+    "cancel": "İptal",
+    "enable": "Etkinleştir",
+    "viewUnavailable": "Görünüm kullanılamıyor",
+    "viewMissingMsg": "«{name}» eklentisi artık şu görünümü tanımlamıyor: ",
+    "closePane": "Paneli kapat",
+    "notFoundTitle": "Eklenti bulunamadı",
+    "notFoundMsg": "Bu paneli açan uzantı yüklü değil.",
+    "extensionsBtn": "Uzantılar…",
+    "disabledTitle": "Uzantı devre dışı",
+    "disabledMsg": "«{name}» devre dışı. Paneli geri getirmek için etkinleştirin.",
+    "loading": "Uzantı kullanılamıyor (yükleniyor…)",
+    "noPanels": "etkin panel yok",
+    "toastDismiss": "Kapat",
+    "toastClose": "Kapat"
+  },
+  "dialog": {
+    "close": "Kapat",
+    "cancel": "İptal",
+    "discard": "Vazgeç",
+    "delete": "Sil",
+    "reset": "Sıfırla",
+    "closeTerminal": "Terminal kapatılsın mı?",
+    "closeTab": "\"{title}\" sekmesi kapatılsın mı?",
+    "closeSpace": "\"{name}\" alanı kapatılsın mı?",
+    "closeSpaceAlt": "\"{name}\" alanı kapatılsın mı?",
+    "deleteExt": "«{name}» silinsin mi? Klasör ve kod silinecek; veri (depolama) korunur.",
+    "resetExt": "«{name}» ayarları varsayılanlara sıfırlansın mı? Uzantının kaydedilmiş tüm verileri silinecek ve uzantı yeniden başlatılacak.",
+    "unsavedCloseOne": "«{name}» dosyasında kaydedilmemiş değişiklikler var. Kaydetmeden kapatılsın mı?",
+    "unsavedCloseMany": "{count} dosyada kaydedilmemiş değişiklikler var. Kaydetmeden kapatılsın mı?",
+    "fileFallback": "dosya"
+  },
+  "toast": {
+    "bellWaiting": "{label} · giriş bekleniyor",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "Paneli aç",
+    "later": "Sonra",
+    "paneFallback": "terminal",
+    "spaceFallback": "alan"
+  },
+  "finder": {
+    "title": "Bırakın — dosya düzenleyicide açılacak",
+    "subtitle": "etkin düzenleyici panelinde, aksi halde yeni bir bölme olarak"
+  },
+  "perm": {
+    "exec": {
+      "title": "Komut çalıştır",
+      "detail": "çalıştırmaya izin verilenler: {bins}",
+      "badge": "çalıştır: {bins}",
+      "noBinary": "ikili dosya belirtilmedi"
+    },
+    "state:read": {
+      "title": "Düzeni oku",
+      "detail": "alanlar, sekmeler, konsollar — salt okunur",
+      "badge": "düzeni oku"
+    },
+    "terminal:write": {
+      "title": "Konsola yapıştır",
+      "detail": "etkin konsola metin ekler — Enter'a siz basarsınız",
+      "badge": "konsola yapıştır"
+    },
+    "terminal:read": {
+      "title": "Terminal çıktısını oku",
+      "detail": "konsollarınızda gösterilen her şeyi okur; ekranda görünen parolalar ve belirteçler dahil",
+      "badge": "konsolları oku"
+    },
+    "network": {
+      "title": "Ağ erişimi",
+      "detail": "eklenti paneli internete erişebilir (uzaktan içerik veya veri yükleme)",
+      "badge": "ağ"
+    },
+    "unknown": {
+      "detail": "bilinmeyen izin"
+    }
+  }
+}

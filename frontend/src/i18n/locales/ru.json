@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "ПРОСТРАНСТВА",
+    "addSpace": "Новое пространство",
+    "toggle": "переключить",
+    "addTab": "добавить вкладку",
+    "close": "закрыть"
+  },
+  "header": {
+    "unsaved": "не сохранено",
+    "closeFile": "закрыть {name}",
+    "openFile": "открыть файл",
+    "markdownView": "вид markdown",
+    "sourceView": "вид исходника",
+    "source": "исходник",
+    "splitView": "разделённый вид",
+    "split": "сплит",
+    "previewView": "вид превью",
+    "preview": "превью",
+    "restartShell": "перезапустить оболочку",
+    "restart": "перезапуск (⌘R)",
+    "splitRight": "разделить вправо",
+    "splitRightTitle": "разделить → (правый клик = меню)",
+    "splitDown": "разделить вниз",
+    "splitDownTitle": "разделить ↓ (правый клик = меню)",
+    "zoom": "зум",
+    "zoomTitle": "зум (⌘↵)",
+    "closePane": "закрыть панель",
+    "close": "закрыть",
+    "splitMenu": "меню разделения"
+  },
+  "status": {
+    "toggleBottomPanel": "переключить нижнюю панель",
+    "bottomPanelTitle": "нижняя панель (⌘J)",
+    "resizeBottomPanel": "изменить размер нижней панели"
+  },
+  "activityBar": {
+    "toggleSidebar": "переключить боковую панель",
+    "navigationSidebar": "навигационная панель (⌘B)",
+    "extensions": "расширения",
+    "settings": "настройки"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "переключить правую панель",
+    "rightPanelTitle": "правая панель (⌘⌥B)",
+    "addTab": "добавить вкладку",
+    "newTab": "новая вкладка",
+    "tabButton": "＋ вкладка",
+    "gridConsoles": "сетка консолей",
+    "columns": "колонки",
+    "rows": "строки"
+  },
+  "settings": {
+    "language": "Язык",
+    "title": "Настройки",
+    "closeAria": "Закрыть настройки",
+    "livePreview": "ЖИВОЙ ПРЕДПРОСМОТР",
+    "familySize": "Гарнитура · Размер",
+    "reset": "Сбросить к значениям по умолчанию",
+    "done": "Готово",
+    "cat": {
+      "appearance": "Оформление",
+      "terminal": "Терминал",
+      "editor": "Редактор",
+      "keymap": "Горячие клавиши",
+      "extensions": "Расширения",
+      "about": "О программе"
+    },
+    "section": {
+      "stateColors": "ЦВЕТА СОСТОЯНИЙ",
+      "labelFont": "ШРИФТ ПОДПИСЕЙ",
+      "language": "ЯЗЫК",
+      "contentFontSize": "РАЗМЕР ШРИФТА СОДЕРЖИМОГО"
+    },
+    "color": {
+      "active": "Активная панель",
+      "exit": "Завершённая консоль",
+      "notifications": "Уведомления"
+    },
+    "field": {
+      "terminal": "Терминал",
+      "editor": "Редактор"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "Только чтение"
+    },
+    "km": {
+      "newTab": "Новая вкладка",
+      "closePane": "Закрыть панель",
+      "splitRight": "Разделить вправо",
+      "splitDown": "Разделить вниз",
+      "newSpace": "Новое пространство",
+      "restartPane": "Перезапустить панель",
+      "zoomPane": "Зум панели",
+      "openFile": "Открыть файл",
+      "save": "Сохранить",
+      "toggleSidebar": "Переключить боковую панель",
+      "toggleBottomPanel": "Переключить нижнюю панель",
+      "toggleRightArea": "Переключить правую область",
+      "collapseNavigator": "Свернуть навигатор",
+      "focusNeighbor": "Фокус на соседнюю панель",
+      "switchSpace": "Сменить пространство",
+      "selectTab": "Выбрать вкладку"
+    },
+    "ext": {
+      "desc": "Управление плагинами и расширениями, установленными в Tilzio.",
+      "open": "Открыть расширения"
+    },
+    "about": {
+      "tagline": "Терминальные рабочие пространства"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "разделить как…",
+      "terminal": "Терминал",
+      "editor": "Редактор (пустой)",
+      "openFile": "Открыть файл…"
+    }
+  },
+  "editor": {
+    "terminal": "Терминал",
+    "terminalDesc": "новый терминал в этой панели",
+    "openFile": "Открыть файл",
+    "openFileDesc": "открыть файл в редакторе",
+    "dragHint": "или перетащите файл из Finder",
+    "failedOpen": "не удалось открыть файл"
+  },
+  "ext": {
+    "title": "Расширения",
+    "install": "Установить",
+    "refresh": "обновить",
+    "close": "закрыть",
+    "filterAria": "фильтр расширений",
+    "filterPlaceholder": "Фильтр установленных расширений…",
+    "emptyNoExtensions": "Нет расширений. Поместите папку расширения в каталог плагинов Tilzio (рядом с layout.json) и нажмите «Обновить».",
+    "noMatches": "Нет подходящих расширений",
+    "detailsAria": "подробности: {name}",
+    "error": "ошибка",
+    "enabled": "включено",
+    "disabled": "отключено",
+    "requestsNoPermissions": "не запрашивает разрешений",
+    "activationError": "ошибка активации",
+    "toggleAria": "переключить {name}",
+    "deleteAria": "удалить {name}",
+    "disabledGroup": "ОТКЛЮЧЕНО",
+    "footerSummary": "{installed} установлено · {enabled} включено",
+    "openFolderAria": "открыть папку плагинов",
+    "pluginsFolder": "папка плагинов",
+    "extensionAria": "Расширение {name}",
+    "back": "Назад",
+    "oneItem": "1 элемент",
+    "nItems": "{n} элементов",
+    "contribActivityBar": "Панель активности — {icon} {label}",
+    "contribPanel": "Панель ({location}) — {label}",
+    "locationRight": "справа",
+    "locationBottom": "снизу",
+    "contribStatusBar": "Статус-бар — {items}",
+    "contribBreadcrumb": "Хлебные крошки — {items}",
+    "sectionError": "ОШИБКА",
+    "sectionPermissions": "РАЗРЕШЕНИЯ",
+    "sectionContributes": "ДОБАВЛЯЕТ В ИНТЕРФЕЙС",
+    "contributesNothing": "ничего не добавляет",
+    "sectionData": "ДАННЫЕ",
+    "keys": "ключи",
+    "bytes": "байт",
+    "resetToDefaults": "Сбросить к значениям по умолчанию",
+    "resetDescription": "сбрасывает сохранённые настройки/данные расширения; состояние включения и разрешения не затрагиваются. данные (хранилище) сохраняются при удалении",
+    "sectionPath": "ПУТЬ",
+    "installTitle": "Установить расширение",
+    "closeLabel": "Закрыть",
+    "conflictTitle": "Расширение уже установлено",
+    "conflictMsg": "«{id}» уже установлено. Заменить установленную версию новой?",
+    "cancel": "Отмена",
+    "replace": "Заменить",
+    "dropPrefix": "Перетащите ",
+    "dropSuffix": " сюда",
+    "dropSub": "или нажмите, чтобы выбрать файл",
+    "orFromUrl": "или по URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "Скачать",
+    "installing": "Установка…"
+  },
+  "plugin": {
+    "consentAria": "Запрос разрешений",
+    "consentTitle": "Включить расширение «{name}»?",
+    "consentPermissions": "ЗАПРАШИВАЕМЫЕ РАЗРЕШЕНИЯ",
+    "consentNoPermissions": "Не запрашивает особых разрешений.",
+    "consentNote": "Tilzio доверяет установленным расширениям (как VS Code). Разрешения показаны для прозрачности — во время работы они не ограничивают плагин, кроме списка разрешённых бинарников exec (контролируется хостом).",
+    "cancel": "Отмена",
+    "enable": "Включить",
+    "viewUnavailable": "Вид недоступен",
+    "viewMissingMsg": "Плагин «{name}» больше не объявляет вид ",
+    "closePane": "Закрыть панель",
+    "notFoundTitle": "Плагин не найден",
+    "notFoundMsg": "Расширение, открывшее эту панель, не установлено.",
+    "extensionsBtn": "Расширения…",
+    "disabledTitle": "Расширение отключено",
+    "disabledMsg": "«{name}» отключено. Включите его, чтобы вернуть панель.",
+    "loading": "Расширение недоступно (загрузка…)",
+    "noPanels": "нет активных панелей",
+    "toastDismiss": "Скрыть",
+    "toastClose": "Закрыть"
+  },
+  "dialog": {
+    "close": "Закрыть",
+    "cancel": "Отмена",
+    "discard": "Не сохранять",
+    "delete": "Удалить",
+    "reset": "Сбросить",
+    "closeTerminal": "Закрыть терминал?",
+    "closeTab": "Закрыть вкладку «{title}»?",
+    "closeSpace": "Закрыть пространство «{name}»?",
+    "closeSpaceAlt": "Закрыть пространство «{name}»?",
+    "deleteExt": "Удалить «{name}»? Папка и код будут удалены; данные (хранилище) сохранятся.",
+    "resetExt": "Сбросить настройки «{name}» к значениям по умолчанию? Все сохранённые данные расширения будут стёрты, и расширение перезапустится.",
+    "unsavedCloseOne": "В «{name}» есть несохранённые изменения. Закрыть без сохранения?",
+    "unsavedCloseMany": "В {count} файлах есть несохранённые изменения. Закрыть без сохранения?",
+    "fileFallback": "файл"
+  },
+  "toast": {
+    "bellWaiting": "{label} · ожидает ввода",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "Открыть панель",
+    "later": "Позже",
+    "paneFallback": "терминал",
+    "spaceFallback": "пространство"
+  },
+  "finder": {
+    "title": "Отпустите — файл откроется в редакторе",
+    "subtitle": "в активной панели редактора, иначе новым сплитом"
+  },
+  "perm": {
+    "exec": {
+      "title": "Запуск команд",
+      "detail": "разрешено запускать: {bins}",
+      "badge": "запуск: {bins}",
+      "noBinary": "бинарник не указан"
+    },
+    "state:read": {
+      "title": "Чтение раскладки",
+      "detail": "пространства, вкладки, консоли — только чтение",
+      "badge": "чтение раскладки"
+    },
+    "terminal:write": {
+      "title": "Вставка в консоль",
+      "detail": "вставляет текст в активную консоль — Enter нажимаете вы",
+      "badge": "вставка в консоль"
+    },
+    "terminal:read": {
+      "title": "Чтение вывода терминала",
+      "detail": "читает всё, что отображается в ваших консолях, включая пароли и токены, появившиеся на экране",
+      "badge": "чтение консолей"
+    },
+    "network": {
+      "title": "Доступ к сети",
+      "detail": "панель плагина может выходить в интернет (загрузка удалённого содержимого или данных)",
+      "badge": "сеть"
+    },
+    "unknown": {
+      "detail": "неизвестное разрешение"
+    }
+  }
+}

@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "工作区",
+    "addSpace": "新建工作区",
+    "toggle": "切换",
+    "addTab": "添加标签页",
+    "close": "关闭"
+  },
+  "header": {
+    "unsaved": "未保存",
+    "closeFile": "关闭 {name}",
+    "openFile": "打开文件",
+    "markdownView": "Markdown 视图",
+    "sourceView": "源码视图",
+    "source": "源码",
+    "splitView": "分屏视图",
+    "split": "分屏",
+    "previewView": "预览视图",
+    "preview": "预览",
+    "restartShell": "重启 shell",
+    "restart": "重启 (⌘R)",
+    "splitRight": "向右分屏",
+    "splitRightTitle": "向右分屏 → (右键 = 菜单)",
+    "splitDown": "向下分屏",
+    "splitDownTitle": "向下分屏 ↓ (右键 = 菜单)",
+    "zoom": "缩放",
+    "zoomTitle": "缩放 (⌘↵)",
+    "closePane": "关闭面板",
+    "close": "关闭",
+    "splitMenu": "分屏菜单"
+  },
+  "status": {
+    "toggleBottomPanel": "切换底部面板",
+    "bottomPanelTitle": "底部面板 (⌘J)",
+    "resizeBottomPanel": "调整底部面板大小"
+  },
+  "activityBar": {
+    "toggleSidebar": "切换侧边栏",
+    "navigationSidebar": "导航侧边栏 (⌘B)",
+    "extensions": "扩展",
+    "settings": "设置"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "切换右侧面板",
+    "rightPanelTitle": "右侧面板 (⌘⌥B)",
+    "addTab": "添加标签页",
+    "newTab": "新建标签页",
+    "tabButton": "＋ 标签页",
+    "gridConsoles": "网格控制台",
+    "columns": "列",
+    "rows": "行"
+  },
+  "settings": {
+    "language": "语言",
+    "title": "设置",
+    "closeAria": "关闭设置",
+    "livePreview": "实时预览",
+    "familySize": "字体 · 字号",
+    "reset": "恢复默认",
+    "done": "完成",
+    "cat": {
+      "appearance": "外观",
+      "terminal": "终端",
+      "editor": "编辑器",
+      "keymap": "快捷键",
+      "extensions": "扩展",
+      "about": "关于"
+    },
+    "section": {
+      "stateColors": "状态颜色",
+      "labelFont": "标签字体",
+      "language": "语言",
+      "contentFontSize": "内容字号"
+    },
+    "color": {
+      "active": "活动面板",
+      "exit": "已退出的控制台",
+      "notifications": "通知"
+    },
+    "field": {
+      "terminal": "终端",
+      "editor": "编辑器"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "只读"
+    },
+    "km": {
+      "newTab": "新建标签页",
+      "closePane": "关闭面板",
+      "splitRight": "向右分屏",
+      "splitDown": "向下分屏",
+      "newSpace": "新建工作区",
+      "restartPane": "重启面板",
+      "zoomPane": "缩放面板",
+      "openFile": "打开文件",
+      "save": "保存",
+      "toggleSidebar": "切换侧边栏",
+      "toggleBottomPanel": "切换底部面板",
+      "toggleRightArea": "切换右侧区域",
+      "collapseNavigator": "折叠导航器",
+      "focusNeighbor": "聚焦相邻面板",
+      "switchSpace": "切换工作区",
+      "selectTab": "选择标签页"
+    },
+    "ext": {
+      "desc": "管理已安装在 Tilzio 中的插件和扩展。",
+      "open": "打开扩展"
+    },
+    "about": {
+      "tagline": "终端工作区"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "分屏为…",
+      "terminal": "终端",
+      "editor": "编辑器（空）",
+      "openFile": "打开文件…"
+    }
+  },
+  "editor": {
+    "terminal": "终端",
+    "terminalDesc": "在此面板新建终端",
+    "openFile": "打开文件",
+    "openFileDesc": "在编辑器中打开文件",
+    "dragHint": "或从 Finder 拖入文件",
+    "failedOpen": "打开文件失败"
+  },
+  "ext": {
+    "title": "扩展",
+    "install": "安装",
+    "refresh": "刷新",
+    "close": "关闭",
+    "filterAria": "筛选扩展",
+    "filterPlaceholder": "筛选已安装的扩展…",
+    "emptyNoExtensions": "暂无扩展。请将扩展文件夹放入 Tilzio 插件目录（与 layout.json 同级），然后点击“刷新”。",
+    "noMatches": "没有匹配的扩展",
+    "detailsAria": "详情：{name}",
+    "error": "错误",
+    "enabled": "已启用",
+    "disabled": "已禁用",
+    "requestsNoPermissions": "无需权限",
+    "activationError": "激活错误",
+    "toggleAria": "切换 {name}",
+    "deleteAria": "删除 {name}",
+    "disabledGroup": "已禁用",
+    "footerSummary": "已安装 {installed} · 已启用 {enabled}",
+    "openFolderAria": "打开插件文件夹",
+    "pluginsFolder": "插件文件夹",
+    "extensionAria": "扩展 {name}",
+    "back": "返回",
+    "oneItem": "1 项",
+    "nItems": "{n} 项",
+    "contribActivityBar": "活动栏 — {icon} {label}",
+    "contribPanel": "面板（{location}）— {label}",
+    "locationRight": "右侧",
+    "locationBottom": "底部",
+    "contribStatusBar": "状态栏 — {items}",
+    "contribBreadcrumb": "面包屑 — {items}",
+    "sectionError": "错误",
+    "sectionPermissions": "权限",
+    "sectionContributes": "界面贡献",
+    "contributesNothing": "无界面贡献",
+    "sectionData": "数据",
+    "keys": "键",
+    "bytes": "字节",
+    "resetToDefaults": "恢复默认",
+    "resetDescription": "重置扩展已保存的设置/数据；其启用状态和权限不受影响。删除时数据（存储）会保留",
+    "sectionPath": "路径",
+    "installTitle": "安装扩展",
+    "closeLabel": "关闭",
+    "conflictTitle": "扩展已安装",
+    "conflictMsg": "«{id}» 已安装。是否用新版本替换已安装的版本？",
+    "cancel": "取消",
+    "replace": "替换",
+    "dropPrefix": "拖放 ",
+    "dropSuffix": " 到此处",
+    "dropSub": "或点击选择文件",
+    "orFromUrl": "或从 URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "下载",
+    "installing": "安装中…"
+  },
+  "plugin": {
+    "consentAria": "权限请求",
+    "consentTitle": "启用扩展 «{name}»？",
+    "consentPermissions": "请求的权限",
+    "consentNoPermissions": "不请求任何特殊权限。",
+    "consentNote": "Tilzio 信任已安装的扩展（与 VS Code 类似）。此处显示权限只是为了透明 — 运行时它们不会限制插件，但 exec 可执行文件白名单除外（由宿主强制执行）。",
+    "cancel": "取消",
+    "enable": "启用",
+    "viewUnavailable": "视图不可用",
+    "viewMissingMsg": "插件 «{name}» 不再声明该视图 ",
+    "closePane": "关闭面板",
+    "notFoundTitle": "找不到插件",
+    "notFoundMsg": "打开此面板的扩展未安装。",
+    "extensionsBtn": "扩展…",
+    "disabledTitle": "扩展已禁用",
+    "disabledMsg": "«{name}» 已禁用。启用它以恢复面板。",
+    "loading": "扩展不可用（加载中…）",
+    "noPanels": "没有活动面板",
+    "toastDismiss": "忽略",
+    "toastClose": "关闭"
+  },
+  "dialog": {
+    "close": "关闭",
+    "cancel": "取消",
+    "discard": "放弃",
+    "delete": "删除",
+    "reset": "重置",
+    "closeTerminal": "关闭终端？",
+    "closeTab": "关闭标签页“{title}”？",
+    "closeSpace": "关闭工作区“{name}”？",
+    "closeSpaceAlt": "关闭工作区“{name}”？",
+    "deleteExt": "删除 «{name}»？文件夹和代码将被删除；数据（存储）会保留。",
+    "resetExt": "将 «{name}» 的设置重置为默认？扩展所有已保存的数据将被清除，且扩展将重启。",
+    "unsavedCloseOne": "«{name}» 有未保存的更改。不保存就关闭？",
+    "unsavedCloseMany": "{count} 个文件有未保存的更改。不保存就关闭？",
+    "fileFallback": "文件"
+  },
+  "toast": {
+    "bellWaiting": "{label} · 等待输入",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "打开面板",
+    "later": "稍后",
+    "paneFallback": "终端",
+    "spaceFallback": "工作区"
+  },
+  "finder": {
+    "title": "松开 — 文件将在编辑器中打开",
+    "subtitle": "在活动编辑器面板中，否则作为新分屏"
+  },
+  "perm": {
+    "exec": {
+      "title": "运行命令",
+      "detail": "允许运行：{bins}",
+      "badge": "运行：{bins}",
+      "noBinary": "未指定可执行文件"
+    },
+    "state:read": {
+      "title": "读取布局",
+      "detail": "工作区、标签页、控制台 — 只读",
+      "badge": "读取布局"
+    },
+    "terminal:write": {
+      "title": "粘贴到控制台",
+      "detail": "将文本插入活动控制台 — 由你按下回车",
+      "badge": "粘贴到控制台"
+    },
+    "terminal:read": {
+      "title": "读取终端输出",
+      "detail": "读取控制台中显示的所有内容，包括屏幕上出现的密码和令牌",
+      "badge": "读取控制台"
+    },
+    "network": {
+      "title": "网络访问",
+      "detail": "插件面板可以访问互联网（加载远程内容或数据）",
+      "badge": "网络"
+    },
+    "unknown": {
+      "detail": "未知权限"
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "nav": { "spaces": "스페이스", "addSpace": "새 스페이스", "toggle": "토글", "addTab": "탭 추가", "close": "닫기" },
+  "header": {
+    "unsaved": "저장 안 됨", "closeFile": "{name} 닫기", "openFile": "파일 열기", "markdownView": "마크다운 보기",
+    "sourceView": "소스 보기", "source": "소스", "splitView": "분할 보기", "split": "분할", "previewView": "미리보기 보기",
+    "preview": "미리보기", "restartShell": "셸 재시작", "restart": "재시작 (⌘R)", "splitRight": "오른쪽 분할",
+    "splitRightTitle": "오른쪽 분할 → (우클릭 = 메뉴)", "splitDown": "아래 분할", "splitDownTitle": "아래 분할 ↓ (우클릭 = 메뉴)",
+    "zoom": "확대", "zoomTitle": "확대 (⌘↵)", "closePane": "패널 닫기", "close": "닫기", "splitMenu": "분할 메뉴"
+  },
+  "status": { "toggleBottomPanel": "하단 패널 토글", "bottomPanelTitle": "하단 패널 (⌘J)", "resizeBottomPanel": "하단 패널 크기 조절" },
+  "activityBar": { "toggleSidebar": "사이드바 토글", "navigationSidebar": "탐색 사이드바 (⌘B)", "extensions": "확장", "settings": "설정" },
+  "breadcrumb": {
+    "toggleRightPanel": "오른쪽 패널 토글", "rightPanelTitle": "오른쪽 패널 (⌘⌥B)", "addTab": "탭 추가", "newTab": "새 탭",
+    "tabButton": "＋ 탭", "gridConsoles": "그리드 콘솔", "columns": "열", "rows": "행"
+  },
+  "settings": {
+    "language": "언어", "title": "설정", "closeAria": "설정 닫기", "livePreview": "실시간 미리보기", "familySize": "글꼴 · 크기",
+    "reset": "기본값으로 초기화", "done": "완료",
+    "cat": { "appearance": "모양", "terminal": "터미널", "editor": "편집기", "keymap": "키맵", "extensions": "확장", "about": "정보" },
+    "section": { "stateColors": "상태 색상", "labelFont": "레이블 글꼴", "language": "언어", "contentFontSize": "콘텐츠 글꼴 크기" },
+    "color": { "active": "활성 패널", "exit": "종료된 콘솔", "notifications": "알림" },
+    "field": { "terminal": "터미널", "editor": "편집기" },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": { "readOnly": "읽기 전용" },
+    "km": {
+      "newTab": "새 탭", "closePane": "패널 닫기", "splitRight": "오른쪽 분할", "splitDown": "아래 분할", "newSpace": "새 스페이스",
+      "restartPane": "패널 재시작", "zoomPane": "패널 확대", "openFile": "파일 열기", "save": "저장", "toggleSidebar": "사이드바 토글",
+      "toggleBottomPanel": "하단 패널 토글", "toggleRightArea": "오른쪽 영역 토글", "collapseNavigator": "탐색기 접기",
+      "focusNeighbor": "인접 패널 포커스", "switchSpace": "스페이스 전환", "selectTab": "탭 선택"
+    },
+    "ext": { "desc": "Tilzio에 설치된 플러그인과 확장을 관리합니다.", "open": "확장 열기" },
+    "about": { "tagline": "터미널 워크스페이스" }
+  },
+  "menu": { "split": { "header": "분할 방식…", "terminal": "터미널", "editor": "편집기 (빈 창)", "openFile": "파일 열기…" } },
+  "editor": {
+    "terminal": "터미널", "terminalDesc": "이 패널에 새 터미널", "openFile": "파일 열기", "openFileDesc": "편집기에서 파일 열기",
+    "dragHint": "또는 Finder에서 파일을 끌어다 놓기", "failedOpen": "파일을 열지 못했습니다"
+  },
+  "ext": {
+    "title": "확장", "install": "설치", "refresh": "새로고침", "close": "닫기", "filterAria": "확장 필터링",
+    "filterPlaceholder": "설치된 확장 필터링…",
+    "emptyNoExtensions": "확장이 없습니다. Tilzio 플러그인 디렉터리(layout.json 옆)에 확장 폴더를 넣고 \"새로고침\"을 클릭하세요.",
+    "noMatches": "일치하는 확장 없음", "detailsAria": "세부 정보: {name}", "error": "오류", "enabled": "사용", "disabled": "사용 안 함",
+    "requestsNoPermissions": "요청하는 권한 없음", "activationError": "활성화 오류", "toggleAria": "{name} 토글", "deleteAria": "{name} 삭제",
+    "disabledGroup": "사용 안 함", "footerSummary": "{installed}개 설치됨 · {enabled}개 사용 중", "openFolderAria": "플러그인 폴더 열기",
+    "pluginsFolder": "플러그인 폴더", "extensionAria": "확장 {name}", "back": "뒤로", "oneItem": "1개 항목", "nItems": "{n}개 항목",
+    "contribActivityBar": "액티비티 바 — {icon} {label}", "contribPanel": "패널 ({location}) — {label}", "locationRight": "오른쪽",
+    "locationBottom": "하단", "contribStatusBar": "상태 바 — {items}", "contribBreadcrumb": "이동 경로 — {items}", "sectionError": "오류",
+    "sectionPermissions": "권한", "sectionContributes": "UI 기여", "contributesNothing": "기여 없음", "sectionData": "데이터",
+    "keys": "키", "bytes": "바이트", "resetToDefaults": "기본값으로 초기화",
+    "resetDescription": "확장의 저장된 설정/데이터를 초기화합니다. 사용 상태와 권한은 유지됩니다. 데이터(스토리지)는 삭제 시에도 보존됩니다",
+    "sectionPath": "경로", "installTitle": "확장 설치", "closeLabel": "닫기", "conflictTitle": "확장이 이미 설치됨",
+    "conflictMsg": "«{id}» 은(는) 이미 설치되어 있습니다. 설치된 버전을 새 버전으로 교체할까요?", "cancel": "취소", "replace": "교체",
+    "dropPrefix": "여기에 ", "dropSuffix": " 끌어다 놓기", "dropSub": "또는 클릭하여 파일 선택", "orFromUrl": "또는 URL에서",
+    "urlPlaceholder": "https://…/plugin.zip", "download": "다운로드", "installing": "설치 중…"
+  },
+  "plugin": {
+    "consentAria": "권한 요청", "consentTitle": "확장 «{name}» 을(를) 사용할까요?", "consentPermissions": "요청된 권한",
+    "consentNoPermissions": "특별한 권한을 요청하지 않습니다.",
+    "consentNote": "Tilzio는 설치된 확장을 신뢰합니다(VS Code처럼). 권한은 투명성을 위해 표시되며, 런타임에는 exec 바이너리 허용 목록(호스트가 강제)을 제외하고 플러그인을 제한하지 않습니다.",
+    "cancel": "취소", "enable": "사용", "viewUnavailable": "보기를 사용할 수 없음",
+    "viewMissingMsg": "플러그인 «{name}» 이(가) 더 이상 이 보기를 선언하지 않습니다 ", "closePane": "패널 닫기",
+    "notFoundTitle": "플러그인을 찾을 수 없음", "notFoundMsg": "이 패널을 연 확장이 설치되어 있지 않습니다.", "extensionsBtn": "확장…",
+    "disabledTitle": "확장 사용 안 함", "disabledMsg": "«{name}» 은(는) 사용 중지되었습니다. 패널을 다시 열려면 사용으로 설정하세요.",
+    "loading": "확장을 사용할 수 없음 (로드 중…)", "noPanels": "활성 패널 없음", "toastDismiss": "닫기", "toastClose": "닫기"
+  },
+  "dialog": {
+    "close": "닫기", "cancel": "취소", "discard": "버리기", "delete": "삭제", "reset": "초기화", "closeTerminal": "터미널을 닫을까요?",
+    "closeTab": "탭 \"{title}\" 을(를) 닫을까요?", "closeSpace": "스페이스 \"{name}\" 을(를) 닫을까요?",
+    "closeSpaceAlt": "스페이스 \"{name}\" 을(를) 닫을까요?",
+    "deleteExt": "«{name}» 을(를) 삭제할까요? 폴더와 코드가 삭제됩니다. 데이터(스토리지)는 유지됩니다.",
+    "resetExt": "«{name}» 설정을 기본값으로 초기화할까요? 확장의 저장된 데이터가 모두 지워지고 확장이 재시작됩니다.",
+    "unsavedCloseOne": "«{name}» 에 저장하지 않은 변경 사항이 있습니다. 저장하지 않고 닫을까요?",
+    "unsavedCloseMany": "{count}개 파일에 저장하지 않은 변경 사항이 있습니다. 저장하지 않고 닫을까요?", "fileFallback": "파일"
+  },
+  "toast": {
+    "bellWaiting": "{label} · 입력 대기 중", "bellBody": "{spaceName} › {label}", "openPane": "패널 열기", "later": "나중에",
+    "paneFallback": "터미널", "spaceFallback": "스페이스"
+  },
+  "finder": { "title": "놓으면 — 편집기에서 파일이 열립니다", "subtitle": "활성 편집기 패널에서, 없으면 새 분할로" },
+  "perm": {
+    "exec": { "title": "명령 실행", "detail": "실행 허용: {bins}", "badge": "실행: {bins}", "noBinary": "바이너리가 지정되지 않음" },
+    "state:read": { "title": "레이아웃 읽기", "detail": "스페이스, 탭, 콘솔 — 읽기 전용", "badge": "레이아웃 읽기" },
+    "terminal:write": { "title": "콘솔에 붙여넣기", "detail": "활성 콘솔에 텍스트를 삽입합니다 — Enter는 직접 누릅니다", "badge": "콘솔에 붙여넣기" },
+    "terminal:read": { "title": "터미널 출력 읽기", "detail": "화면에 표시된 비밀번호와 토큰을 포함하여 콘솔에 나타나는 모든 내용을 읽습니다", "badge": "콘솔 읽기" },
+    "network": { "title": "네트워크 접근", "detail": "플러그인 패널이 인터넷에 접근할 수 있습니다(원격 콘텐츠나 데이터 로드)", "badge": "네트워크" },
+    "unknown": { "detail": "알 수 없는 권한" }
+  }
+}

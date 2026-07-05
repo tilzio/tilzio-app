@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "SPAZI",
+    "addSpace": "Nuovo spazio",
+    "toggle": "attiva/disattiva",
+    "addTab": "aggiungi scheda",
+    "close": "chiudi"
+  },
+  "header": {
+    "unsaved": "non salvato",
+    "closeFile": "chiudi {name}",
+    "openFile": "apri file",
+    "markdownView": "vista markdown",
+    "sourceView": "vista sorgente",
+    "source": "sorgente",
+    "splitView": "vista divisa",
+    "split": "dividi",
+    "previewView": "vista anteprima",
+    "preview": "anteprima",
+    "restartShell": "riavvia shell",
+    "restart": "riavvia (⌘R)",
+    "splitRight": "dividi a destra",
+    "splitRightTitle": "dividi → (clic destro = menu)",
+    "splitDown": "dividi in basso",
+    "splitDownTitle": "dividi ↓ (clic destro = menu)",
+    "zoom": "zoom",
+    "zoomTitle": "zoom (⌘↵)",
+    "closePane": "chiudi pannello",
+    "close": "chiudi",
+    "splitMenu": "menu divisione"
+  },
+  "status": {
+    "toggleBottomPanel": "attiva/disattiva pannello inferiore",
+    "bottomPanelTitle": "pannello inferiore (⌘J)",
+    "resizeBottomPanel": "ridimensiona pannello inferiore"
+  },
+  "activityBar": {
+    "toggleSidebar": "attiva/disattiva barra laterale",
+    "navigationSidebar": "barra laterale di navigazione (⌘B)",
+    "extensions": "estensioni",
+    "settings": "impostazioni"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "attiva/disattiva pannello destro",
+    "rightPanelTitle": "pannello destro (⌘⌥B)",
+    "addTab": "aggiungi scheda",
+    "newTab": "nuova scheda",
+    "tabButton": "＋ scheda",
+    "gridConsoles": "console a griglia",
+    "columns": "colonne",
+    "rows": "righe"
+  },
+  "settings": {
+    "language": "Lingua",
+    "title": "Impostazioni",
+    "closeAria": "Chiudi impostazioni",
+    "livePreview": "ANTEPRIMA LIVE",
+    "familySize": "Famiglia · Dimensione",
+    "reset": "Ripristina predefiniti",
+    "done": "Fatto",
+    "cat": {
+      "appearance": "Aspetto",
+      "terminal": "Terminale",
+      "editor": "Editor",
+      "keymap": "Scorciatoie",
+      "extensions": "Estensioni",
+      "about": "Informazioni"
+    },
+    "section": {
+      "stateColors": "COLORI DI STATO",
+      "labelFont": "CARATTERE ETICHETTE",
+      "language": "LINGUA",
+      "contentFontSize": "DIMENSIONE CARATTERE CONTENUTO"
+    },
+    "color": {
+      "active": "Pannello attivo",
+      "exit": "Console terminata",
+      "notifications": "Notifiche"
+    },
+    "field": {
+      "terminal": "Terminale",
+      "editor": "Editor"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "Sola lettura"
+    },
+    "km": {
+      "newTab": "Nuova scheda",
+      "closePane": "Chiudi pannello",
+      "splitRight": "Dividi a destra",
+      "splitDown": "Dividi in basso",
+      "newSpace": "Nuovo spazio",
+      "restartPane": "Riavvia pannello",
+      "zoomPane": "Zoom pannello",
+      "openFile": "Apri file",
+      "save": "Salva",
+      "toggleSidebar": "Attiva/disattiva barra laterale",
+      "toggleBottomPanel": "Attiva/disattiva pannello inferiore",
+      "toggleRightArea": "Attiva/disattiva area destra",
+      "collapseNavigator": "Comprimi navigatore",
+      "focusNeighbor": "Sposta focus al vicino",
+      "switchSpace": "Cambia spazio",
+      "selectTab": "Seleziona scheda"
+    },
+    "ext": {
+      "desc": "Gestisci plugin ed estensioni installati in Tilzio.",
+      "open": "Apri Estensioni"
+    },
+    "about": {
+      "tagline": "Spazi di lavoro nel terminale"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "dividi come…",
+      "terminal": "Terminale",
+      "editor": "Editor (vuoto)",
+      "openFile": "Apri file…"
+    }
+  },
+  "editor": {
+    "terminal": "Terminale",
+    "terminalDesc": "nuovo terminale in questo pannello",
+    "openFile": "Apri file",
+    "openFileDesc": "apri un file nell'editor",
+    "dragHint": "oppure trascina un file dal Finder",
+    "failedOpen": "impossibile aprire il file"
+  },
+  "ext": {
+    "title": "Estensioni",
+    "install": "Installa",
+    "refresh": "aggiorna",
+    "close": "chiudi",
+    "filterAria": "filtra estensioni",
+    "filterPlaceholder": "Filtra estensioni installate…",
+    "emptyNoExtensions": "Nessuna estensione. Posiziona una cartella di estensione nella directory dei plugin di Tilzio (accanto a layout.json) e fai clic su \"Aggiorna\".",
+    "noMatches": "Nessuna estensione corrispondente",
+    "detailsAria": "dettagli: {name}",
+    "error": "errore",
+    "enabled": "abilitata",
+    "disabled": "disabilitata",
+    "requestsNoPermissions": "non richiede permessi",
+    "activationError": "errore di attivazione",
+    "toggleAria": "attiva/disattiva {name}",
+    "deleteAria": "elimina {name}",
+    "disabledGroup": "DISABILITATE",
+    "footerSummary": "{installed} installate · {enabled} abilitate",
+    "openFolderAria": "apri cartella plugin",
+    "pluginsFolder": "cartella plugin",
+    "extensionAria": "Estensione {name}",
+    "back": "Indietro",
+    "oneItem": "1 elemento",
+    "nItems": "{n} elementi",
+    "contribActivityBar": "Barra Attività — {icon} {label}",
+    "contribPanel": "Pannello ({location}) — {label}",
+    "locationRight": "destra",
+    "locationBottom": "basso",
+    "contribStatusBar": "Barra di stato — {items}",
+    "contribBreadcrumb": "Breadcrumb — {items}",
+    "sectionError": "ERRORE",
+    "sectionPermissions": "PERMESSI",
+    "sectionContributes": "CONTRIBUISCE ALL'INTERFACCIA",
+    "contributesNothing": "non contribuisce con nulla",
+    "sectionData": "DATI",
+    "keys": "chiavi",
+    "bytes": "byte",
+    "resetToDefaults": "Ripristina predefiniti",
+    "resetDescription": "ripristina le impostazioni/dati salvati dell'estensione; il suo stato di abilitazione e i permessi non vengono toccati. i dati (storage) vengono mantenuti quando eliminata",
+    "sectionPath": "PERCORSO",
+    "installTitle": "Installa estensione",
+    "closeLabel": "Chiudi",
+    "conflictTitle": "Estensione già installata",
+    "conflictMsg": "«{id}» è già installata. Sostituire la versione installata con quella nuova?",
+    "cancel": "Annulla",
+    "replace": "Sostituisci",
+    "dropPrefix": "Rilascia ",
+    "dropSuffix": " qui",
+    "dropSub": "oppure fai clic per scegliere un file",
+    "orFromUrl": "oppure da URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "Scarica",
+    "installing": "Installazione…"
+  },
+  "plugin": {
+    "consentAria": "Richiesta di permesso",
+    "consentTitle": "Abilitare l'estensione «{name}»?",
+    "consentPermissions": "PERMESSI RICHIESTI",
+    "consentNoPermissions": "Non richiede permessi speciali.",
+    "consentNote": "Tilzio si fida delle estensioni installate (come VS Code). I permessi sono mostrati per trasparenza — in esecuzione non limitano il plugin, tranne la allow-list dei binari exec (imposta dall'host).",
+    "cancel": "Annulla",
+    "enable": "Abilita",
+    "viewUnavailable": "Vista non disponibile",
+    "viewMissingMsg": "Il plugin «{name}» non dichiara più la vista ",
+    "closePane": "Chiudi pannello",
+    "notFoundTitle": "Plugin non trovato",
+    "notFoundMsg": "L'estensione che ha aperto questo pannello non è installata.",
+    "extensionsBtn": "Estensioni…",
+    "disabledTitle": "Estensione disabilitata",
+    "disabledMsg": "«{name}» è disabilitata. Abilitala per ripristinare il pannello.",
+    "loading": "Estensione non disponibile (caricamento…)",
+    "noPanels": "nessun pannello attivo",
+    "toastDismiss": "Ignora",
+    "toastClose": "Chiudi"
+  },
+  "dialog": {
+    "close": "Chiudi",
+    "cancel": "Annulla",
+    "discard": "Scarta",
+    "delete": "Elimina",
+    "reset": "Ripristina",
+    "closeTerminal": "Chiudere il terminale?",
+    "closeTab": "Chiudere la scheda \"{title}\"?",
+    "closeSpace": "Chiudere lo spazio \"{name}\"?",
+    "closeSpaceAlt": "Chiudere lo spazio \"{name}\"?",
+    "deleteExt": "Eliminare «{name}»? La cartella e il codice verranno eliminati; i dati (storage) vengono mantenuti.",
+    "resetExt": "Ripristinare le impostazioni predefinite di «{name}»? Tutti i dati salvati dell'estensione verranno cancellati e l'estensione verrà riavviata.",
+    "unsavedCloseOne": "«{name}» ha modifiche non salvate. Chiudere senza salvare?",
+    "unsavedCloseMany": "{count} file hanno modifiche non salvate. Chiudere senza salvare?",
+    "fileFallback": "file"
+  },
+  "toast": {
+    "bellWaiting": "{label} · in attesa di input",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "Apri pannello",
+    "later": "Più tardi",
+    "paneFallback": "terminale",
+    "spaceFallback": "spazio"
+  },
+  "finder": {
+    "title": "Rilascia — il file si aprirà nell'editor",
+    "subtitle": "nel pannello editor attivo, altrimenti come nuova divisione"
+  },
+  "perm": {
+    "exec": {
+      "title": "Esegui comandi",
+      "detail": "autorizzato a eseguire: {bins}",
+      "badge": "esegui: {bins}",
+      "noBinary": "binario non specificato"
+    },
+    "state:read": {
+      "title": "Leggi layout",
+      "detail": "spazi, schede, console — sola lettura",
+      "badge": "leggi layout"
+    },
+    "terminal:write": {
+      "title": "Incolla nella console",
+      "detail": "inserisce testo nella console attiva — premi tu Invio",
+      "badge": "incolla nella console"
+    },
+    "terminal:read": {
+      "title": "Leggi output del terminale",
+      "detail": "legge tutto ciò che è mostrato nelle tue console, incluse password e token apparsi sullo schermo",
+      "badge": "leggi console"
+    },
+    "network": {
+      "title": "Accesso alla rete",
+      "detail": "il pannello del plugin può accedere a internet (caricando contenuti o dati remoti)",
+      "badge": "rete"
+    },
+    "unknown": {
+      "detail": "permesso sconosciuto"
+    }
+  }
+}

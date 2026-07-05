@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "สเปซ",
+    "addSpace": "สเปซใหม่",
+    "toggle": "สลับ",
+    "addTab": "เพิ่มแท็บ",
+    "close": "ปิด"
+  },
+  "header": {
+    "unsaved": "ยังไม่บันทึก",
+    "closeFile": "ปิด {name}",
+    "openFile": "เปิดไฟล์",
+    "markdownView": "มุมมอง Markdown",
+    "sourceView": "มุมมองซอร์ส",
+    "source": "ซอร์ส",
+    "splitView": "มุมมองแยกหน้าจอ",
+    "split": "แยกหน้าจอ",
+    "previewView": "มุมมองตัวอย่าง",
+    "preview": "ตัวอย่าง",
+    "restartShell": "รีสตาร์ตเชลล์",
+    "restart": "รีสตาร์ต (⌘R)",
+    "splitRight": "แยกไปทางขวา",
+    "splitRightTitle": "แยก → (คลิกขวา = เมนู)",
+    "splitDown": "แยกลงล่าง",
+    "splitDownTitle": "แยก ↓ (คลิกขวา = เมนู)",
+    "zoom": "ซูม",
+    "zoomTitle": "ซูม (⌘↵)",
+    "closePane": "ปิดพาเนล",
+    "close": "ปิด",
+    "splitMenu": "เมนูแยกหน้าจอ"
+  },
+  "status": {
+    "toggleBottomPanel": "สลับพาเนลด้านล่าง",
+    "bottomPanelTitle": "พาเนลด้านล่าง (⌘J)",
+    "resizeBottomPanel": "ปรับขนาดพาเนลด้านล่าง"
+  },
+  "activityBar": {
+    "toggleSidebar": "สลับแถบด้านข้าง",
+    "navigationSidebar": "แถบนำทางด้านข้าง (⌘B)",
+    "extensions": "ส่วนขยาย",
+    "settings": "การตั้งค่า"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "สลับพาเนลด้านขวา",
+    "rightPanelTitle": "พาเนลด้านขวา (⌘⌥B)",
+    "addTab": "เพิ่มแท็บ",
+    "newTab": "แท็บใหม่",
+    "tabButton": "＋ แท็บ",
+    "gridConsoles": "จัดคอนโซลแบบกริด",
+    "columns": "คอลัมน์",
+    "rows": "แถว"
+  },
+  "settings": {
+    "language": "ภาษา",
+    "title": "การตั้งค่า",
+    "closeAria": "ปิดการตั้งค่า",
+    "livePreview": "ตัวอย่างสด",
+    "familySize": "แบบอักษร · ขนาด",
+    "reset": "คืนค่าเริ่มต้น",
+    "done": "เสร็จสิ้น",
+    "cat": {
+      "appearance": "รูปลักษณ์",
+      "terminal": "เทอร์มินัล",
+      "editor": "ตัวแก้ไข",
+      "keymap": "คีย์แมป",
+      "extensions": "ส่วนขยาย",
+      "about": "เกี่ยวกับ"
+    },
+    "section": {
+      "stateColors": "สีของสถานะ",
+      "labelFont": "ฟอนต์ป้ายกำกับ",
+      "language": "ภาษา",
+      "contentFontSize": "ขนาดฟอนต์เนื้อหา"
+    },
+    "color": {
+      "active": "พาเนลที่ใช้งานอยู่",
+      "exit": "คอนโซลที่ออกแล้ว",
+      "notifications": "การแจ้งเตือน"
+    },
+    "field": {
+      "terminal": "เทอร์มินัล",
+      "editor": "ตัวแก้ไข"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "อ่านอย่างเดียว"
+    },
+    "km": {
+      "newTab": "แท็บใหม่",
+      "closePane": "ปิดพาเนล",
+      "splitRight": "แยกไปทางขวา",
+      "splitDown": "แยกลงล่าง",
+      "newSpace": "สเปซใหม่",
+      "restartPane": "รีสตาร์ตพาเนล",
+      "zoomPane": "ซูมพาเนล",
+      "openFile": "เปิดไฟล์",
+      "save": "บันทึก",
+      "toggleSidebar": "สลับแถบด้านข้าง",
+      "toggleBottomPanel": "สลับพาเนลด้านล่าง",
+      "toggleRightArea": "สลับพื้นที่ด้านขวา",
+      "collapseNavigator": "ยุบตัวนำทาง",
+      "focusNeighbor": "โฟกัสพาเนลข้างเคียง",
+      "switchSpace": "สลับสเปซ",
+      "selectTab": "เลือกแท็บ"
+    },
+    "ext": {
+      "desc": "จัดการปลั๊กอินและส่วนขยายที่ติดตั้งใน Tilzio",
+      "open": "เปิดส่วนขยาย"
+    },
+    "about": {
+      "tagline": "พื้นที่ทำงานเทอร์มินัล"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "แยกเป็น…",
+      "terminal": "เทอร์มินัล",
+      "editor": "ตัวแก้ไข (ว่างเปล่า)",
+      "openFile": "เปิดไฟล์…"
+    }
+  },
+  "editor": {
+    "terminal": "เทอร์มินัล",
+    "terminalDesc": "เทอร์มินัลใหม่ในพาเนลนี้",
+    "openFile": "เปิดไฟล์",
+    "openFileDesc": "เปิดไฟล์ในตัวแก้ไข",
+    "dragHint": "หรือลากไฟล์จาก Finder มาวาง",
+    "failedOpen": "เปิดไฟล์ไม่สำเร็จ"
+  },
+  "ext": {
+    "title": "ส่วนขยาย",
+    "install": "ติดตั้ง",
+    "refresh": "รีเฟรช",
+    "close": "ปิด",
+    "filterAria": "กรองส่วนขยาย",
+    "filterPlaceholder": "กรองส่วนขยายที่ติดตั้งไว้…",
+    "emptyNoExtensions": "ไม่มีส่วนขยาย วางโฟลเดอร์ส่วนขยายไว้ในไดเรกทอรีปลั๊กอินของ Tilzio (ข้าง layout.json) แล้วคลิก \"รีเฟรช\"",
+    "noMatches": "ไม่พบส่วนขยายที่ตรงกัน",
+    "detailsAria": "รายละเอียด: {name}",
+    "error": "ข้อผิดพลาด",
+    "enabled": "เปิดใช้งาน",
+    "disabled": "ปิดใช้งาน",
+    "requestsNoPermissions": "ไม่ขอสิทธิ์ใดๆ",
+    "activationError": "ข้อผิดพลาดในการเปิดใช้งาน",
+    "toggleAria": "สลับ {name}",
+    "deleteAria": "ลบ {name}",
+    "disabledGroup": "ปิดใช้งาน",
+    "footerSummary": "ติดตั้ง {installed} · เปิดใช้งาน {enabled}",
+    "openFolderAria": "เปิดโฟลเดอร์ปลั๊กอิน",
+    "pluginsFolder": "โฟลเดอร์ปลั๊กอิน",
+    "extensionAria": "ส่วนขยาย {name}",
+    "back": "กลับ",
+    "oneItem": "1 รายการ",
+    "nItems": "{n} รายการ",
+    "contribActivityBar": "แถบกิจกรรม — {icon} {label}",
+    "contribPanel": "พาเนล ({location}) — {label}",
+    "locationRight": "ขวา",
+    "locationBottom": "ล่าง",
+    "contribStatusBar": "แถบสถานะ — {items}",
+    "contribBreadcrumb": "เบรดครัมบ์ — {items}",
+    "sectionError": "ข้อผิดพลาด",
+    "sectionPermissions": "สิทธิ์การเข้าถึง",
+    "sectionContributes": "ส่วนที่เพิ่มเข้า UI",
+    "contributesNothing": "ไม่เพิ่มส่วนใดใน UI",
+    "sectionData": "ข้อมูล",
+    "keys": "คีย์",
+    "bytes": "ไบต์",
+    "resetToDefaults": "คืนค่าเริ่มต้น",
+    "resetDescription": "รีเซ็ตการตั้งค่า/ข้อมูลที่บันทึกไว้ของส่วนขยาย โดยไม่กระทบสถานะเปิดใช้งานและสิทธิ์ ข้อมูล (สตอเรจ) จะยังคงอยู่เมื่อลบ",
+    "sectionPath": "พาธ",
+    "installTitle": "ติดตั้งส่วนขยาย",
+    "closeLabel": "ปิด",
+    "conflictTitle": "ติดตั้งส่วนขยายนี้ไว้แล้ว",
+    "conflictMsg": "«{id}» ติดตั้งไว้แล้ว ต้องการแทนที่เวอร์ชันที่ติดตั้งไว้ด้วยเวอร์ชันใหม่หรือไม่?",
+    "cancel": "ยกเลิก",
+    "replace": "แทนที่",
+    "dropPrefix": "วาง ",
+    "dropSuffix": " ที่นี่",
+    "dropSub": "หรือคลิกเพื่อเลือกไฟล์",
+    "orFromUrl": "หรือจาก URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "ดาวน์โหลด",
+    "installing": "กำลังติดตั้ง…"
+  },
+  "plugin": {
+    "consentAria": "คำขอสิทธิ์",
+    "consentTitle": "เปิดใช้งานส่วนขยาย «{name}»?",
+    "consentPermissions": "สิทธิ์ที่ร้องขอ",
+    "consentNoPermissions": "ไม่ขอสิทธิ์พิเศษใดๆ",
+    "consentNote": "Tilzio ให้ความไว้วางใจส่วนขยายที่ติดตั้งไว้ (เหมือน VS Code) สิทธิ์ที่แสดงมีไว้เพื่อความโปร่งใส — ขณะทำงานจริงจะไม่จำกัดการทำงานของปลั๊กอิน ยกเว้นรายการไบนารีที่อนุญาตให้เรียกใช้ (บังคับใช้โดยโฮสต์)",
+    "cancel": "ยกเลิก",
+    "enable": "เปิดใช้งาน",
+    "viewUnavailable": "มุมมองไม่พร้อมใช้งาน",
+    "viewMissingMsg": "ปลั๊กอิน «{name}» ไม่ได้ประกาศมุมมองนี้ไว้อีกต่อไป ",
+    "closePane": "ปิดพาเนล",
+    "notFoundTitle": "ไม่พบปลั๊กอิน",
+    "notFoundMsg": "ไม่ได้ติดตั้งส่วนขยายที่เปิดพาเนลนี้ไว้",
+    "extensionsBtn": "ส่วนขยาย…",
+    "disabledTitle": "ส่วนขยายถูกปิดใช้งาน",
+    "disabledMsg": "«{name}» ถูกปิดใช้งานอยู่ เปิดใช้งานเพื่อนำพาเนลกลับมา",
+    "loading": "ส่วนขยายไม่พร้อมใช้งาน (กำลังโหลด…)",
+    "noPanels": "ไม่มีพาเนลที่ใช้งานอยู่",
+    "toastDismiss": "ปิดข้อความ",
+    "toastClose": "ปิด"
+  },
+  "dialog": {
+    "close": "ปิด",
+    "cancel": "ยกเลิก",
+    "discard": "ละทิ้ง",
+    "delete": "ลบ",
+    "reset": "รีเซ็ต",
+    "closeTerminal": "ปิดเทอร์มินัล?",
+    "closeTab": "ปิดแท็บ \"{title}\"?",
+    "closeSpace": "ปิดสเปซ \"{name}\"?",
+    "closeSpaceAlt": "ปิดสเปซ \"{name}\"?",
+    "deleteExt": "ลบ «{name}»? โฟลเดอร์และโค้ดจะถูกลบ โดยข้อมูล (สตอเรจ) จะยังคงอยู่",
+    "resetExt": "รีเซ็ตการตั้งค่าของ «{name}» เป็นค่าเริ่มต้น? ข้อมูลที่บันทึกไว้ทั้งหมดของส่วนขยายจะถูกลบและส่วนขยายจะรีสตาร์ต",
+    "unsavedCloseOne": "«{name}» มีการเปลี่ยนแปลงที่ยังไม่ได้บันทึก ปิดโดยไม่บันทึกหรือไม่?",
+    "unsavedCloseMany": "มี {count} ไฟล์ที่มีการเปลี่ยนแปลงยังไม่ได้บันทึก ปิดโดยไม่บันทึกหรือไม่?",
+    "fileFallback": "ไฟล์"
+  },
+  "toast": {
+    "bellWaiting": "{label} · รอการป้อนข้อมูล",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "เปิดพาเนล",
+    "later": "ไว้ทีหลัง",
+    "paneFallback": "เทอร์มินัล",
+    "spaceFallback": "สเปซ"
+  },
+  "finder": {
+    "title": "ปล่อยไฟล์ — ไฟล์จะเปิดในตัวแก้ไข",
+    "subtitle": "ในพาเนลตัวแก้ไขที่ใช้งานอยู่ ถ้าไม่มีจะเปิดเป็นการแยกหน้าจอใหม่"
+  },
+  "perm": {
+    "exec": {
+      "title": "รันคำสั่ง",
+      "detail": "อนุญาตให้รัน: {bins}",
+      "badge": "รัน: {bins}",
+      "noBinary": "ไม่ได้ระบุไบนารี"
+    },
+    "state:read": {
+      "title": "อ่านเลย์เอาต์",
+      "detail": "สเปซ แท็บ คอนโซล — อ่านได้อย่างเดียว",
+      "badge": "อ่านเลย์เอาต์"
+    },
+    "terminal:write": {
+      "title": "วางข้อความลงคอนโซล",
+      "detail": "แทรกข้อความลงในคอนโซลที่ใช้งานอยู่ — คุณเป็นคนกด Enter เอง",
+      "badge": "วางลงคอนโซล"
+    },
+    "terminal:read": {
+      "title": "อ่านผลลัพธ์เทอร์มินัล",
+      "detail": "อ่านทุกอย่างที่แสดงในคอนโซลของคุณ รวมถึงรหัสผ่านและโทเคนที่เคยปรากฏบนหน้าจอ",
+      "badge": "อ่านคอนโซล"
+    },
+    "network": {
+      "title": "การเข้าถึงเครือข่าย",
+      "detail": "พาเนลของปลั๊กอินสามารถเชื่อมต่ออินเทอร์เน็ตได้ (โหลดเนื้อหาหรือข้อมูลจากระยะไกล)",
+      "badge": "เครือข่าย"
+    },
+    "unknown": {
+      "detail": "สิทธิ์ที่ไม่รู้จัก"
+    }
+  }
+}

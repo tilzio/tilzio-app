@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "SPACES",
+    "addSpace": "Nytt space",
+    "toggle": "veksle",
+    "addTab": "ny fane",
+    "close": "lukk"
+  },
+  "header": {
+    "unsaved": "ulagret",
+    "closeFile": "lukk {name}",
+    "openFile": "åpne fil",
+    "markdownView": "markdown-visning",
+    "sourceView": "kildevisning",
+    "source": "kilde",
+    "splitView": "delt visning",
+    "split": "del",
+    "previewView": "forhåndsvisning",
+    "preview": "forhåndsvis",
+    "restartShell": "start skall på nytt",
+    "restart": "start på nytt (⌘R)",
+    "splitRight": "del til høyre",
+    "splitRightTitle": "del → (høyreklikk = meny)",
+    "splitDown": "del nedover",
+    "splitDownTitle": "del ↓ (høyreklikk = meny)",
+    "zoom": "zoom",
+    "zoomTitle": "zoom (⌘↵)",
+    "closePane": "lukk rute",
+    "close": "lukk",
+    "splitMenu": "delemeny"
+  },
+  "status": {
+    "toggleBottomPanel": "veksle bunnpanel",
+    "bottomPanelTitle": "bunnpanel (⌘J)",
+    "resizeBottomPanel": "endre størrelse på bunnpanel"
+  },
+  "activityBar": {
+    "toggleSidebar": "veksle sidefelt",
+    "navigationSidebar": "navigasjonssidefelt (⌘B)",
+    "extensions": "utvidelser",
+    "settings": "innstillinger"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "veksle høyrepanel",
+    "rightPanelTitle": "høyrepanel (⌘⌥B)",
+    "addTab": "ny fane",
+    "newTab": "ny fane",
+    "tabButton": "＋ fane",
+    "gridConsoles": "rutenettkonsoller",
+    "columns": "kolonner",
+    "rows": "rader"
+  },
+  "settings": {
+    "language": "Språk",
+    "title": "Innstillinger",
+    "closeAria": "Lukk innstillinger",
+    "livePreview": "LIVE FORHÅNDSVISNING",
+    "familySize": "Familie · Størrelse",
+    "reset": "Tilbakestill til standard",
+    "done": "Ferdig",
+    "cat": {
+      "appearance": "Utseende",
+      "terminal": "Terminal",
+      "editor": "Redigering",
+      "keymap": "Tastatur",
+      "extensions": "Utvidelser",
+      "about": "Om"
+    },
+    "section": {
+      "stateColors": "TILSTANDSFARGER",
+      "labelFont": "ETIKETTSKRIFT",
+      "language": "SPRÅK",
+      "contentFontSize": "SKRIFTSTØRRELSE FOR INNHOLD"
+    },
+    "color": {
+      "active": "Aktiv rute",
+      "exit": "Avsluttet konsoll",
+      "notifications": "Varsler"
+    },
+    "field": {
+      "terminal": "Terminal",
+      "editor": "Redigering"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "Skrivebeskyttet"
+    },
+    "km": {
+      "newTab": "Ny fane",
+      "closePane": "Lukk rute",
+      "splitRight": "Del til høyre",
+      "splitDown": "Del nedover",
+      "newSpace": "Nytt space",
+      "restartPane": "Start rute på nytt",
+      "zoomPane": "Zoom rute",
+      "openFile": "Åpne fil",
+      "save": "Lagre",
+      "toggleSidebar": "Veksle sidefelt",
+      "toggleBottomPanel": "Veksle bunnpanel",
+      "toggleRightArea": "Veksle høyre område",
+      "collapseNavigator": "Skjul navigator",
+      "focusNeighbor": "Fokuser nabo",
+      "switchSpace": "Bytt space",
+      "selectTab": "Velg fane"
+    },
+    "ext": {
+      "desc": "Administrer programtillegg og utvidelser installert i Tilzio.",
+      "open": "Åpne utvidelser"
+    },
+    "about": {
+      "tagline": "Terminalarbeidsområder"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "del som…",
+      "terminal": "Terminal",
+      "editor": "Redigering (tom)",
+      "openFile": "Åpne fil…"
+    }
+  },
+  "editor": {
+    "terminal": "Terminal",
+    "terminalDesc": "ny terminal i denne ruten",
+    "openFile": "Åpne fil",
+    "openFileDesc": "åpne en fil i redigeringen",
+    "dragHint": "eller dra en fil fra Finder",
+    "failedOpen": "kunne ikke åpne filen"
+  },
+  "ext": {
+    "title": "Utvidelser",
+    "install": "Installer",
+    "refresh": "oppdater",
+    "close": "lukk",
+    "filterAria": "filtrer utvidelser",
+    "filterPlaceholder": "Filtrer installerte utvidelser…",
+    "emptyNoExtensions": "Ingen utvidelser. Legg en utvidelsesmappe i Tilzios programtilleggsmappe (ved siden av layout.json) og klikk «Oppdater».",
+    "noMatches": "Ingen samsvarende utvidelser",
+    "detailsAria": "detaljer: {name}",
+    "error": "feil",
+    "enabled": "aktivert",
+    "disabled": "deaktivert",
+    "requestsNoPermissions": "ber ikke om tillatelser",
+    "activationError": "aktiveringsfeil",
+    "toggleAria": "veksle {name}",
+    "deleteAria": "slett {name}",
+    "disabledGroup": "DEAKTIVERT",
+    "footerSummary": "{installed} installert · {enabled} aktivert",
+    "openFolderAria": "åpne programtilleggsmappe",
+    "pluginsFolder": "programtilleggsmappe",
+    "extensionAria": "Utvidelse {name}",
+    "back": "Tilbake",
+    "oneItem": "1 element",
+    "nItems": "{n} elementer",
+    "contribActivityBar": "Aktivitetslinje — {icon} {label}",
+    "contribPanel": "Panel ({location}) — {label}",
+    "locationRight": "høyre",
+    "locationBottom": "bunn",
+    "contribStatusBar": "Statuslinje — {items}",
+    "contribBreadcrumb": "Brødsmuler — {items}",
+    "sectionError": "FEIL",
+    "sectionPermissions": "TILLATELSER",
+    "sectionContributes": "BIDRAR TIL UI",
+    "contributesNothing": "bidrar med ingenting",
+    "sectionData": "DATA",
+    "keys": "nøkler",
+    "bytes": "byte",
+    "resetToDefaults": "Tilbakestill til standard",
+    "resetDescription": "tilbakestiller utvidelsens lagrede innstillinger/data; aktiveringstilstand og tillatelser røres ikke. data (lagring) beholdes ved sletting",
+    "sectionPath": "STI",
+    "installTitle": "Installer utvidelse",
+    "closeLabel": "Lukk",
+    "conflictTitle": "Utvidelse allerede installert",
+    "conflictMsg": "«{id}» er allerede installert. Erstatte den installerte versjonen med den nye?",
+    "cancel": "Avbryt",
+    "replace": "Erstatt",
+    "dropPrefix": "Slipp ",
+    "dropSuffix": " her",
+    "dropSub": "eller klikk for å velge en fil",
+    "orFromUrl": "eller fra URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "Last ned",
+    "installing": "Installerer…"
+  },
+  "plugin": {
+    "consentAria": "Tillatelsesforespørsel",
+    "consentTitle": "Aktivere utvidelsen «{name}»?",
+    "consentPermissions": "FORESPURTE TILLATELSER",
+    "consentNoPermissions": "Ber ikke om spesielle tillatelser.",
+    "consentNote": "Tilzio stoler på installerte utvidelser (som VS Code). Tillatelser vises for åpenhet — under kjøring begrenser de ikke programtillegget, bortsett fra tillatelseslisten for exec-binærfiler (håndhevet av verten).",
+    "cancel": "Avbryt",
+    "enable": "Aktiver",
+    "viewUnavailable": "Visning utilgjengelig",
+    "viewMissingMsg": "Programtillegget «{name}» oppgir ikke lenger visningen ",
+    "closePane": "Lukk rute",
+    "notFoundTitle": "Programtillegg ikke funnet",
+    "notFoundMsg": "Utvidelsen som åpnet denne ruten, er ikke installert.",
+    "extensionsBtn": "Utvidelser…",
+    "disabledTitle": "Utvidelse deaktivert",
+    "disabledMsg": "«{name}» er deaktivert. Aktiver den for å hente ruten tilbake.",
+    "loading": "Utvidelse utilgjengelig (laster…)",
+    "noPanels": "ingen aktive paneler",
+    "toastDismiss": "Lukk",
+    "toastClose": "Lukk"
+  },
+  "dialog": {
+    "close": "Lukk",
+    "cancel": "Avbryt",
+    "discard": "Forkast",
+    "delete": "Slett",
+    "reset": "Tilbakestill",
+    "closeTerminal": "Lukke terminal?",
+    "closeTab": "Lukke fanen «{title}»?",
+    "closeSpace": "Lukke spacet «{name}»?",
+    "closeSpaceAlt": "Lukke spacet «{name}»?",
+    "deleteExt": "Slette «{name}»? Mappen og koden slettes; data (lagring) beholdes.",
+    "resetExt": "Tilbakestille innstillingene for «{name}» til standard? Alle utvidelsens lagrede data slettes, og utvidelsen starter på nytt.",
+    "unsavedCloseOne": "«{name}» har ulagrede endringer. Lukke uten å lagre?",
+    "unsavedCloseMany": "{count} filer har ulagrede endringer. Lukke uten å lagre?",
+    "fileFallback": "fil"
+  },
+  "toast": {
+    "bellWaiting": "{label} · venter på inndata",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "Åpne rute",
+    "later": "Senere",
+    "paneFallback": "terminal",
+    "spaceFallback": "space"
+  },
+  "finder": {
+    "title": "Slipp — filen åpnes i redigeringen",
+    "subtitle": "i den aktive redigeringsruten, ellers som ny deling"
+  },
+  "perm": {
+    "exec": {
+      "title": "Kjør kommandoer",
+      "detail": "har lov til å kjøre: {bins}",
+      "badge": "kjør: {bins}",
+      "noBinary": "binærfil ikke angitt"
+    },
+    "state:read": {
+      "title": "Les oppsett",
+      "detail": "spaces, faner, konsoller — kun lesing",
+      "badge": "les oppsett"
+    },
+    "terminal:write": {
+      "title": "Lim inn i konsoll",
+      "detail": "setter inn tekst i den aktive konsollen — du trykker Enter",
+      "badge": "lim inn i konsoll"
+    },
+    "terminal:read": {
+      "title": "Les terminalutdata",
+      "detail": "leser alt som vises i konsollene dine, inkludert passord og tokener som har dukket opp på skjermen",
+      "badge": "les konsoller"
+    },
+    "network": {
+      "title": "Nettverkstilgang",
+      "detail": "programtilleggets panel kan nå internett (laster eksternt innhold eller data)",
+      "badge": "nettverk"
+    },
+    "unknown": {
+      "detail": "ukjent tillatelse"
+    }
+  }
+}

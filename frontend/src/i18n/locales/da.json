@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "SPACES",
+    "addSpace": "Nyt space",
+    "toggle": "skift",
+    "addTab": "tilføj faneblad",
+    "close": "luk"
+  },
+  "header": {
+    "unsaved": "ikke gemt",
+    "closeFile": "luk {name}",
+    "openFile": "åbn fil",
+    "markdownView": "markdown-visning",
+    "sourceView": "kildevisning",
+    "source": "kilde",
+    "splitView": "opdelt visning",
+    "split": "opdel",
+    "previewView": "forhåndsvisning",
+    "preview": "forhåndsvis",
+    "restartShell": "genstart shell",
+    "restart": "genstart (⌘R)",
+    "splitRight": "opdel til højre",
+    "splitRightTitle": "opdel → (højreklik = menu)",
+    "splitDown": "opdel nedad",
+    "splitDownTitle": "opdel ↓ (højreklik = menu)",
+    "zoom": "zoom",
+    "zoomTitle": "zoom (⌘↵)",
+    "closePane": "luk rude",
+    "close": "luk",
+    "splitMenu": "opdelingsmenu"
+  },
+  "status": {
+    "toggleBottomPanel": "vis/skjul bundpanel",
+    "bottomPanelTitle": "bundpanel (⌘J)",
+    "resizeBottomPanel": "tilpas bundpanel"
+  },
+  "activityBar": {
+    "toggleSidebar": "vis/skjul sidepanel",
+    "navigationSidebar": "navigationssidepanel (⌘B)",
+    "extensions": "udvidelser",
+    "settings": "indstillinger"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "vis/skjul højre panel",
+    "rightPanelTitle": "højre panel (⌘⌥B)",
+    "addTab": "tilføj faneblad",
+    "newTab": "nyt faneblad",
+    "tabButton": "＋ faneblad",
+    "gridConsoles": "gitterkonsoller",
+    "columns": "kolonner",
+    "rows": "rækker"
+  },
+  "settings": {
+    "language": "Sprog",
+    "title": "Indstillinger",
+    "closeAria": "Luk indstillinger",
+    "livePreview": "LIVE-FORHÅNDSVISNING",
+    "familySize": "Familie · Størrelse",
+    "reset": "Nulstil til standard",
+    "done": "Færdig",
+    "cat": {
+      "appearance": "Udseende",
+      "terminal": "Terminal",
+      "editor": "Editor",
+      "keymap": "Tastaturgenveje",
+      "extensions": "Udvidelser",
+      "about": "Om"
+    },
+    "section": {
+      "stateColors": "TILSTANDSFARVER",
+      "labelFont": "ETIKETSKRIFT",
+      "language": "SPROG",
+      "contentFontSize": "SKRIFTSTØRRELSE FOR INDHOLD"
+    },
+    "color": {
+      "active": "Aktiv rude",
+      "exit": "Afsluttet konsol",
+      "notifications": "Notifikationer"
+    },
+    "field": {
+      "terminal": "Terminal",
+      "editor": "Editor"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "Skrivebeskyttet"
+    },
+    "km": {
+      "newTab": "Nyt faneblad",
+      "closePane": "Luk rude",
+      "splitRight": "Opdel til højre",
+      "splitDown": "Opdel nedad",
+      "newSpace": "Nyt space",
+      "restartPane": "Genstart rude",
+      "zoomPane": "Zoom rude",
+      "openFile": "Åbn fil",
+      "save": "Gem",
+      "toggleSidebar": "Vis/skjul sidepanel",
+      "toggleBottomPanel": "Vis/skjul bundpanel",
+      "toggleRightArea": "Vis/skjul højre område",
+      "collapseNavigator": "Fold navigator sammen",
+      "focusNeighbor": "Fokusér nabo",
+      "switchSpace": "Skift space",
+      "selectTab": "Vælg faneblad"
+    },
+    "ext": {
+      "desc": "Administrér plugins og udvidelser installeret i Tilzio.",
+      "open": "Åbn Udvidelser"
+    },
+    "about": {
+      "tagline": "Terminalarbejdsområder"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "opdel som…",
+      "terminal": "Terminal",
+      "editor": "Editor (tom)",
+      "openFile": "Åbn fil…"
+    }
+  },
+  "editor": {
+    "terminal": "Terminal",
+    "terminalDesc": "ny terminal i denne rude",
+    "openFile": "Åbn fil",
+    "openFileDesc": "åbn en fil i editoren",
+    "dragHint": "eller træk en fil fra Finder",
+    "failedOpen": "kunne ikke åbne filen"
+  },
+  "ext": {
+    "title": "Udvidelser",
+    "install": "Installér",
+    "refresh": "opdatér",
+    "close": "luk",
+    "filterAria": "filtrér udvidelser",
+    "filterPlaceholder": "Filtrér installerede udvidelser…",
+    "emptyNoExtensions": "Ingen udvidelser. Placér en udvidelsesmappe i Tilzios plugins-mappe (ved siden af layout.json) og klik på \"Opdatér\".",
+    "noMatches": "Ingen matchende udvidelser",
+    "detailsAria": "detaljer: {name}",
+    "error": "fejl",
+    "enabled": "aktiveret",
+    "disabled": "deaktiveret",
+    "requestsNoPermissions": "anmoder ikke om tilladelser",
+    "activationError": "aktiveringsfejl",
+    "toggleAria": "skift {name}",
+    "deleteAria": "slet {name}",
+    "disabledGroup": "DEAKTIVERET",
+    "footerSummary": "{installed} installeret · {enabled} aktiveret",
+    "openFolderAria": "åbn plugins-mappe",
+    "pluginsFolder": "plugins-mappe",
+    "extensionAria": "Udvidelse {name}",
+    "back": "Tilbage",
+    "oneItem": "1 element",
+    "nItems": "{n} elementer",
+    "contribActivityBar": "Aktivitetslinje — {icon} {label}",
+    "contribPanel": "Panel ({location}) — {label}",
+    "locationRight": "højre",
+    "locationBottom": "bund",
+    "contribStatusBar": "Statuslinje — {items}",
+    "contribBreadcrumb": "Brødkrummer — {items}",
+    "sectionError": "FEJL",
+    "sectionPermissions": "TILLADELSER",
+    "sectionContributes": "BIDRAGER TIL UI",
+    "contributesNothing": "bidrager med intet",
+    "sectionData": "DATA",
+    "keys": "nøgler",
+    "bytes": "bytes",
+    "resetToDefaults": "Nulstil til standard",
+    "resetDescription": "nulstiller udvidelsens gemte indstillinger/data; dens aktiveringstilstand og tilladelser røres ikke. data (lager) bevares ved sletning",
+    "sectionPath": "STI",
+    "installTitle": "Installér udvidelse",
+    "closeLabel": "Luk",
+    "conflictTitle": "Udvidelse allerede installeret",
+    "conflictMsg": "«{id}» er allerede installeret. Erstat den installerede version med den nye?",
+    "cancel": "Annullér",
+    "replace": "Erstat",
+    "dropPrefix": "Slip ",
+    "dropSuffix": " her",
+    "dropSub": "eller klik for at vælge en fil",
+    "orFromUrl": "eller fra URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "Download",
+    "installing": "Installerer…"
+  },
+  "plugin": {
+    "consentAria": "Tilladelsesanmodning",
+    "consentTitle": "Aktivér udvidelsen «{name}»?",
+    "consentPermissions": "ANMODEDE TILLADELSER",
+    "consentNoPermissions": "Anmoder ikke om særlige tilladelser.",
+    "consentNote": "Tilzio har tillid til installerede udvidelser (som VS Code). Tilladelser vises for gennemsigtighed — under kørsel begrænser de ikke pluginet, undtagen tilladelseslisten for exec-binærfiler (håndhæves af værten).",
+    "cancel": "Annullér",
+    "enable": "Aktivér",
+    "viewUnavailable": "Visning utilgængelig",
+    "viewMissingMsg": "Pluginet «{name}» erklærer ikke længere visningen ",
+    "closePane": "Luk rude",
+    "notFoundTitle": "Plugin ikke fundet",
+    "notFoundMsg": "Udvidelsen, der åbnede denne rude, er ikke installeret.",
+    "extensionsBtn": "Udvidelser…",
+    "disabledTitle": "Udvidelse deaktiveret",
+    "disabledMsg": "«{name}» er deaktiveret. Aktivér den for at få ruden tilbage.",
+    "loading": "Udvidelse utilgængelig (indlæser…)",
+    "noPanels": "ingen aktive paneler",
+    "toastDismiss": "Afvis",
+    "toastClose": "Luk"
+  },
+  "dialog": {
+    "close": "Luk",
+    "cancel": "Annullér",
+    "discard": "Kassér",
+    "delete": "Slet",
+    "reset": "Nulstil",
+    "closeTerminal": "Luk terminal?",
+    "closeTab": "Luk fanebladet \"{title}\"?",
+    "closeSpace": "Luk spacet \"{name}\"?",
+    "closeSpaceAlt": "Luk spacet \"{name}\"?",
+    "deleteExt": "Slet «{name}»? Mappen og koden slettes; data (lager) bevares.",
+    "resetExt": "Nulstil indstillingerne for «{name}» til standard? Alle udvidelsens gemte data slettes, og udvidelsen genstarter.",
+    "unsavedCloseOne": "«{name}» har ikke-gemte ændringer. Luk uden at gemme?",
+    "unsavedCloseMany": "{count} filer har ikke-gemte ændringer. Luk uden at gemme?",
+    "fileFallback": "fil"
+  },
+  "toast": {
+    "bellWaiting": "{label} · venter på input",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "Åbn rude",
+    "later": "Senere",
+    "paneFallback": "terminal",
+    "spaceFallback": "space"
+  },
+  "finder": {
+    "title": "Slip — filen åbnes i editoren",
+    "subtitle": "i den aktive editorrude, ellers som en ny opdeling"
+  },
+  "perm": {
+    "exec": {
+      "title": "Kør kommandoer",
+      "detail": "må køre: {bins}",
+      "badge": "kør: {bins}",
+      "noBinary": "binærfil ikke angivet"
+    },
+    "state:read": {
+      "title": "Læs layout",
+      "detail": "spaces, faneblade, konsoller — kun læsning",
+      "badge": "læs layout"
+    },
+    "terminal:write": {
+      "title": "Indsæt i konsol",
+      "detail": "indsætter tekst i den aktive konsol — du trykker Enter",
+      "badge": "indsæt i konsol"
+    },
+    "terminal:read": {
+      "title": "Læs terminaloutput",
+      "detail": "læser alt vist i dine konsoller, inklusive adgangskoder og tokens, der er vist på skærmen",
+      "badge": "læs konsoller"
+    },
+    "network": {
+      "title": "Netværksadgang",
+      "detail": "pluginpanelet kan tilgå internettet (indlæse fjernindhold eller data)",
+      "badge": "netværk"
+    },
+    "unknown": {
+      "detail": "ukendt tilladelse"
+    }
+  }
+}

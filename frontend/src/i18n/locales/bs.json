@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "PROSTORI",
+    "addSpace": "Novi prostor",
+    "toggle": "preklopi",
+    "addTab": "dodaj karticu",
+    "close": "zatvori"
+  },
+  "header": {
+    "unsaved": "nesačuvano",
+    "closeFile": "zatvori {name}",
+    "openFile": "otvori datoteku",
+    "markdownView": "markdown prikaz",
+    "sourceView": "prikaz izvora",
+    "source": "izvor",
+    "splitView": "podijeljeni prikaz",
+    "split": "podijeli",
+    "previewView": "prikaz pregleda",
+    "preview": "pregled",
+    "restartShell": "ponovo pokreni shell",
+    "restart": "ponovo pokreni (⌘R)",
+    "splitRight": "podijeli desno",
+    "splitRightTitle": "podijeli → (desni klik = meni)",
+    "splitDown": "podijeli dolje",
+    "splitDownTitle": "podijeli ↓ (desni klik = meni)",
+    "zoom": "uvećaj",
+    "zoomTitle": "uvećaj (⌘↵)",
+    "closePane": "zatvori okno",
+    "close": "zatvori",
+    "splitMenu": "meni podjele"
+  },
+  "status": {
+    "toggleBottomPanel": "preklopi donji panel",
+    "bottomPanelTitle": "donji panel (⌘J)",
+    "resizeBottomPanel": "promijeni veličinu donjeg panela"
+  },
+  "activityBar": {
+    "toggleSidebar": "preklopi bočnu traku",
+    "navigationSidebar": "navigaciona bočna traka (⌘B)",
+    "extensions": "ekstenzije",
+    "settings": "postavke"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "preklopi desni panel",
+    "rightPanelTitle": "desni panel (⌘⌥B)",
+    "addTab": "dodaj karticu",
+    "newTab": "nova kartica",
+    "tabButton": "＋ kartica",
+    "gridConsoles": "mreža konzola",
+    "columns": "kolone",
+    "rows": "redovi"
+  },
+  "settings": {
+    "language": "Jezik",
+    "title": "Postavke",
+    "closeAria": "Zatvori postavke",
+    "livePreview": "PREGLED UŽIVO",
+    "familySize": "Familija · Veličina",
+    "reset": "Vrati na zadano",
+    "done": "Gotovo",
+    "cat": {
+      "appearance": "Izgled",
+      "terminal": "Terminal",
+      "editor": "Uređivač",
+      "keymap": "Prečice",
+      "extensions": "Ekstenzije",
+      "about": "O programu"
+    },
+    "section": {
+      "stateColors": "BOJE STANJA",
+      "labelFont": "FONT OZNAKA",
+      "language": "JEZIK",
+      "contentFontSize": "VELIČINA FONTA SADRŽAJA"
+    },
+    "color": {
+      "active": "Aktivno okno",
+      "exit": "Izašla konzola",
+      "notifications": "Obavještenja"
+    },
+    "field": {
+      "terminal": "Terminal",
+      "editor": "Uređivač"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "Samo za čitanje"
+    },
+    "km": {
+      "newTab": "Nova kartica",
+      "closePane": "Zatvori okno",
+      "splitRight": "Podijeli desno",
+      "splitDown": "Podijeli dolje",
+      "newSpace": "Novi prostor",
+      "restartPane": "Ponovo pokreni okno",
+      "zoomPane": "Uvećaj okno",
+      "openFile": "Otvori datoteku",
+      "save": "Sačuvaj",
+      "toggleSidebar": "Preklopi bočnu traku",
+      "toggleBottomPanel": "Preklopi donji panel",
+      "toggleRightArea": "Preklopi desni dio",
+      "collapseNavigator": "Skupi navigator",
+      "focusNeighbor": "Fokusiraj susjeda",
+      "switchSpace": "Promijeni prostor",
+      "selectTab": "Odaberi karticu"
+    },
+    "ext": {
+      "desc": "Upravljajte dodacima i ekstenzijama instaliranim u Tilzio.",
+      "open": "Otvori Ekstenzije"
+    },
+    "about": {
+      "tagline": "Terminalni radni prostori"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "podijeli kao…",
+      "terminal": "Terminal",
+      "editor": "Uređivač (prazan)",
+      "openFile": "Otvori datoteku…"
+    }
+  },
+  "editor": {
+    "terminal": "Terminal",
+    "terminalDesc": "novi terminal u ovom oknu",
+    "openFile": "Otvori datoteku",
+    "openFileDesc": "otvori datoteku u uređivaču",
+    "dragHint": "ili prevucite datoteku iz Findera",
+    "failedOpen": "otvaranje datoteke nije uspjelo"
+  },
+  "ext": {
+    "title": "Ekstenzije",
+    "install": "Instaliraj",
+    "refresh": "osvježi",
+    "close": "zatvori",
+    "filterAria": "filtriraj ekstenzije",
+    "filterPlaceholder": "Filtriraj instalirane ekstenzije…",
+    "emptyNoExtensions": "Nema ekstenzija. Postavite folder ekstenzije u Tilzio direktorij dodataka (pored layout.json) i kliknite \"Osvježi\".",
+    "noMatches": "Nema odgovarajućih ekstenzija",
+    "detailsAria": "detalji: {name}",
+    "error": "greška",
+    "enabled": "omogućeno",
+    "disabled": "onemogućeno",
+    "requestsNoPermissions": "ne traži dozvole",
+    "activationError": "greška pri aktivaciji",
+    "toggleAria": "preklopi {name}",
+    "deleteAria": "obriši {name}",
+    "disabledGroup": "ONEMOGUĆENO",
+    "footerSummary": "{installed} instalirano · {enabled} omogućeno",
+    "openFolderAria": "otvori folder dodataka",
+    "pluginsFolder": "folder dodataka",
+    "extensionAria": "Ekstenzija {name}",
+    "back": "Nazad",
+    "oneItem": "1 stavka",
+    "nItems": "{n} stavki",
+    "contribActivityBar": "Traka aktivnosti — {icon} {label}",
+    "contribPanel": "Panel ({location}) — {label}",
+    "locationRight": "desno",
+    "locationBottom": "dno",
+    "contribStatusBar": "Statusna traka — {items}",
+    "contribBreadcrumb": "Navigaciona putanja — {items}",
+    "sectionError": "GREŠKA",
+    "sectionPermissions": "DOZVOLE",
+    "sectionContributes": "DOPRINOSI SUČELJU",
+    "contributesNothing": "ne doprinosi ničemu",
+    "sectionData": "PODACI",
+    "keys": "ključevi",
+    "bytes": "bajtovi",
+    "resetToDefaults": "Vrati na zadano",
+    "resetDescription": "vraća sačuvane postavke/podatke ekstenzije; njeno stanje omogućenosti i dozvole ostaju netaknuti. podaci (pohrana) se čuvaju pri brisanju",
+    "sectionPath": "PUTANJA",
+    "installTitle": "Instaliraj ekstenziju",
+    "closeLabel": "Zatvori",
+    "conflictTitle": "Ekstenzija je već instalirana",
+    "conflictMsg": "«{id}» je već instalirana. Zamijeniti instaliranu verziju novom?",
+    "cancel": "Otkaži",
+    "replace": "Zamijeni",
+    "dropPrefix": "Ispustite ",
+    "dropSuffix": " ovdje",
+    "dropSub": "ili kliknite da odaberete datoteku",
+    "orFromUrl": "ili sa URL-a",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "Preuzmi",
+    "installing": "Instaliranje…"
+  },
+  "plugin": {
+    "consentAria": "Zahtjev za dozvolu",
+    "consentTitle": "Omogućiti ekstenziju «{name}»?",
+    "consentPermissions": "TRAŽENE DOZVOLE",
+    "consentNoPermissions": "Ne traži posebne dozvole.",
+    "consentNote": "Tilzio vjeruje instaliranim ekstenzijama (kao VS Code). Dozvole se prikazuju radi transparentnosti — tokom izvršavanja ne ograničavaju dodatak, osim liste dozvoljenih exec binarnih datoteka (koju provodi host).",
+    "cancel": "Otkaži",
+    "enable": "Omogući",
+    "viewUnavailable": "Prikaz nedostupan",
+    "viewMissingMsg": "Dodatak «{name}» više ne deklariše prikaz ",
+    "closePane": "Zatvori okno",
+    "notFoundTitle": "Dodatak nije pronađen",
+    "notFoundMsg": "Ekstenzija koja je otvorila ovo okno nije instalirana.",
+    "extensionsBtn": "Ekstenzije…",
+    "disabledTitle": "Ekstenzija onemogućena",
+    "disabledMsg": "«{name}» je onemogućena. Omogućite je da vratite okno.",
+    "loading": "Ekstenzija nedostupna (učitavanje…)",
+    "noPanels": "nema aktivnih panela",
+    "toastDismiss": "Odbaci",
+    "toastClose": "Zatvori"
+  },
+  "dialog": {
+    "close": "Zatvori",
+    "cancel": "Otkaži",
+    "discard": "Odbaci",
+    "delete": "Obriši",
+    "reset": "Vrati",
+    "closeTerminal": "Zatvoriti terminal?",
+    "closeTab": "Zatvoriti karticu \"{title}\"?",
+    "closeSpace": "Zatvoriti prostor \"{name}\"?",
+    "closeSpaceAlt": "Zatvoriti prostor \"{name}\"?",
+    "deleteExt": "Obrisati «{name}»? Folder i kod će biti obrisani; podaci (pohrana) se čuvaju.",
+    "resetExt": "Vratiti postavke «{name}» na zadano? Svi sačuvani podaci ekstenzije će biti izbrisani i ekstenzija će se ponovo pokrenuti.",
+    "unsavedCloseOne": "«{name}» ima nesačuvane izmjene. Zatvoriti bez čuvanja?",
+    "unsavedCloseMany": "{count} datoteka ima nesačuvane izmjene. Zatvoriti bez čuvanja?",
+    "fileFallback": "datoteka"
+  },
+  "toast": {
+    "bellWaiting": "{label} · čeka unos",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "Otvori okno",
+    "later": "Kasnije",
+    "paneFallback": "terminal",
+    "spaceFallback": "prostor"
+  },
+  "finder": {
+    "title": "Otpustite — datoteka će se otvoriti u uređivaču",
+    "subtitle": "u aktivnom oknu uređivača, inače kao nova podjela"
+  },
+  "perm": {
+    "exec": {
+      "title": "Pokreni komande",
+      "detail": "dozvoljeno pokretanje: {bins}",
+      "badge": "pokreni: {bins}",
+      "noBinary": "binarna datoteka nije navedena"
+    },
+    "state:read": {
+      "title": "Čitanje rasporeda",
+      "detail": "prostori, kartice, konzole — samo čitanje",
+      "badge": "čitanje rasporeda"
+    },
+    "terminal:write": {
+      "title": "Zalijepi u konzolu",
+      "detail": "umeće tekst u aktivnu konzolu — vi pritisnete Enter",
+      "badge": "zalijepi u konzolu"
+    },
+    "terminal:read": {
+      "title": "Čitanje izlaza terminala",
+      "detail": "čita sve prikazano u vašim konzolama, uključujući lozinke i tokene koji su se pojavili na ekranu",
+      "badge": "čitanje konzola"
+    },
+    "network": {
+      "title": "Pristup mreži",
+      "detail": "panel dodatka može pristupiti internetu (učitavanje udaljenog sadržaja ili podataka)",
+      "badge": "mreža"
+    },
+    "unknown": {
+      "detail": "nepoznata dozvola"
+    }
+  }
+}

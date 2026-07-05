@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "スペース",
+    "addSpace": "新しいスペース",
+    "toggle": "切り替え",
+    "addTab": "タブを追加",
+    "close": "閉じる"
+  },
+  "header": {
+    "unsaved": "未保存",
+    "closeFile": "{name} を閉じる",
+    "openFile": "ファイルを開く",
+    "markdownView": "Markdown 表示",
+    "sourceView": "ソース表示",
+    "source": "ソース",
+    "splitView": "分割表示",
+    "split": "分割",
+    "previewView": "プレビュー表示",
+    "preview": "プレビュー",
+    "restartShell": "シェルを再起動",
+    "restart": "再起動 (⌘R)",
+    "splitRight": "右に分割",
+    "splitRightTitle": "右に分割 → (右クリック = メニュー)",
+    "splitDown": "下に分割",
+    "splitDownTitle": "下に分割 ↓ (右クリック = メニュー)",
+    "zoom": "ズーム",
+    "zoomTitle": "ズーム (⌘↵)",
+    "closePane": "ペインを閉じる",
+    "close": "閉じる",
+    "splitMenu": "分割メニュー"
+  },
+  "status": {
+    "toggleBottomPanel": "下部パネルを切り替え",
+    "bottomPanelTitle": "下部パネル (⌘J)",
+    "resizeBottomPanel": "下部パネルのサイズ変更"
+  },
+  "activityBar": {
+    "toggleSidebar": "サイドバーを切り替え",
+    "navigationSidebar": "ナビゲーションサイドバー (⌘B)",
+    "extensions": "拡張機能",
+    "settings": "設定"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "右パネルを切り替え",
+    "rightPanelTitle": "右パネル (⌘⌥B)",
+    "addTab": "タブを追加",
+    "newTab": "新しいタブ",
+    "tabButton": "＋ タブ",
+    "gridConsoles": "グリッドコンソール",
+    "columns": "列",
+    "rows": "行"
+  },
+  "settings": {
+    "language": "言語",
+    "title": "設定",
+    "closeAria": "設定を閉じる",
+    "livePreview": "ライブプレビュー",
+    "familySize": "書体 · サイズ",
+    "reset": "デフォルトに戻す",
+    "done": "完了",
+    "cat": {
+      "appearance": "外観",
+      "terminal": "ターミナル",
+      "editor": "エディタ",
+      "keymap": "キーマップ",
+      "extensions": "拡張機能",
+      "about": "情報"
+    },
+    "section": {
+      "stateColors": "状態カラー",
+      "labelFont": "ラベルフォント",
+      "language": "言語",
+      "contentFontSize": "コンテンツのフォントサイズ"
+    },
+    "color": {
+      "active": "アクティブなペイン",
+      "exit": "終了したコンソール",
+      "notifications": "通知"
+    },
+    "field": {
+      "terminal": "ターミナル",
+      "editor": "エディタ"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "読み取り専用"
+    },
+    "km": {
+      "newTab": "新しいタブ",
+      "closePane": "ペインを閉じる",
+      "splitRight": "右に分割",
+      "splitDown": "下に分割",
+      "newSpace": "新しいスペース",
+      "restartPane": "ペインを再起動",
+      "zoomPane": "ペインをズーム",
+      "openFile": "ファイルを開く",
+      "save": "保存",
+      "toggleSidebar": "サイドバーを切り替え",
+      "toggleBottomPanel": "下部パネルを切り替え",
+      "toggleRightArea": "右エリアを切り替え",
+      "collapseNavigator": "ナビゲーターを折りたたむ",
+      "focusNeighbor": "隣のペインにフォーカス",
+      "switchSpace": "スペースを切り替え",
+      "selectTab": "タブを選択"
+    },
+    "ext": {
+      "desc": "Tilzio にインストールされたプラグインと拡張機能を管理します。",
+      "open": "拡張機能を開く"
+    },
+    "about": {
+      "tagline": "ターミナルワークスペース"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "分割方法…",
+      "terminal": "ターミナル",
+      "editor": "エディタ (空)",
+      "openFile": "ファイルを開く…"
+    }
+  },
+  "editor": {
+    "terminal": "ターミナル",
+    "terminalDesc": "このペインに新しいターミナル",
+    "openFile": "ファイルを開く",
+    "openFileDesc": "エディタでファイルを開く",
+    "dragHint": "または Finder からファイルをドラッグ",
+    "failedOpen": "ファイルを開けませんでした"
+  },
+  "ext": {
+    "title": "拡張機能",
+    "install": "インストール",
+    "refresh": "更新",
+    "close": "閉じる",
+    "filterAria": "拡張機能を絞り込み",
+    "filterPlaceholder": "インストール済み拡張機能を絞り込み…",
+    "emptyNoExtensions": "拡張機能がありません。拡張機能フォルダを Tilzio のプラグインディレクトリ (layout.json の隣) に置き、「更新」をクリックしてください。",
+    "noMatches": "一致する拡張機能がありません",
+    "detailsAria": "詳細: {name}",
+    "error": "エラー",
+    "enabled": "有効",
+    "disabled": "無効",
+    "requestsNoPermissions": "権限を要求しません",
+    "activationError": "有効化エラー",
+    "toggleAria": "{name} を切り替え",
+    "deleteAria": "{name} を削除",
+    "disabledGroup": "無効",
+    "footerSummary": "{installed} 個インストール済み · {enabled} 個有効",
+    "openFolderAria": "プラグインフォルダを開く",
+    "pluginsFolder": "プラグインフォルダ",
+    "extensionAria": "拡張機能 {name}",
+    "back": "戻る",
+    "oneItem": "1 項目",
+    "nItems": "{n} 項目",
+    "contribActivityBar": "アクティビティバー — {icon} {label}",
+    "contribPanel": "パネル ({location}) — {label}",
+    "locationRight": "右",
+    "locationBottom": "下",
+    "contribStatusBar": "ステータスバー — {items}",
+    "contribBreadcrumb": "パンくずリスト — {items}",
+    "sectionError": "エラー",
+    "sectionPermissions": "権限",
+    "sectionContributes": "UI への貢献",
+    "contributesNothing": "貢献なし",
+    "sectionData": "データ",
+    "keys": "キー",
+    "bytes": "バイト",
+    "resetToDefaults": "デフォルトに戻す",
+    "resetDescription": "拡張機能の保存された設定/データをリセットします。有効状態と権限はそのままです。削除時にデータ (ストレージ) は保持されます",
+    "sectionPath": "パス",
+    "installTitle": "拡張機能をインストール",
+    "closeLabel": "閉じる",
+    "conflictTitle": "拡張機能はすでにインストール済み",
+    "conflictMsg": "«{id}» はすでにインストールされています。インストール済みのバージョンを新しいものに置き換えますか？",
+    "cancel": "キャンセル",
+    "replace": "置き換え",
+    "dropPrefix": "ここに ",
+    "dropSuffix": " をドロップ",
+    "dropSub": "またはクリックしてファイルを選択",
+    "orFromUrl": "または URL から",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "ダウンロード",
+    "installing": "インストール中…"
+  },
+  "plugin": {
+    "consentAria": "権限リクエスト",
+    "consentTitle": "拡張機能 «{name}» を有効にしますか？",
+    "consentPermissions": "要求された権限",
+    "consentNoPermissions": "特別な権限は要求しません。",
+    "consentNote": "Tilzio はインストールされた拡張機能を (VS Code と同様に) 信頼します。権限は透明性のために表示されます — 実行時にはプラグインを制限しません。ただし exec バイナリの許可リスト (ホストが強制) は例外です。",
+    "cancel": "キャンセル",
+    "enable": "有効にする",
+    "viewUnavailable": "ビューを利用できません",
+    "viewMissingMsg": "プラグイン «{name}» はこのビューを宣言しなくなりました ",
+    "closePane": "ペインを閉じる",
+    "notFoundTitle": "プラグインが見つかりません",
+    "notFoundMsg": "このペインを開いた拡張機能はインストールされていません。",
+    "extensionsBtn": "拡張機能…",
+    "disabledTitle": "拡張機能は無効です",
+    "disabledMsg": "«{name}» は無効です。有効にするとペインが戻ります。",
+    "loading": "拡張機能を利用できません (読み込み中…)",
+    "noPanels": "アクティブなパネルがありません",
+    "toastDismiss": "非表示",
+    "toastClose": "閉じる"
+  },
+  "dialog": {
+    "close": "閉じる",
+    "cancel": "キャンセル",
+    "discard": "破棄",
+    "delete": "削除",
+    "reset": "リセット",
+    "closeTerminal": "ターミナルを閉じますか？",
+    "closeTab": "タブ \"{title}\" を閉じますか？",
+    "closeSpace": "スペース \"{name}\" を閉じますか？",
+    "closeSpaceAlt": "スペース \"{name}\" を閉じますか？",
+    "deleteExt": "«{name}» を削除しますか？フォルダとコードは削除されますが、データ (ストレージ) は保持されます。",
+    "resetExt": "«{name}» の設定をデフォルトに戻しますか？拡張機能の保存データはすべて消去され、拡張機能が再起動します。",
+    "unsavedCloseOne": "«{name}» に未保存の変更があります。保存せずに閉じますか？",
+    "unsavedCloseMany": "{count} 個のファイルに未保存の変更があります。保存せずに閉じますか？",
+    "fileFallback": "ファイル"
+  },
+  "toast": {
+    "bellWaiting": "{label} · 入力待ち",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "ペインを開く",
+    "later": "後で",
+    "paneFallback": "ターミナル",
+    "spaceFallback": "スペース"
+  },
+  "finder": {
+    "title": "離してください — ファイルがエディタで開きます",
+    "subtitle": "アクティブなエディタペインで、なければ新しい分割で"
+  },
+  "perm": {
+    "exec": {
+      "title": "コマンドを実行",
+      "detail": "実行を許可: {bins}",
+      "badge": "実行: {bins}",
+      "noBinary": "バイナリが指定されていません"
+    },
+    "state:read": {
+      "title": "レイアウトを読み取り",
+      "detail": "スペース、タブ、コンソール — 読み取りのみ",
+      "badge": "レイアウト読み取り"
+    },
+    "terminal:write": {
+      "title": "コンソールに貼り付け",
+      "detail": "アクティブなコンソールにテキストを挿入します — Enter はあなたが押します",
+      "badge": "コンソールに貼り付け"
+    },
+    "terminal:read": {
+      "title": "ターミナル出力を読み取り",
+      "detail": "画面に表示されたパスワードやトークンを含め、コンソールに表示されるすべてを読み取ります",
+      "badge": "コンソール読み取り"
+    },
+    "network": {
+      "title": "ネットワークアクセス",
+      "detail": "プラグインパネルがインターネットに接続できます (リモートのコンテンツやデータの読み込み)",
+      "badge": "ネットワーク"
+    },
+    "unknown": {
+      "detail": "不明な権限"
+    }
+  }
+}

@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "المساحات",
+    "addSpace": "مساحة جديدة",
+    "toggle": "تبديل",
+    "addTab": "إضافة تبويب",
+    "close": "إغلاق"
+  },
+  "header": {
+    "unsaved": "غير محفوظ",
+    "closeFile": "إغلاق {name}",
+    "openFile": "فتح ملف",
+    "markdownView": "عرض ماركداون",
+    "sourceView": "عرض المصدر",
+    "source": "المصدر",
+    "splitView": "عرض مقسّم",
+    "split": "تقسيم",
+    "previewView": "عرض المعاينة",
+    "preview": "معاينة",
+    "restartShell": "إعادة تشغيل الصدفة",
+    "restart": "إعادة تشغيل (⌘R)",
+    "splitRight": "تقسيم يمينًا",
+    "splitRightTitle": "تقسيم → (نقر يمين = قائمة)",
+    "splitDown": "تقسيم أسفل",
+    "splitDownTitle": "تقسيم ↓ (نقر يمين = قائمة)",
+    "zoom": "تكبير",
+    "zoomTitle": "تكبير (⌘↵)",
+    "closePane": "إغلاق اللوحة",
+    "close": "إغلاق",
+    "splitMenu": "قائمة التقسيم"
+  },
+  "status": {
+    "toggleBottomPanel": "تبديل اللوحة السفلية",
+    "bottomPanelTitle": "اللوحة السفلية (⌘J)",
+    "resizeBottomPanel": "تغيير حجم اللوحة السفلية"
+  },
+  "activityBar": {
+    "toggleSidebar": "تبديل الشريط الجانبي",
+    "navigationSidebar": "شريط التنقّل الجانبي (⌘B)",
+    "extensions": "الإضافات",
+    "settings": "الإعدادات"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "تبديل اللوحة اليمنى",
+    "rightPanelTitle": "اللوحة اليمنى (⌘⌥B)",
+    "addTab": "إضافة تبويب",
+    "newTab": "تبويب جديد",
+    "tabButton": "＋ تبويب",
+    "gridConsoles": "شبكة الطرفيات",
+    "columns": "أعمدة",
+    "rows": "صفوف"
+  },
+  "settings": {
+    "language": "اللغة",
+    "title": "الإعدادات",
+    "closeAria": "إغلاق الإعدادات",
+    "livePreview": "معاينة حيّة",
+    "familySize": "العائلة · الحجم",
+    "reset": "إعادة التعيين إلى الافتراضي",
+    "done": "تم",
+    "cat": {
+      "appearance": "المظهر",
+      "terminal": "الطرفية",
+      "editor": "المحرّر",
+      "keymap": "خريطة المفاتيح",
+      "extensions": "الإضافات",
+      "about": "حول"
+    },
+    "section": {
+      "stateColors": "ألوان الحالة",
+      "labelFont": "خط التسمية",
+      "language": "اللغة",
+      "contentFontSize": "حجم خط المحتوى"
+    },
+    "color": {
+      "active": "اللوحة النشطة",
+      "exit": "طرفية مُنتهية",
+      "notifications": "الإشعارات"
+    },
+    "field": {
+      "terminal": "الطرفية",
+      "editor": "المحرّر"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "للقراءة فقط"
+    },
+    "km": {
+      "newTab": "تبويب جديد",
+      "closePane": "إغلاق اللوحة",
+      "splitRight": "تقسيم يمينًا",
+      "splitDown": "تقسيم أسفل",
+      "newSpace": "مساحة جديدة",
+      "restartPane": "إعادة تشغيل اللوحة",
+      "zoomPane": "تكبير اللوحة",
+      "openFile": "فتح ملف",
+      "save": "حفظ",
+      "toggleSidebar": "تبديل الشريط الجانبي",
+      "toggleBottomPanel": "تبديل اللوحة السفلية",
+      "toggleRightArea": "تبديل المنطقة اليمنى",
+      "collapseNavigator": "طيّ لوحة التنقّل",
+      "focusNeighbor": "التركيز على المجاور",
+      "switchSpace": "تبديل المساحة",
+      "selectTab": "اختيار التبويب"
+    },
+    "ext": {
+      "desc": "إدارة المكوّنات الإضافية والإضافات المثبّتة في Tilzio.",
+      "open": "فتح الإضافات"
+    },
+    "about": {
+      "tagline": "مساحات عمل طرفية"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "تقسيم كـ…",
+      "terminal": "طرفية",
+      "editor": "محرّر (فارغ)",
+      "openFile": "فتح ملف…"
+    }
+  },
+  "editor": {
+    "terminal": "طرفية",
+    "terminalDesc": "طرفية جديدة في هذه اللوحة",
+    "openFile": "فتح ملف",
+    "openFileDesc": "فتح ملف في المحرّر",
+    "dragHint": "أو اسحب ملفًا من Finder",
+    "failedOpen": "تعذّر فتح الملف"
+  },
+  "ext": {
+    "title": "الإضافات",
+    "install": "تثبيت",
+    "refresh": "تحديث",
+    "close": "إغلاق",
+    "filterAria": "تصفية الإضافات",
+    "filterPlaceholder": "تصفية الإضافات المثبّتة…",
+    "emptyNoExtensions": "لا توجد إضافات. ضع مجلد إضافة في دليل المكوّنات الإضافية لـ Tilzio (بجوار layout.json) ثم انقر \"تحديث\".",
+    "noMatches": "لا توجد إضافات مطابقة",
+    "detailsAria": "التفاصيل: {name}",
+    "error": "خطأ",
+    "enabled": "مُفعّل",
+    "disabled": "مُعطّل",
+    "requestsNoPermissions": "لا يطلب أي أذونات",
+    "activationError": "خطأ في التفعيل",
+    "toggleAria": "تبديل {name}",
+    "deleteAria": "حذف {name}",
+    "disabledGroup": "مُعطّل",
+    "footerSummary": "{installed} مثبّت · {enabled} مُفعّل",
+    "openFolderAria": "فتح مجلد المكوّنات الإضافية",
+    "pluginsFolder": "مجلد المكوّنات الإضافية",
+    "extensionAria": "إضافة {name}",
+    "back": "رجوع",
+    "oneItem": "عنصر واحد",
+    "nItems": "{n} عناصر",
+    "contribActivityBar": "شريط النشاط — {icon} {label}",
+    "contribPanel": "لوحة ({location}) — {label}",
+    "locationRight": "يمين",
+    "locationBottom": "أسفل",
+    "contribStatusBar": "شريط الحالة — {items}",
+    "contribBreadcrumb": "مسار التنقّل — {items}",
+    "sectionError": "خطأ",
+    "sectionPermissions": "الأذونات",
+    "sectionContributes": "يساهم في الواجهة",
+    "contributesNothing": "لا يساهم بشيء",
+    "sectionData": "البيانات",
+    "keys": "مفاتيح",
+    "bytes": "بايت",
+    "resetToDefaults": "إعادة التعيين إلى الافتراضي",
+    "resetDescription": "يعيد تعيين إعدادات/بيانات الإضافة المحفوظة؛ تبقى حالة التفعيل والأذونات دون تغيير. تُحفظ البيانات (التخزين) عند الحذف",
+    "sectionPath": "المسار",
+    "installTitle": "تثبيت إضافة",
+    "closeLabel": "إغلاق",
+    "conflictTitle": "الإضافة مثبّتة بالفعل",
+    "conflictMsg": "«{id}» مثبّتة بالفعل. هل تريد استبدال النسخة المثبّتة بالجديدة؟",
+    "cancel": "إلغاء",
+    "replace": "استبدال",
+    "dropPrefix": "أفلِت ",
+    "dropSuffix": " هنا",
+    "dropSub": "أو انقر لاختيار ملف",
+    "orFromUrl": "أو من عنوان URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "تنزيل",
+    "installing": "جارٍ التثبيت…"
+  },
+  "plugin": {
+    "consentAria": "طلب إذن",
+    "consentTitle": "تفعيل الإضافة «{name}»؟",
+    "consentPermissions": "الأذونات المطلوبة",
+    "consentNoPermissions": "لا يطلب أي أذونات خاصة.",
+    "consentNote": "يثق Tilzio بالإضافات المثبّتة (مثل VS Code). تُعرض الأذونات للشفافية — فهي أثناء التشغيل لا تقيّد المكوّن الإضافي، باستثناء قائمة السماح للملفات التنفيذية (exec) التي يفرضها المضيف.",
+    "cancel": "إلغاء",
+    "enable": "تفعيل",
+    "viewUnavailable": "العرض غير متاح",
+    "viewMissingMsg": "المكوّن الإضافي «{name}» لم يعد يعلن العرض ",
+    "closePane": "إغلاق اللوحة",
+    "notFoundTitle": "المكوّن الإضافي غير موجود",
+    "notFoundMsg": "الإضافة التي فتحت هذه اللوحة غير مثبّتة.",
+    "extensionsBtn": "الإضافات…",
+    "disabledTitle": "الإضافة مُعطّلة",
+    "disabledMsg": "«{name}» مُعطّلة. فعّلها لإعادة اللوحة.",
+    "loading": "الإضافة غير متاحة (جارٍ التحميل…)",
+    "noPanels": "لا توجد لوحات نشطة",
+    "toastDismiss": "تجاهل",
+    "toastClose": "إغلاق"
+  },
+  "dialog": {
+    "close": "إغلاق",
+    "cancel": "إلغاء",
+    "discard": "تجاهل",
+    "delete": "حذف",
+    "reset": "إعادة التعيين",
+    "closeTerminal": "إغلاق الطرفية؟",
+    "closeTab": "إغلاق التبويب \"{title}\"؟",
+    "closeSpace": "إغلاق المساحة \"{name}\"؟",
+    "closeSpaceAlt": "إغلاق المساحة \"{name}\"؟",
+    "deleteExt": "حذف «{name}»؟ سيُحذف المجلد والشيفرة؛ تُحفظ البيانات (التخزين).",
+    "resetExt": "إعادة تعيين إعدادات «{name}» إلى الافتراضي؟ ستُمحى جميع بيانات الإضافة المحفوظة وستُعاد الإضافة تشغيلها.",
+    "unsavedCloseOne": "توجد تغييرات غير محفوظة في «{name}». الإغلاق دون حفظ؟",
+    "unsavedCloseMany": "توجد تغييرات غير محفوظة في {count} من الملفات. الإغلاق دون حفظ؟",
+    "fileFallback": "ملف"
+  },
+  "toast": {
+    "bellWaiting": "{label} · بانتظار الإدخال",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "فتح اللوحة",
+    "later": "لاحقًا",
+    "paneFallback": "طرفية",
+    "spaceFallback": "مساحة"
+  },
+  "finder": {
+    "title": "أفلِت — سيُفتح الملف في المحرّر",
+    "subtitle": "في لوحة المحرّر النشطة، وإلا في تقسيم جديد"
+  },
+  "perm": {
+    "exec": {
+      "title": "تشغيل الأوامر",
+      "detail": "مسموح بتشغيل: {bins}",
+      "badge": "تشغيل: {bins}",
+      "noBinary": "الملف التنفيذي غير محدّد"
+    },
+    "state:read": {
+      "title": "قراءة التخطيط",
+      "detail": "المساحات والتبويبات والطرفيات — للقراءة فقط",
+      "badge": "قراءة التخطيط"
+    },
+    "terminal:write": {
+      "title": "لصق في الطرفية",
+      "detail": "يُدرج نصًا في الطرفية النشطة — أنت تضغط Enter",
+      "badge": "لصق في الطرفية"
+    },
+    "terminal:read": {
+      "title": "قراءة مخرجات الطرفية",
+      "detail": "يقرأ كل ما يظهر في طرفياتك، بما في ذلك كلمات المرور والرموز التي ظهرت على الشاشة",
+      "badge": "قراءة الطرفيات"
+    },
+    "network": {
+      "title": "الوصول إلى الشبكة",
+      "detail": "يمكن للوحة المكوّن الإضافي الوصول إلى الإنترنت (تحميل محتوى أو بيانات عن بُعد)",
+      "badge": "الشبكة"
+    },
+    "unknown": {
+      "detail": "إذن غير معروف"
+    }
+  }
+}

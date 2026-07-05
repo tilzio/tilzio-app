@@ -1,0 +1,265 @@
+{
+  "nav": {
+    "spaces": "SPACES",
+    "addSpace": "New space",
+    "toggle": "toggle",
+    "addTab": "add tab",
+    "close": "close"
+  },
+  "header": {
+    "unsaved": "unsaved",
+    "closeFile": "close {name}",
+    "openFile": "open file",
+    "markdownView": "markdown view",
+    "sourceView": "source view",
+    "source": "source",
+    "splitView": "split view",
+    "split": "split",
+    "previewView": "preview view",
+    "preview": "preview",
+    "restartShell": "restart shell",
+    "restart": "restart (⌘R)",
+    "splitRight": "split right",
+    "splitRightTitle": "split → (right-click = menu)",
+    "splitDown": "split down",
+    "splitDownTitle": "split ↓ (right-click = menu)",
+    "zoom": "zoom",
+    "zoomTitle": "zoom (⌘↵)",
+    "closePane": "close pane",
+    "close": "close",
+    "splitMenu": "split menu"
+  },
+  "status": {
+    "toggleBottomPanel": "toggle bottom panel",
+    "bottomPanelTitle": "bottom panel (⌘J)",
+    "resizeBottomPanel": "resize bottom panel"
+  },
+  "activityBar": {
+    "toggleSidebar": "toggle sidebar",
+    "navigationSidebar": "navigation sidebar (⌘B)",
+    "extensions": "extensions",
+    "settings": "settings"
+  },
+  "breadcrumb": {
+    "toggleRightPanel": "toggle right panel",
+    "rightPanelTitle": "right panel (⌘⌥B)",
+    "addTab": "add tab",
+    "newTab": "new tab",
+    "tabButton": "＋ tab",
+    "gridConsoles": "grid consoles",
+    "columns": "columns",
+    "rows": "rows"
+  },
+  "settings": {
+    "language": "Language",
+    "title": "Settings",
+    "closeAria": "Close settings",
+    "livePreview": "LIVE PREVIEW",
+    "familySize": "Family · Size",
+    "reset": "Reset to defaults",
+    "done": "Done",
+    "cat": {
+      "appearance": "Appearance",
+      "terminal": "Terminal",
+      "editor": "Editor",
+      "keymap": "Keymap",
+      "extensions": "Extensions",
+      "about": "About"
+    },
+    "section": {
+      "stateColors": "STATE COLORS",
+      "labelFont": "LABEL FONT",
+      "language": "LANGUAGE",
+      "contentFontSize": "CONTENT FONT SIZE"
+    },
+    "color": {
+      "active": "Active pane",
+      "exit": "Exited console",
+      "notifications": "Notifications"
+    },
+    "field": {
+      "terminal": "Terminal",
+      "editor": "Editor"
+    },
+    "sizeHint": "px · {min}–{max}",
+    "keymap": {
+      "readOnly": "Read-only"
+    },
+    "km": {
+      "newTab": "New tab",
+      "closePane": "Close pane",
+      "splitRight": "Split right",
+      "splitDown": "Split down",
+      "newSpace": "New space",
+      "restartPane": "Restart pane",
+      "zoomPane": "Zoom pane",
+      "openFile": "Open file",
+      "save": "Save",
+      "toggleSidebar": "Toggle sidebar",
+      "toggleBottomPanel": "Toggle bottom panel",
+      "toggleRightArea": "Toggle right area",
+      "collapseNavigator": "Collapse navigator",
+      "focusNeighbor": "Focus neighbor",
+      "switchSpace": "Switch space",
+      "selectTab": "Select tab"
+    },
+    "ext": {
+      "desc": "Manage plugins and extensions installed in Tilzio.",
+      "open": "Open Extensions"
+    },
+    "about": {
+      "tagline": "Terminal workspaces"
+    }
+  },
+  "menu": {
+    "split": {
+      "header": "split as…",
+      "terminal": "Terminal",
+      "editor": "Editor (empty)",
+      "openFile": "Open file…"
+    }
+  },
+  "editor": {
+    "terminal": "Terminal",
+    "terminalDesc": "new terminal in this pane",
+    "openFile": "Open file",
+    "openFileDesc": "open a file in the editor",
+    "dragHint": "or drag a file from Finder",
+    "failedOpen": "failed to open the file"
+  },
+  "ext": {
+    "title": "Extensions",
+    "install": "Install",
+    "refresh": "refresh",
+    "close": "close",
+    "filterAria": "filter extensions",
+    "filterPlaceholder": "Filter installed extensions…",
+    "emptyNoExtensions": "No extensions. Place an extension folder in the Tilzio plugins directory (next to layout.json) and click \"Refresh\".",
+    "noMatches": "No matching extensions",
+    "detailsAria": "details: {name}",
+    "error": "error",
+    "enabled": "enabled",
+    "disabled": "disabled",
+    "requestsNoPermissions": "requests no permissions",
+    "activationError": "activation error",
+    "toggleAria": "toggle {name}",
+    "deleteAria": "delete {name}",
+    "disabledGroup": "DISABLED",
+    "footerSummary": "{installed} installed · {enabled} enabled",
+    "openFolderAria": "open plugins folder",
+    "pluginsFolder": "plugins folder",
+    "extensionAria": "Extension {name}",
+    "back": "Back",
+    "oneItem": "1 item",
+    "nItems": "{n} items",
+    "contribActivityBar": "Activity Bar — {icon} {label}",
+    "contribPanel": "Panel ({location}) — {label}",
+    "locationRight": "right",
+    "locationBottom": "bottom",
+    "contribStatusBar": "Status bar — {items}",
+    "contribBreadcrumb": "Breadcrumbs — {items}",
+    "sectionError": "ERROR",
+    "sectionPermissions": "PERMISSIONS",
+    "sectionContributes": "CONTRIBUTES TO UI",
+    "contributesNothing": "contributes nothing",
+    "sectionData": "DATA",
+    "keys": "keys",
+    "bytes": "bytes",
+    "resetToDefaults": "Reset to defaults",
+    "resetDescription": "resets the extension's saved settings/data; its enabled state and permissions are untouched. data (storage) is kept when deleted",
+    "sectionPath": "PATH",
+    "installTitle": "Install extension",
+    "closeLabel": "Close",
+    "conflictTitle": "Extension already installed",
+    "conflictMsg": "«{id}» is already installed. Replace the installed version with the new one?",
+    "cancel": "Cancel",
+    "replace": "Replace",
+    "dropPrefix": "Drop ",
+    "dropSuffix": " here",
+    "dropSub": "or click to choose a file",
+    "orFromUrl": "or from URL",
+    "urlPlaceholder": "https://…/plugin.zip",
+    "download": "Download",
+    "installing": "Installing…"
+  },
+  "plugin": {
+    "consentAria": "Permission request",
+    "consentTitle": "Enable extension «{name}»?",
+    "consentPermissions": "REQUESTED PERMISSIONS",
+    "consentNoPermissions": "Requests no special permissions.",
+    "consentNote": "Tilzio trusts installed extensions (like VS Code). Permissions are shown for transparency — at runtime they do not restrict the plugin, except for the exec binary allow-list (enforced by the host).",
+    "cancel": "Cancel",
+    "enable": "Enable",
+    "viewUnavailable": "View unavailable",
+    "viewMissingMsg": "Plugin «{name}» no longer declares the view ",
+    "closePane": "Close pane",
+    "notFoundTitle": "Plugin not found",
+    "notFoundMsg": "The extension that opened this pane is not installed.",
+    "extensionsBtn": "Extensions…",
+    "disabledTitle": "Extension disabled",
+    "disabledMsg": "«{name}» is disabled. Enable it to bring the pane back.",
+    "loading": "Extension unavailable (loading…)",
+    "noPanels": "no active panels",
+    "toastDismiss": "Dismiss",
+    "toastClose": "Close"
+  },
+  "dialog": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "discard": "Discard",
+    "delete": "Delete",
+    "reset": "Reset",
+    "closeTerminal": "Close terminal?",
+    "closeTab": "Close tab \"{title}\"?",
+    "closeSpace": "Close space \"{name}\"?",
+    "closeSpaceAlt": "Close space \"{name}\"?",
+    "deleteExt": "Delete «{name}»? The folder and code will be deleted; data (storage) is kept.",
+    "resetExt": "Reset «{name}» settings to defaults? All the extension's saved data will be erased and the extension will restart.",
+    "unsavedCloseOne": "«{name}» has unsaved changes. Close without saving?",
+    "unsavedCloseMany": "{count} files have unsaved changes. Close without saving?",
+    "fileFallback": "file"
+  },
+  "toast": {
+    "bellWaiting": "{label} · waiting for input",
+    "bellBody": "{spaceName} › {label}",
+    "openPane": "Open pane",
+    "later": "Later",
+    "paneFallback": "terminal",
+    "spaceFallback": "space"
+  },
+  "finder": {
+    "title": "Release — the file will open in the editor",
+    "subtitle": "in the active editor pane, otherwise as a new split"
+  },
+  "perm": {
+    "exec": {
+      "title": "Run commands",
+      "detail": "allowed to run: {bins}",
+      "badge": "run: {bins}",
+      "noBinary": "binary not specified"
+    },
+    "state:read": {
+      "title": "Read layout",
+      "detail": "spaces, tabs, consoles — read only",
+      "badge": "read layout"
+    },
+    "terminal:write": {
+      "title": "Paste to console",
+      "detail": "inserts text into the active console — you press Enter",
+      "badge": "paste to console"
+    },
+    "terminal:read": {
+      "title": "Read terminal output",
+      "detail": "reads everything shown in your consoles, including passwords and tokens that appeared on screen",
+      "badge": "read consoles"
+    },
+    "network": {
+      "title": "Network access",
+      "detail": "the plugin panel can reach the internet (loading remote content or data)",
+      "badge": "network"
+    },
+    "unknown": {
+      "detail": "unknown permission"
+    }
+  }
+}

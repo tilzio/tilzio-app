@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; font: 13px ui-monospace, Menlo, monospace; background: #282828; color: #ebdbb2; }
+  .wrap { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+  h1 { font-size: 14px; margin: 0; color: #83a598; }
+  button { font: 12px ui-monospace, monospace; padding: 5px 12px; border-radius: 4px; border: 1px solid #3c3836; background: #32302f; color: #ebdbb2; cursor: pointer; }
+  button:hover { border-color: #fe8019; color: #fe8019; }
+  #log { white-space: pre-wrap; color: #928374; min-height: 40px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>🧠 Second Brain — iframe view</h1>
+    <div>
+      <button id="hi">Say hello</button>
+      <button id="ping">Ping worker</button>
+    </div>
+    <div id="log">waiting…</div>
+  </div>
+  <script>
+    var log = document.getElementById('log');
+    var lines = [];
+    function render() { log.textContent = lines.slice().reverse().join('\n'); }
+    function add(t) { lines.push(t); render(); }
+    // host is injected by the server (window.host). Worker messages:
+    host.onMessage(function (msg) {
+      if (!msg) return;
+      if (msg.type === 'restore') { lines = (msg.lines || []).slice(); render(); }   // rehydration after remount
+      else if (msg.type === 'line') { add(msg.text); }
+    });
+    document.getElementById('hi').onclick = function () { host.post({ type: 'hello' }); };
+    document.getElementById('ping').onclick = function () { host.post({ type: 'ping', at: Date.now() }); };
+    // On (re)load of the iframe we request the accumulated state from the worker.
+    host.post({ type: 'sync' });
+    add('iframe ready');
+    // Functional check of CSP connect-src 'none': the network attempt MUST be blocked.
+    fetch('https://example.com', { mode: 'no-cors' })
+      .then(function () { add('NET: allowed (CSP does not block!)'); })
+      .catch(function () { add('NET: blocked (CSP ok)'); });
+  </script>
+</body>
+</html>

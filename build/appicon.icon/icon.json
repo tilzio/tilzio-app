@@ -1,0 +1,19 @@
+{
+  "fill" : {
+    "solid" : "srgb:0.10980,0.12157,0.14118,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "image-name" : "wails_icon_vector.svg",
+          "name" : "tilzio_icon"
+        }
+      ]
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [ "watchOS" ],
+    "squares" : "shared"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "id": "dev.term.demo",
+  "name": "Sandbox Demo",
+  "version": "1.0.0",
+  "engine": "tilzio@1",
+  "entry": "main.js",
+  "permissions": []
+}

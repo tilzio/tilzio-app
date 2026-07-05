@@ -1,0 +1,195 @@
+:root {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: rgba(27, 38, 54, 1);
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+@font-face {
+    font-family: "Inter";
+    font-style: normal;
+    font-weight: 400;
+    src: local(""),
+    url("./Inter-Medium.ttf") format("truetype");
+}
+
+/* Tilzio wordmark font — Space Grotesk SemiBold 600 */
+@font-face {
+    font-family: "Space Grotesk";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: local("Space Grotesk SemiBold"),
+    url("./SpaceGrotesk-SemiBold.woff2") format("woff2");
+}
+
+/* UI chrome font (navigator/headers/status/dialogs) — JetBrains Mono 400/500/600/700
+   (real weights; previously Medium was a copy of Regular → faux-bold at 600/700).
+   Terminal/editor content is NOT affected by this (that uses the user's font). */
+@font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: local("JetBrains Mono"),
+    url("./JetBrainsMono-Regular.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: local("JetBrains Mono Medium"),
+    url("./JetBrainsMono-Medium.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: local("JetBrains Mono SemiBold"),
+    url("./JetBrainsMono-SemiBold.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "JetBrains Mono";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: local("JetBrains Mono Bold"),
+    url("./JetBrainsMono-Bold.woff2") format("woff2");
+}
+
+h3 {
+    font-size: 3em;
+    line-height: 1.1;
+}
+
+a {
+    font-weight: 500;
+    color: #646cff;
+    text-decoration: inherit;
+}
+
+a:hover {
+    color: #535bf2;
+}
+
+
+.result {
+    height: 20px;
+    line-height: 20px;
+}
+
+html,
+body,
+#app {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    background: var(--bg);
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h1 {
+    font-size: 3.2em;
+    line-height: 1.1;
+}
+
+#app {
+    overflow: hidden;
+}
+
+.logo {
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+}
+
+.logo:hover {
+    filter: drop-shadow(0 0 2em #e80000aa);
+}
+
+.logo.vanilla:hover {
+    filter: drop-shadow(0 0 2em #f7df1eaa);
+}
+
+.result {
+    height: 20px;
+    line-height: 20px;
+    margin: 1.5rem auto;
+    text-align: center;
+}
+
+.footer {
+    margin-top: 1rem;
+    align-content: center;
+    text-align: center;
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        color: #213547;
+        background-color: #ffffff;
+    }
+
+    a:hover {
+        color: #747bff;
+    }
+
+}
+
+
+.input-box .btn:hover {
+    background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+    color: #333333;
+}
+
+.input-box .input {
+    border: none;
+    border-radius: 3px;
+    outline: none;
+    height: 30px;
+    line-height: 30px;
+    padding: 0 10px;
+    color: black;
+    background-color: rgba(240, 240, 240, 1);
+    -webkit-font-smoothing: antialiased;
+}
+
+.input-box .input:hover {
+    border: none;
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.input-box .input:focus {
+    border: none;
+    background-color: rgba(255, 255, 255, 1);
+}

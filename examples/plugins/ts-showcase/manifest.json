@@ -1,0 +1,27 @@
+{
+  "id": "dev.term.showcase",
+  "name": "Showcase",
+  "version": "1.0.0",
+  "engine": "tilzio@1",
+  "entry": "main.js",
+  "permissions": [],
+  "contributes": {
+    "activityBar": [
+      { "id": "showcase.btn", "icon": "🎛", "title": "Showcase", "opens": "showcase.panel" },
+      { "id": "showcase.sidebtn", "icon": "📊", "title": "Summary (right)", "opens": "showcase.side" }
+    ],
+    "statusBar": [
+      { "id": "showcase.status", "align": "left", "priority": 100 },
+      { "id": "showcase.count", "align": "right", "priority": 50 }
+    ],
+    "breadcrumb": [{ "id": "showcase.crumb", "align": "right" }],
+    "panels": [
+      { "id": "showcase.panel", "location": "bottom", "title": "Showcase", "render": "widgets" },
+      { "id": "showcase.side", "location": "right", "title": "Summary", "render": "widgets" }
+    ],
+    "commands": [
+      { "id": "showcase.ping", "title": "Showcase: ping" },
+      { "id": "showcase.refresh", "title": "Showcase: refresh" }
+    ]
+  }
+}

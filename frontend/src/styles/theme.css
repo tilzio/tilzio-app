@@ -1,0 +1,49 @@
+:root {
+  --bg: #282828;            /* background of the area and panels */
+  --bg-elevated: #32302f;   /* panel headers, elevated surfaces */
+  --header-active: #3a352f; /* active pane header */
+  --sidebar: #1d2021;       /* navigator */
+  --breadcrumb: #252422;    /* breadcrumb strip */
+  --text: #ebdbb2;          /* primary text */
+  --text-dim: #a89984;      /* dimmed text */
+  --text-faint: #7c6f64;    /* faintest section labels (caps-labels), shell tag */
+  --text-bright: #d5c4a1;   /* active path segment (breadcrumb/status bar) */
+  --aqua: #83a598;          /* info: DISK/listening/sync, permission safe chip */
+  --border-2: #4a4036;      /* borders of tags/chips/file tabs */
+  --idle: #5a5450;          /* status dot for an inactive/idle pane/tab */
+  --cyan: #2bd9c4;          /* fixed pending color (Tone='pending'); ≠ the configurable --alert */
+  --accent: #fe8019;        /* orange: active border, indicators */
+  --amber: #fabd2f;         /* amber: active pane name */
+  --green: #b8bb26;         /* success */
+  --red: #fb4934;           /* errors/exit */
+  --border: #3c3836;
+  --active-row: #3c3836;    /* active navigator row */
+  /* Brand lockup (navigator wordmark). Separate from the UI accent — we do not migrate the theme. */
+  --brand-bg: #1C1F24;     /* mark backdrop + dark cursor block */
+  --brand-tile: #31363E;   /* graphite side tiles */
+  --brand-accent: #F6A531; /* amber: mark focus panel + io-split logotype */
+  --brand-text: #ECEAE4;   /* neutral-white logotype text (not the cream --text) */
+  --radius: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 9px;         /* outer radius of the window / large containers */
+  --pane-header-h: 28px;    /* pane header height (PaneHeader); perimeter DnD insets by it */
+  --exit: #fb4934;                /* border of an exited console (configurable) */
+  --ui-font: 'JetBrains Mono', ui-monospace, Menlo, monospace; /* UI chrome font (titles/headers/dialogs); JetBrains Mono is the UI-kit default */
+  --ui-font-size: 13;             /* title size (unitless; via calc(...*1px)) */
+}
+
+@keyframes uwPulse { 0%, 100% { box-shadow: inset 0 0 0 1.5px var(--red), 0 0 0 0 rgba(251,73,52,0); } 50% { box-shadow: inset 0 0 0 1.5px var(--red), 0 0 0 6px rgba(251,73,52,0.16); } }
+
+/* Pulse ring around the status dot (alert/notifications); color = the default alert cyan,
+   the consumer in S2/S3 overrides it for a custom --alert via color-mix */
+@keyframes tzPulseDot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(43,217,196,.5); }
+  50%      { box-shadow: 0 0 0 4px rgba(43,217,196,0); }
+}
+
+/* Swing of the bell icon in the alert pane header */
+@keyframes tilzBell {
+  0%, 100% { transform: rotate(0deg); }
+  25%      { transform: rotate(-12deg); }
+  75%      { transform: rotate(12deg); }
+}

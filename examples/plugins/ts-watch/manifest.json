@@ -1,0 +1,13 @@
+{
+  "id": "dev.term.watch",
+  "name": "Terminal Watch",
+  "version": "1.0.0",
+  "engine": "tilzio@1",
+  "entry": "main.js",
+  "permissions": ["state:read", "terminal:read"],
+  "contributes": {
+    "activityBar": [{ "id": "watch.btn", "icon": "👁", "title": "Terminal Watch", "opens": "watch.panel" }],
+    "panels": [{ "id": "watch.panel", "location": "right", "title": "Terminal Watch", "render": "widgets" }],
+    "statusBar": [{ "id": "watch.sb", "align": "left", "priority": 50 }]
+  }
+}

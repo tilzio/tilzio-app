@@ -1,0 +1,74 @@
+name: Release macOS
+
+# Cuts a GitHub Release with an unsigned Tilzio.dmg when a version tag is pushed.
+#   git tag v0.1.0 && git push origin v0.1.0
+# The build runs on GitHub's macOS runner (full Xcode + toolchain). The release is
+# published with the runner's built-in GITHUB_TOKEN — no external credentials needed.
+#
+# NOTE: unsigned build. On first launch users must right-click the app → Open
+# (System Settings → Privacy & Security on newer macOS). Add Apple Developer ID
+# signing + notarization here later for a warning-free download.
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  build-macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Task
+        run: brew install go-task
+
+      - name: Install Wails v3 CLI (pinned to go.mod)
+        run: go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-alpha.97
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci || npm install
+
+      # Universal (arm64 + amd64). If the amd64 cross-compile ever fails on the
+      # arm64 runner, swap this line for `task package` (native arm64 only).
+      - name: Package .app bundle
+        run: task package:universal
+
+      - name: Build unsigned DMG
+        run: |
+          set -euo pipefail
+          APP="bin/tilzio.app"
+          if [ ! -d "$APP" ]; then
+            echo "::error::app bundle not found at $APP"; ls -la bin || true; exit 1
+          fi
+          rm -rf staging && mkdir -p staging
+          cp -R "$APP" "staging/Tilzio.app"
+          ln -s /Applications staging/Applications
+          hdiutil create -volname "Tilzio" -srcfolder staging -ov -format UDZO Tilzio.dmg
+          shasum -a 256 Tilzio.dmg | tee Tilzio.dmg.sha256
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Idempotent: drop a same-tag release if a previous run already made one.
+          gh release delete "${{ github.ref_name }}" --yes || true
+          gh release create "${{ github.ref_name }}" \
+            Tilzio.dmg Tilzio.dmg.sha256 \
+            --title "Tilzio ${{ github.ref_name }}" \
+            --generate-notes \
+            --prerelease

@@ -4,15 +4,17 @@
         <key>CFBundlePackageType</key>
             <string>APPL</string>
         <key>CFBundleName</key>
-            <string>My Product</string>
+            <string>Tilzio</string>
+        <key>CFBundleDisplayName</key>
+            <string>Tilzio</string>
         <key>CFBundleExecutable</key>
             <string>tilzio</string>
         <key>CFBundleIdentifier</key>
-            <string>com.example.tilzio</string>
+            <string>io.tilz.app</string>
         <key>CFBundleVersion</key>
             <string>0.1.0</string>
         <key>CFBundleGetInfoString</key>
-            <string>This is a comment</string>
+            <string>Tilzio — a native macOS terminal for AI coding agents</string>
         <key>CFBundleShortVersionString</key>
             <string>0.1.0</string>
         <key>CFBundleIconFile</key>
@@ -24,6 +26,6 @@
         <key>NSHighResolutionCapable</key>
             <string>true</string>
         <key>NSHumanReadableCopyright</key>
-            <string>© 2026, My Company</string>
+            <string>© 2026 Tilzio</string>
     </dict>
 </plist>

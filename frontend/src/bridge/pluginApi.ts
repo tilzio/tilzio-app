@@ -104,8 +104,8 @@ export async function dispatch(ctx: ApiContext, method: string, args: unknown[])
       return undefined;
     }
     case 'view.post': {
-      const [paneId, msg] = args as [unknown, unknown];
-      pluginViewBridge.postToPane(String(paneId), msg);
+      const [frameId, msg] = args as [unknown, unknown];
+      pluginViewBridge.postToFrame(String(frameId), msg);
       return undefined;
     }
     default:

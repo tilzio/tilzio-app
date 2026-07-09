@@ -161,8 +161,8 @@ describe('dispatch SP-A terminal observe', () => {
 });
 
 describe('dispatch SP-B view bridge', () => {
-  it('dispatch view.post forwards to the view bridge by paneId', async () => {
-    const spy = vi.spyOn(pluginViewBridge, 'postToPane').mockImplementation(() => {});
+  it('dispatch view.post forwards to the view bridge by frameId', async () => {
+    const spy = vi.spyOn(pluginViewBridge, 'postToFrame').mockImplementation(() => {});
     await dispatch({ pluginId: 'p1', setUi: () => {}, permissions: [] }, 'view.post', ['pane1', { a: 1 }]);
     expect(spy).toHaveBeenCalledWith('pane1', { a: 1 });
     spy.mockRestore();

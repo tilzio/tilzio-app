@@ -38,7 +38,7 @@ export const WORKER_PRELUDE = `(function () {
         if (ec) { exitSubs.delete(m.data.subId); try { ec(m.data.code); } catch (_) {} }  // delete BEFORE the call — even a throwing cb won't leave a subscription behind
       }
       else if (m.name === 'view-message') {
-        if (onViewMsgCb) { try { onViewMsgCb(m.data.payload, m.data.paneId); } catch (_) {} }
+        if (onViewMsgCb) { try { onViewMsgCb(m.data.payload, m.data.frameId); } catch (_) {} }
       }
     }
   };
@@ -87,7 +87,7 @@ export const WORKER_PRELUDE = `(function () {
       stripAnsi: function (text) { return String(text).replace(ANSI_RE, ''); }
     },
     view: {
-      post: function (paneId, msg) { return rpc('view.post', [paneId, msg]); },
+      post: function (frameId, msg) { return rpc('view.post', [frameId, msg]); },
       onMessage: function (cb) { onViewMsgCb = cb; return function () { onViewMsgCb = null; }; }
     }
   };

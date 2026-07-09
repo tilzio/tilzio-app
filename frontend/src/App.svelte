@@ -28,7 +28,8 @@
   import SettingsDialog from './components/SettingsDialog.svelte';
   import PluginToast from './components/PluginToast.svelte';
   import RightAreaResizer from './components/RightAreaResizer.svelte';
-  import PluginPanelArea from './components/PluginPanelArea.svelte';
+  import PluginAccordion from './components/PluginAccordion.svelte';
+  import { rightAccordion, openRightPanel, closeRightPanel, toggleRightCollapsed } from './bridge/rightAccordion.svelte';
   import ExtensionsScreen from './components/ExtensionsScreen.svelte';
   import PluginDetail from './components/PluginDetail.svelte';
   import PermissionConsentDialog from './components/PermissionConsentDialog.svelte';
@@ -108,6 +109,11 @@
   const abButtons = $derived(activityBarButtons(pluginViews));
   const bottomPanels = $derived(panelsFor(pluginViews, 'bottom'));
   const rightPanels = $derived(panelsFor(pluginViews, 'right'));
+  const openRightPanels = $derived(
+    rightAccordion.open
+      .map((id) => rightPanels.find((p) => p.id === id))
+      .filter((p): p is (typeof rightPanels)[number] => p !== undefined),
+  );
   // Outer remount key: switching space/tab remounts the whole subtree (triggers
   // scrollback replay on the newly visible panes; §9).
   const tabKey = $derived(`${store.app.activeSpaceId}:${tab?.id ?? ''}`);
@@ -288,13 +294,15 @@
     const parsed = parseOpens(opens);
     if (parsed.kind === 'view') { actions.openPluginView(pluginId, parsed.target); return; }
     const right = rightPanels.find((p) => p.id === opens);
-    const location: 'bottom' | 'right' = right ? 'right' : 'bottom';
-    const isOpen = location === 'right' ? (ui.rightAreaOpen ?? false) : (ui.bottomPanelOpen ?? false);
-    const decision = decideActivation(isOpen, activePanelId(location), opens);
-    if (decision.toggleArea) {
-      if (location === 'right') actions.toggleRightArea(); else actions.toggleBottomPanel();
+    if (right) {
+      if (!(ui.rightAreaOpen ?? false)) actions.toggleRightArea();
+      openRightPanel(opens);
+      return;
     }
-    setActivePanel(location, decision.setActive);
+    const isOpen = ui.bottomPanelOpen ?? false;
+    const decision = decideActivation(isOpen, activePanelId('bottom'), opens);
+    if (decision.toggleArea) actions.toggleBottomPanel();
+    setActivePanel('bottom', decision.setActive);
   }
 
   function openInstall() {
@@ -730,10 +738,11 @@
         onReset={() => actions.setRightAreaWidth(RIGHT_AREA_DEFAULT)}
       />
       <aside class="right-area">
-        <PluginPanelArea
-          panels={rightPanels}
-          activeId={pluginPanels.activeRight}
-          onSelectTab={(id) => setActivePanel('right', id)}
+        <PluginAccordion
+          panels={openRightPanels}
+          collapsed={rightAccordion.collapsed}
+          onToggle={(id) => toggleRightCollapsed(id)}
+          onClose={(id) => { closeRightPanel(id); if (rightAccordion.open.length === 0) actions.toggleRightArea(); }}
           onCommand={pluginCommand}
         />
       </aside>

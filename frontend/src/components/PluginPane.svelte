@@ -1,11 +1,9 @@
 <script lang="ts">
-  import { onDestroy } from 'svelte';
   import PaneHeader from './PaneHeader.svelte';
+  import PluginViewFrame from './PluginViewFrame.svelte';
   import { pluginHost } from '../bridge/pluginHost.svelte';
-  import { pluginViewBridge } from '../bridge/pluginViewBridge';
   import { pluginsBridge, type PluginManifest } from '../bridge/plugins';
   import { enablePlugin } from '../bridge/pluginManage';
-  import { dragState } from '../bridge/dragState.svelte';
   import { t } from '../i18n/index.svelte';
 
   let {
@@ -49,14 +47,6 @@
     return () => { cancelled = true; };
   });
 
-  let iframeEl: HTMLIFrameElement | undefined = $state(undefined);
-  let myWin: Window | null = null;   // the window THIS component registered
-  function onIframeLoad() {
-    myWin = iframeEl?.contentWindow ?? null;
-    if (myWin) pluginViewBridge.register(paneId, pluginId, myWin);
-  }
-  onDestroy(() => pluginViewBridge.unregister(paneId, myWin ?? undefined));
-
   function doEnable() {
     if (installedManifest) void enablePlugin(installedManifest);
     else onOpenExtensions?.();
@@ -66,18 +56,7 @@
 <div class="pane" class:active role="presentation" data-pane-id={paneId} onpointerdown={() => onFocus?.()}>
   <PaneHeader {paneId} {title} {active} {zoomed} {onSplit} {onZoom} {onClose} />
   {#if paneStatus === 'live'}
-    {@const src = `/plugins/${pluginId}/${view!.entry}`}
-    <div class="view-wrap">
-      <iframe class="view" {src} title={title} sandbox="allow-scripts" bind:this={iframeEl} onload={onIframeLoad}></iframe>
-      {#if dragState.dragId !== null}
-        <!-- Pane drag: a cross-origin sandbox iframe swallows HTML5 dragover/drop, and
-             WKWebView doesn't forward them to the .leaf wrapper even with pointer-events:none on the iframe.
-             The overlay is plain DOM in the parent document over the iframe: it catches drag events,
-             which bubble up to the SplitContainer wrapper (zone highlight + drop). At rest it isn't rendered
-             → the iframe is fully interactive. -->
-        <div class="drag-catcher" aria-hidden="true"></div>
-      {/if}
-    </div>
+    <PluginViewFrame {pluginId} entry={view!.entry} frameId={paneId} {title} />
   {:else}
     <div class="placeholder" class:missing={paneStatus === 'missing'}>
       <div class="ico">{paneStatus === 'missing' ? '⚠' : '🧩'}</div>
@@ -103,11 +82,6 @@
 <style>
   .pane { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; box-sizing: border-box; isolation: isolate; background: var(--bg); }
   .pane.active::before { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 3; box-shadow: inset 0 0 0 2px var(--accent); }
-  .view-wrap { position: relative; flex: 1; min-height: 0; display: flex; }
-  .view { flex: 1; min-height: 0; width: 100%; border: none; background: var(--bg); position: relative; z-index: 0; }
-  /* Transparent drag-event catcher over the iframe (only during a pane drag).
-     z-index above the iframe(0), below the .drop-hl/.pane.active highlight (z-index:3 in the .leaf wrapper). */
-  .drag-catcher { position: absolute; inset: 0; z-index: 1; }
   .placeholder { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; padding: 16px; color: var(--text-dim); }
   .placeholder.missing { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--red) 22%, transparent); }
   .placeholder .ico { font-size: 26px; opacity: 0.6; }

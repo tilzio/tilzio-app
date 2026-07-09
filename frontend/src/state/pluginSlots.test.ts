@@ -125,3 +125,16 @@ it('panel resolves header', () => {
   const panel = panelsFor([p], 'right')[0];
   expect(panel.header).toEqual({ title: 'T', icon: '⏱', actions: [{ icon: '⚙', command: 'p.s' }] });
 });
+
+describe('panelsFor carries render/entry (SP-B docked)', () => {
+  const view = (panels: any[]) => ([{ id: 'p', contributes: { activityBar: [], statusBar: [], breadcrumb: [], panels, views: [] }, ui: {} }]);
+  it('passes iframe render + entry through', () => {
+    const out = panelsFor(view([{ id: 'd', location: 'right', title: 'D', render: 'iframe', entry: 'panel.html' }]) as any, 'right');
+    expect(out[0]).toMatchObject({ id: 'd', render: 'iframe', entry: 'panel.html' });
+  });
+  it('widget panel resolves render widgets, no entry', () => {
+    const out = panelsFor(view([{ id: 'w', location: 'right', title: 'W', render: 'widgets' }]) as any, 'right');
+    expect(out[0].render).toBe('widgets');
+    expect(out[0].entry).toBeUndefined();
+  });
+});

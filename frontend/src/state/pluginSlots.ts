@@ -8,7 +8,7 @@ export interface PluginView { id: string; contributes: Contributions; ui: Record
 export interface ResolvedStatusItem { pluginId: string; id: string; align: 'left' | 'right'; priority: number; text: string; icon?: string; tone: Tone; command?: string; color?: string; alert?: boolean; fill?: boolean; group?: string }
 export interface ResolvedBreadcrumbItem { pluginId: string; id: string; text: string; icon?: string; tone: Tone; command?: string; color?: string }
 export interface ResolvedActivityButton { pluginId: string; id: string; icon: string; title: string; opens: string }
-export interface ResolvedPanel { pluginId: string; id: string; title: string; location: 'bottom' | 'right'; widgets: Widget[]; header?: { title?: string; icon?: string; actions: { icon: string; command: string; args?: unknown }[] } }
+export interface ResolvedPanel { pluginId: string; id: string; title: string; location: 'bottom' | 'right'; render?: 'widgets' | 'iframe'; entry?: string; widgets: Widget[]; header?: { title?: string; icon?: string; actions: { icon: string; command: string; args?: unknown }[] } }
 
 // A bar item (status/breadcrumb) is shown only when its data has text or icon.
 function barData(ui: Record<string, unknown>, id: string): { text: string; icon?: string; tone: Tone; command?: string; color?: string; alert?: boolean; fill?: boolean; group?: string } | null {
@@ -85,7 +85,7 @@ export function panelsFor(plugins: PluginView[], location: 'bottom' | 'right'): 
       const h = asObj(pd.header);
       const actions = asArray(h.actions).slice(0, 8).map((a) => { const x = asObj(a); return { icon: cleanStr(x.icon, 8), command: cleanStr(x.command, 100), ...(x.args !== undefined ? { args: x.args } : {}) }; }).filter((a) => a.command);
       const header = (h.title !== undefined || h.icon !== undefined || actions.length) ? { ...(h.title !== undefined ? { title: cleanStr(h.title, 40) } : {}), ...(h.icon !== undefined ? { icon: cleanStr(h.icon, 8) } : {}), actions } : undefined;
-      out.push({ pluginId: p.id, id: d.id, title: d.title, location, widgets: sanitizeWidgets(p.ui[d.id]), ...(header ? { header } : {}) });
+      out.push({ pluginId: p.id, id: d.id, title: d.title, location, render: d.render, ...(d.entry ? { entry: d.entry } : {}), widgets: d.render === 'iframe' ? [] : sanitizeWidgets(p.ui[d.id]), ...(header ? { header } : {}) });
     }
   }
   return out;

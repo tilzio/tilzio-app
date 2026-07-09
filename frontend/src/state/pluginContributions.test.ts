@@ -48,3 +48,22 @@ describe('parseContributes', () => {
     expect(EMPTY_CONTRIBUTIONS.views).toEqual([]);
   });
 });
+
+describe('PanelDecl render/entry (SP-B docked)', () => {
+  it('defaults render to widgets when omitted', () => {
+    const c = parseContributes({ panels: [{ id: 'a', location: 'right', title: 'A' }] });
+    expect(c.panels[0]).toMatchObject({ id: 'a', location: 'right', render: 'widgets' });
+    expect(c.panels[0].entry).toBeUndefined();
+  });
+  it('parses an iframe panel with entry', () => {
+    const c = parseContributes({ panels: [{ id: 'd', location: 'right', title: 'D', render: 'iframe', entry: 'panel.html' }] });
+    expect(c.panels[0]).toMatchObject({ id: 'd', render: 'iframe', entry: 'panel.html' });
+  });
+  it('drops an iframe panel with no entry (keeps siblings)', () => {
+    const c = parseContributes({ panels: [
+      { id: 'bad', location: 'right', title: 'B', render: 'iframe' },
+      { id: 'ok', location: 'right', title: 'O' },
+    ] });
+    expect(c.panels.map((p) => p.id)).toEqual(['ok']);
+  });
+});

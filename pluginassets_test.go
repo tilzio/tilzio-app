@@ -67,6 +67,15 @@ func TestPluginAsset_ServesHTMLWithCSPandBridge(t *testing.T) {
 	}
 }
 
+func TestInjectViewBridgeHasThemeHandler(t *testing.T) {
+	out := string(injectViewBridge([]byte("<html><head></head><body></body></html>")))
+	for _, want := range []string{"ts:theme", "--ts-", "setProperty", "e.source!==parent"} {
+		if !strings.Contains(out, want) {
+			t.Fatalf("injected prelude missing %q; got: %s", want, out)
+		}
+	}
+}
+
 func TestPluginAsset_NonPluginPathDelegates(t *testing.T) {
 	svc := tempPluginSvc(t, map[string]string{"manifest.json": manifestP1})
 	delegated := false

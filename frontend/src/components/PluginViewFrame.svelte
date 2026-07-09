@@ -2,6 +2,7 @@
   import { onDestroy } from 'svelte';
   import { pluginViewBridge } from '../bridge/pluginViewBridge';
   import { dragState } from '../bridge/dragState.svelte';
+  import { postTheme } from '../bridge/pluginTheme';
 
   let { pluginId, entry, frameId, title = '' }: {
     pluginId: string; entry: string; frameId: string; title?: string;
@@ -12,7 +13,7 @@
 
   function onIframeLoad() {
     myWin = iframeEl?.contentWindow ?? null;
-    if (myWin) pluginViewBridge.register(frameId, pluginId, myWin);
+    if (myWin) { pluginViewBridge.register(frameId, pluginId, myWin); postTheme(myWin); }
   }
   onDestroy(() => pluginViewBridge.unregister(frameId, myWin ?? undefined));
 </script>

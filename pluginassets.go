@@ -12,7 +12,7 @@ import (
 // viewBridgePrelude — a mini-SDK for a plugin iframe (mirror of WORKER_PRELUDE, but for the UI).
 // Injected into any text/html under /plugins/. Sandbox without same-origin → the iframe
 // origin is opaque ('null'); communication with the host is only via postMessage. Envelope __tsview.
-const viewBridgePrelude = `<script>(function(){var cbs=[];window.host={post:function(m){parent.postMessage({__tsview:1,data:m},'*');},onMessage:function(cb){cbs.push(cb);return function(){var i=cbs.indexOf(cb);if(i>=0)cbs.splice(i,1);};}};window.addEventListener('message',function(e){var d=e.data;if(!d||d.__tsview!==1)return;for(var i=0;i<cbs.length;i++){try{cbs[i](d.data);}catch(_){}}});})();</script>`
+const viewBridgePrelude = `<script>(function(){var cbs=[];var TSK=/^--ts-[a-z-]+$/;function applyTheme(t){if(!t||typeof t!=='object')return;var r=document.documentElement;for(var k in t){if(TSK.test(k))r.style.setProperty(k,String(t[k]));}}window.host={post:function(m){parent.postMessage({__tsview:1,data:m},'*');},onMessage:function(cb){cbs.push(cb);return function(){var i=cbs.indexOf(cb);if(i>=0)cbs.splice(i,1);};}};window.addEventListener('message',function(e){if(e.source!==parent)return;var d=e.data;if(!d||d.__tsview!==1)return;var p=d.data;if(p&&p.type==='ts:theme'){applyTheme(p.tokens);return;}for(var i=0;i<cbs.length;i++){try{cbs[i](p);}catch(_){}}});})();</script>`
 
 // NewPluginAssetHandler wraps the frontend asset-handler: paths /plugins/<id>/<rel>
 // are served from the plugin's folder (securejoin in plugins.Service.ReadFile); everything

@@ -70,6 +70,12 @@
   let canSplitH = $state(true);
   const SPLIT_MIN_PX = 2 * MIN_PANE_PX; // below this, a split along the axis would produce sub-minimal children
 
+  // DEC private modes a replayed TUI can leave stuck ON in persisted scrollback —
+  // reset after replay (see the scrollback block in onMount). Mouse tracking
+  // (1000/1002/1003/1006) plus its 1005/1015 encoding variants. Bracketed paste
+  // (2004) is deliberately excluded — the shell re-arms it each prompt and it is wanted.
+  const RESET_STICKY_MOUSE = '\x1b[?1000l\x1b[?1002l\x1b[?1003l\x1b[?1005l\x1b[?1006l\x1b[?1015l';
+
   function measurePane() {
     if (!paneEl) return;
     canSplitV = paneEl.clientWidth >= SPLIT_MIN_PX;
@@ -131,6 +137,24 @@
     }
   }
 
+  // Own the clipboard copy path. The native macOS "Copy" (⌘C / Edit-menu `copy:`)
+  // serialises the terminal selection through a path that re-encodes its UTF-8
+  // bytes as Mac OS Roman, so copied Cyrillic (and any non-Latin text) pastes as
+  // mojibake even though it renders correctly on screen. Put xterm's selection —
+  // already a proper Unicode JS string — on the clipboard ourselves and cancel the
+  // broken native serialisation. Document-level + capture phase so we intercept the
+  // event wherever it originates (xterm's own copy handler is on the `.xterm`
+  // element and misses it when the native menu targets the document). Guarded by
+  // hasSelection() so only the pane with an active selection responds and copies
+  // from inputs/the editor elsewhere in the app are left untouched.
+  function onCopy(e: ClipboardEvent) {
+    if (!term?.hasSelection?.()) return;
+    const sel = term.getSelection();
+    if (!sel) return;
+    e.clipboardData?.setData('text/plain', sel);
+    e.preventDefault();
+  }
+
   onMount(async () => {
     term = new Terminal({ fontSize, cursorBlink: true, fontFamily: 'ui-monospace, monospace' });
     fit = new FitAddon();
@@ -143,10 +167,23 @@
     }
     safeFit();
 
+    // Correctly-encoded copy for terminal selections (see onCopy). Capture phase.
+    document.addEventListener('copy', onCopy, true);
+
     // §9 mount: replay scrollback → register handler → spawn if not already live.
     try {
       const sb = await coreBridge.loadScrollback(paneId);
-      if (sb.length) term.write(sb);
+      if (sb.length) {
+        term.write(sb);
+        // Replayed scrollback is raw PTY bytes and can carry unbalanced DEC private
+        // mode SETs left by a TUI that was running when the session was persisted
+        // (e.g. Claude Code / vim enabling mouse tracking, then the app closed before
+        // the matching reset was written). Without this the fresh shell prompt stays
+        // in mouse-reporting mode: drag-select breaks and mouse motion leaks as
+        // `<…M` on the command line. Reset those modes right after the replay; any
+        // program that needs them re-enables on its own.
+        term.write(RESET_STICKY_MOUSE);
+      }
     } catch {
       // No persisted scrollback — normal for a fresh pane.
     }
@@ -239,6 +276,7 @@
 
   onDestroy(() => {
     clearTimeout(resizeTimer);
+    document.removeEventListener('copy', onCopy, true);
     resizeObs?.disconnect();
     ptyEvents.unregister(paneId);
     paneRestart.unregister(paneId);

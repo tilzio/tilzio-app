@@ -18,6 +18,8 @@ vi.mock('@xterm/xterm', () => ({
     loadAddon() {}
     open() {}
     write = vi.fn();
+    hasSelection = vi.fn(() => false);
+    getSelection = vi.fn(() => '');
     onData() {}
     onBell() {}
     dispose() {}
@@ -224,5 +226,75 @@ describe('TerminalPane reattach after reload (ErrAlreadySpawned)', () => {
     );
     expect(ptyEvents.markLive).not.toHaveBeenCalled();
     expect(capturedProvider).toBeNull();
+  });
+});
+
+describe('TerminalPane scrollback replay resets sticky mouse modes', () => {
+  it('resets mouse tracking after replaying non-empty scrollback', async () => {
+    // Persisted scrollback from a session where a TUI left mouse mode on ("\e[?1003h").
+    (coreBridge.loadScrollback as ReturnType<typeof vi.fn>).mockResolvedValueOnce(
+      new Uint8Array([0x1b, 0x5b, 0x3f, 0x31, 0x30, 0x30, 0x33, 0x68]),
+    );
+    render(TerminalPane, { props: { paneId: 'p1' } });
+    await waitFor(() =>
+      expect(capturedTerm.write).toHaveBeenCalledWith(expect.stringContaining('\x1b[?1003l')),
+    );
+  });
+
+  it('does not write the reset when the pane has no scrollback', async () => {
+    // Default loadScrollback resolves an empty Uint8Array → nothing replayed.
+    render(TerminalPane, { props: { paneId: 'p1' } });
+    await waitFor(() => expect(hooks.onExited).toBeTruthy());
+    const wroteReset = capturedTerm.write.mock.calls
+      .flat()
+      .some((a: unknown) => typeof a === 'string' && a.includes('\x1b[?1003l'));
+    expect(wroteReset).toBe(false);
+  });
+});
+
+describe('TerminalPane copy encoding', () => {
+  function dispatchCopy() {
+    const setData = vi.fn();
+    const ev = new Event('copy', { bubbles: true });
+    Object.defineProperty(ev, 'clipboardData', { value: { setData } });
+    const preventDefault = vi.spyOn(ev, 'preventDefault');
+    document.dispatchEvent(ev);
+    return { setData, preventDefault };
+  }
+
+  it('puts the xterm selection on the clipboard as Unicode and cancels the native copy', async () => {
+    render(TerminalPane, { props: { paneId: 'p1' } });
+    await waitFor(() => expect(capturedTerm).not.toBeNull());
+    capturedTerm.hasSelection.mockReturnValue(true);
+    capturedTerm.getSelection.mockReturnValue('привет мир');
+
+    const { setData, preventDefault } = dispatchCopy();
+    expect(setData).toHaveBeenCalledWith('text/plain', 'привет мир');
+    expect(preventDefault).toHaveBeenCalled();
+  });
+
+  it('ignores copy when the pane has no selection (other copies untouched)', async () => {
+    render(TerminalPane, { props: { paneId: 'p1' } });
+    await waitFor(() => expect(capturedTerm).not.toBeNull());
+    capturedTerm.hasSelection.mockReturnValue(false);
+
+    const { setData, preventDefault } = dispatchCopy();
+    expect(setData).not.toHaveBeenCalled();
+    expect(preventDefault).not.toHaveBeenCalled();
+  });
+
+  // The bug (UTF-8 bytes re-encoded as Mac OS Roman) mangles every non-ASCII
+  // script, not just Cyrillic. The fix is language-agnostic — it writes the raw
+  // Unicode selection verbatim — so any mix of scripts must survive unchanged.
+  it('passes selections of any script through verbatim (multi-language)', async () => {
+    render(TerminalPane, { props: { paneId: 'p1' } });
+    await waitFor(() => expect(capturedTerm).not.toBeNull());
+    capturedTerm.hasSelection.mockReturnValue(true);
+    const mixed = 'héllo Grüße Καλημέρα 你好 こんにちは 안녕 مرحبا שלום สวัสดี 🚀🔥';
+    capturedTerm.getSelection.mockReturnValue(mixed);
+
+    const { setData, preventDefault } = dispatchCopy();
+    expect(setData).toHaveBeenCalledWith('text/plain', mixed);
+    expect(preventDefault).toHaveBeenCalled();
   });
 });

@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8">
+<style>
+  html,body{margin:0;height:100%}
+  body{background:var(--ts-bg,#282828);color:var(--ts-text,#ebdbb2);font:12px ui-monospace,Menlo,monospace;padding:12px;box-sizing:border-box}
+  .card{background:var(--ts-bg-elevated,#32302f);border:1px solid var(--ts-border,#3c3836);border-radius:var(--ts-radius,4px);padding:10px;margin-bottom:8px}
+  .val{color:var(--ts-green,#b8bb26);font-size:18px;font-weight:600}
+  button{background:var(--ts-accent,#fe8019);color:#1d2021;border:none;border-radius:var(--ts-radius,4px);padding:6px 10px;cursor:pointer;font:inherit}
+</style></head>
+<body>
+  <div class="card">Passing <div class="val" id="n">0</div></div>
+  <button id="b">Run checks</button>
+  <script>
+    var n = 0;
+    document.getElementById('b').onclick = function () {
+      n += 1; document.getElementById('n').textContent = String(n * 241);
+      window.host.post({ ran: n });
+    };
+    window.host.onMessage(function (m) { /* messages from the plugin worker */ });
+  </script>
+</body>
+</html>

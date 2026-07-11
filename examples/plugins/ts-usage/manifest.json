@@ -16,19 +16,14 @@
       { "id": "usage.sb.claude.today", "align": "left", "priority": 73 },
       { "id": "usage.sb.claude.tok",   "align": "left", "priority": 74 },
       { "id": "usage.sb.claude.reset", "align": "left", "priority": 75 },
+      { "id": "usage.sb.claude.wkReset", "align": "left", "priority": 76 },
       { "id": "usage.sb.codex.name",   "align": "left", "priority": 80 },
       { "id": "usage.sb.codex.today",  "align": "left", "priority": 81 },
       { "id": "usage.sb.codex.tok",    "align": "left", "priority": 82 }
     ],
-    "panels":      [{ "id": "usage.panel", "location": "right", "title": "Usage Watcher", "render": "widgets" }],
+    "panels":      [{ "id": "usage.panel", "location": "right", "title": "Usage Watcher", "render": "iframe", "entry": "panel.html" }],
     "commands": [
-      { "id": "usage.refresh",      "title": "Usage: обновить" },
-      { "id": "usage.settings",     "title": "Usage: настройки" },
-      { "id": "usage.settingsDone", "title": "Usage: закрыть настройки" },
-      { "id": "usage.toggleMetric", "title": "Usage: вкл/выкл показатель" },
-      { "id": "usage.toggleTool",   "title": "Usage: вкл/выкл инструмент" },
-      { "id": "usage.alertUp",      "title": "Usage: порог алерта +5%" },
-      { "id": "usage.alertDown",    "title": "Usage: порог алерта −5%" }
+      { "id": "usage.refresh", "title": "Usage: обновить" }
     ]
   }
 }

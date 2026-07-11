@@ -61,7 +61,8 @@
   .d .arc { position: absolute; inset: 0; border-radius: 50%; }
   .d .arc::after { content: ''; position: absolute; border-radius: 50%; background: var(--ts-bg, #282828); }
   .d .val { position: relative; z-index: 1; line-height: 1; }
-  .d .cap { position: relative; z-index: 1; color: var(--ts-text-dim, #a89984); font-size: 8px; margin-top: 1px; }
+  .lr-hero-col { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .lr-hero-cap { color: var(--ts-text-dim, #a89984); font-size: 9px; text-transform: uppercase; letter-spacing: .06em; }
   .d.hero { width: 80px; height: 80px; }
   .d.hero .arc::after { inset: 8px; }
   .d.hero .val { font-size: 18px; font-weight: 600; }
@@ -303,12 +304,14 @@ function renderLimitsBlock(t, settings) {
       var val = txt('div', 'val', (kind === 'hero') ? fmtPct(r.pct) : String(Math.round(num(r.pct))));
       val.style.color = color;
       d.appendChild(val);
-      if (kind === 'hero') d.appendChild(txt('div', 'cap', r.label));
       return d;
     };
     var wrap = ce('div', 'lr-wrap');
     var hero = rows[0];
-    wrap.appendChild(makeDonut(hero, 'hero'));
+    var heroCol = ce('div', 'lr-hero-col');
+    heroCol.appendChild(makeDonut(hero, 'hero'));
+    heroCol.appendChild(txt('div', 'lr-hero-cap', hero.label));
+    wrap.appendChild(heroCol);
     if (rows.length > 1) {
       var side = ce('div', 'lr-side');
       for (var si = 1; si < rows.length; si++) {

@@ -29,7 +29,7 @@
   import PluginToast from './components/PluginToast.svelte';
   import RightAreaResizer from './components/RightAreaResizer.svelte';
   import PluginAccordion from './components/PluginAccordion.svelte';
-  import { rightAccordion, openRightPanel, closeRightPanel, toggleRightCollapsed } from './bridge/rightAccordion.svelte';
+  import { rightAccordion, openRightPanel, closeRightPanel, toggleRightCollapsed, pruneRightPanels } from './bridge/rightAccordion.svelte';
   import ExtensionsScreen from './components/ExtensionsScreen.svelte';
   import PluginDetail from './components/PluginDetail.svelte';
   import PermissionConsentDialog from './components/PermissionConsentDialog.svelte';
@@ -114,6 +114,16 @@
       .map((id) => rightPanels.find((p) => p.id === id))
       .filter((p): p is (typeof rightPanels)[number] => p !== undefined),
   );
+  // Reactive stale-id prune: when a plugin contributing a right panel is disabled/removed
+  // while its panel is open, its id lingers in rightAccordion.open. Prune it, and if that
+  // empties the right area while it's open, close it. Read rightPanels FIRST so the effect
+  // subscribes to it before pruneRightPanels mutates state (pruneRightPanels is idempotent,
+  // so re-running with the same validIds converges — no infinite loop).
+  $effect(() => {
+    const validIds = rightPanels.map((p) => p.id);
+    pruneRightPanels(validIds);
+    if ((ui.rightAreaOpen ?? false) && rightAccordion.open.length === 0) actions.toggleRightArea();
+  });
   // Outer remount key: switching space/tab remounts the whole subtree (triggers
   // scrollback replay on the newly visible panes; §9).
   const tabKey = $derived(`${store.app.activeSpaceId}:${tab?.id ?? ''}`);

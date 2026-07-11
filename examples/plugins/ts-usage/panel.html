@@ -52,7 +52,22 @@
   .mrow .r { color: var(--ts-text-dim, #a89984); font-size: 9px; }
 
   /* limits: ring */
-  .ringmini { width: 16px; height: 16px; border-radius: 50%; display: inline-block; }
+  /* Limits in "rings" mode: a large hero donut (first limit) + small mini donuts. */
+  .lr-wrap { display: flex; gap: 12px; align-items: center; margin-top: 2px; }
+  .lr-side { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+  .lr-mrow { display: flex; align-items: center; gap: 8px; }
+  .lr-mrow .nm { color: var(--ts-text, #ebdbb2); font-size: 10px; }
+  .d { position: relative; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; }
+  .d .arc { position: absolute; inset: 0; border-radius: 50%; }
+  .d .arc::after { content: ''; position: absolute; border-radius: 50%; background: var(--ts-bg, #282828); }
+  .d .val { position: relative; z-index: 1; line-height: 1; }
+  .d .cap { position: relative; z-index: 1; color: var(--ts-text-dim, #a89984); font-size: 8px; margin-top: 1px; }
+  .d.hero { width: 80px; height: 80px; }
+  .d.hero .arc::after { inset: 8px; }
+  .d.hero .val { font-size: 18px; font-weight: 600; }
+  .d.mini { width: 40px; height: 40px; }
+  .d.mini .arc::after { inset: 5px; }
+  .d.mini .val { font-size: 10px; color: var(--ts-text, #ebdbb2); }
 
   /* history: bars */
   .bars { display: flex; align-items: flex-end; gap: 3px; height: 30px; }
@@ -276,6 +291,48 @@ function renderLimitsBlock(t, settings) {
   var mode = (settings.showFill === false) ? 'text' : ((settings.limitViz === 'rings') ? 'rings' : 'meter');
   var alertPct = settings.alertPct;
 
+  if (mode === 'rings') {
+    var makeDonut = function (r, kind) {
+      var pc = Math.max(0, Math.min(100, num(r.pct)));
+      var color = threshColorHex(r.pct, alertPct);
+      var d = ce('div', 'd');
+      d.classList.add(kind);
+      var arc = ce('div', 'arc');
+      arc.style.background = 'conic-gradient(' + color + ' 0 ' + pc + '%, var(--ts-border, #3c3836) ' + pc + '% 100%)';
+      d.appendChild(arc);
+      var val = txt('div', 'val', (kind === 'hero') ? fmtPct(r.pct) : String(Math.round(num(r.pct))));
+      val.style.color = color;
+      d.appendChild(val);
+      if (kind === 'hero') d.appendChild(txt('div', 'cap', r.label));
+      return d;
+    };
+    var wrap = ce('div', 'lr-wrap');
+    var hero = rows[0];
+    wrap.appendChild(makeDonut(hero, 'hero'));
+    if (rows.length > 1) {
+      var side = ce('div', 'lr-side');
+      for (var si = 1; si < rows.length; si++) {
+        var mr = ce('div', 'lr-mrow');
+        mr.appendChild(makeDonut(rows[si], 'mini'));
+        mr.appendChild(txt('span', 'nm', rows[si].label));
+        side.appendChild(mr);
+      }
+      wrap.appendChild(side);
+    }
+    block.appendChild(wrap);
+    if (hero.showReset) {
+      var hrm = hero.resetAt ? minutesUntilISO(hero.resetAt, Date.now()) : hero.resetMin;
+      if (hrm != null) {
+        var hrr = ce('div', 'mrow');
+        hrr.style.marginTop = '8px';
+        hrr.appendChild(txt('span', 'r', hero.label + ' resets'));
+        hrr.appendChild(txt('span', 'r', fmtDurationMin(hrm)));
+        block.appendChild(hrr);
+      }
+    }
+    return block;
+  }
+
   rows.forEach(function (r, idx) {
     var pctClamped = Math.max(0, Math.min(100, num(r.pct)));
     var color = threshColorHex(r.pct, alertPct);
@@ -303,13 +360,6 @@ function renderLimitsBlock(t, settings) {
       i.style.background = color;
       meter.appendChild(i);
       rowEl.appendChild(meter);
-    } else if (mode === 'rings') {
-      var ringRow = ce('div');
-      ringRow.style.marginTop = '3px';
-      var ring = ce('span', 'ringmini');
-      ring.style.background = 'conic-gradient(' + color + ' 0 ' + pctClamped + '%, var(--ts-border, #3c3836) ' + pctClamped + '% 100%)';
-      ringRow.appendChild(ring);
-      rowEl.appendChild(ringRow);
     }
     // mode === 'text' → bare % already shown in mrow, nothing more to draw.
 

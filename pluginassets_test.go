@@ -5,6 +5,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -76,6 +77,45 @@ func TestInjectViewBridgeHasThemeHandler(t *testing.T) {
 	}
 }
 
+// TestThemeTokenAllowlistRegex documents/guards the contract of the theme-token allowlist
+// applied by the injected prelude's applyTheme (pluginassets.go): only --ts-<lowercase+dashes>
+// keys are ever applied via style.setProperty — this is the boundary that stops a plugin's
+// (or a compromised iframe's) postMessage payload from setting arbitrary CSS custom
+// properties or injecting other content through the theme-token channel.
+func TestThemeTokenAllowlistRegex(t *testing.T) {
+	re := regexp.MustCompile(`^--ts-[a-z-]+$`) // mirrors the TSK regex embedded in viewBridgePrelude
+
+	canonical := []string{
+		"--ts-bg", "--ts-bg-elevated", "--ts-text", "--ts-text-dim",
+		"--ts-accent", "--ts-border", "--ts-radius", "--ts-green",
+		"--ts-red", "--ts-aqua", "--ts-amber",
+	}
+	for _, k := range canonical {
+		if !re.MatchString(k) {
+			t.Errorf("canonical key %q should match the allowlist regex", k)
+		}
+	}
+
+	rejected := []string{
+		"color",             // not prefixed with --ts-
+		"--evil",            // not prefixed with --ts-
+		"--ts-BAD",          // uppercase not allowed
+		"--ts-",             // empty tail not allowed
+		"--ts-x:red;--evil", // injection attempt via extra characters
+	}
+	for _, k := range rejected {
+		if re.MatchString(k) {
+			t.Errorf("control key %q should NOT match the allowlist regex", k)
+		}
+	}
+
+	// Guard against the pattern being removed/altered in the injected prelude itself.
+	out := string(injectViewBridge([]byte("<html><head></head><body></body></html>")))
+	if !strings.Contains(out, "--ts-[a-z-]+") {
+		t.Fatalf("injected prelude missing the allowlist regex pattern substring; got: %s", out)
+	}
+}
+
 func TestPluginAsset_NonPluginPathDelegates(t *testing.T) {
 	svc := tempPluginSvc(t, map[string]string{"manifest.json": manifestP1})
 	delegated := false
@@ -103,9 +143,15 @@ const manifestNet = `{"id":"pnet","name":"Net","version":"1.0.0","engine":"tilzi
 func TestPluginAsset_NetworkPermissionRelaxesCSP(t *testing.T) {
 	root := t.TempDir()
 	dir := filepath.Join(root, "plugins", "pnet")
-	if err := os.MkdirAll(dir, 0o755); err != nil { t.Fatal(err) }
-	if err := os.WriteFile(filepath.Join(dir, "manifest.json"), []byte(manifestNet), 0o644); err != nil { t.Fatal(err) }
-	if err := os.WriteFile(filepath.Join(dir, "view.html"), []byte("<html><head></head><body></body></html>"), 0o644); err != nil { t.Fatal(err) }
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "manifest.json"), []byte(manifestNet), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "view.html"), []byte("<html><head></head><body></body></html>"), 0o644); err != nil {
+		t.Fatal(err)
+	}
 	svc := plugins.NewService(filepath.Join(root, "plugins"), filepath.Join(root, "plugins.json"))
 	h := NewPluginAssetHandler(svc, http.NotFoundHandler())
 	csp := serve(h, "/plugins/pnet/view.html").Header().Get("Content-Security-Policy")

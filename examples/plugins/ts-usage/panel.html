@@ -66,7 +66,7 @@
   .divf { border-top: 1px solid var(--ts-border, #3c3836); margin: 2px 0; }
   .provdiv { border-top: 1px solid var(--ts-border, #3c3836); margin: 1px 0; }
 
-  /* settings stub */
+  /* settings screen */
   .stg-hd {
     display: flex; align-items: center; justify-content: space-between; padding: 8px 10px;
     border-bottom: 1px solid var(--ts-border, #3c3836);
@@ -76,7 +76,34 @@
     font-size: 11px; padding: 2px 4px; border-radius: var(--ts-radius, 4px);
   }
   .stg-hd button:hover { color: var(--ts-text, #ebdbb2); background: var(--ts-bg-elevated, #32302f); }
-  .stg-body { padding: 14px; color: var(--ts-text-dim, #a89984); font-size: 11px; }
+
+  .set { padding: 8px 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+  .sechd {
+    color: var(--ts-accent, #fe8019); font-size: 8px; letter-spacing: .14em; text-transform: uppercase;
+    margin: 9px 0 3px; border-bottom: 1px solid var(--ts-border, #3c3836); padding-bottom: 3px;
+  }
+  .sechd:first-child { margin-top: 2px; }
+  .grpn { color: var(--ts-text-dim, #a89984); font-size: 8px; text-transform: uppercase; letter-spacing: .08em; margin: 4px 0 1px; }
+  .row { display: flex; align-items: center; gap: 7px; padding: 3px 0; font-size: 11px; color: var(--ts-text, #ebdbb2); }
+  .row .grip { color: var(--ts-text-dim, #a89984); font-size: 11px; cursor: grab; }
+  .row .nm { flex: 1; }
+  .row .sub { color: var(--ts-text-dim, #a89984); font-size: 8px; text-transform: uppercase; }
+  .row .sq { width: 9px; height: 9px; border-radius: 2px; flex-shrink: 0; }
+  .row.dragover { outline: 1px dashed var(--ts-accent, #fe8019); outline-offset: -1px; }
+
+  .sw { width: 22px; height: 12px; border-radius: 7px; background: var(--ts-border, #3c3836); position: relative; flex-shrink: 0; cursor: pointer; }
+  .sw.on { background: var(--ts-accent, #fe8019); }
+  .sw::after { content: ''; position: absolute; top: 2px; left: 2px; width: 8px; height: 8px; border-radius: 50%; background: var(--ts-text, #ebdbb2); }
+  .sw.on::after { left: 12px; background: var(--ts-bg, #282828); }
+
+  .step { display: flex; align-items: center; gap: 8px; }
+  .step .b {
+    width: 16px; height: 16px; border: 1px solid var(--ts-border, #3c3836); border-radius: 4px;
+    display: flex; align-items: center; justify-content: center; color: var(--ts-text-dim, #a89984);
+    font-size: 11px; cursor: pointer;
+  }
+  .step .b:hover { color: var(--ts-text, #ebdbb2); background: var(--ts-bg-elevated, #32302f); }
+  .step .v { color: var(--ts-text, #ebdbb2); font-size: 11px; min-width: 30px; text-align: center; }
 </style>
 </head>
 <body>
@@ -468,6 +495,120 @@ function renderDashboard() {
   return root;
 }
 
+// --- settings screen: local metadata (mirrors main.js TOOLS/CARD_METRICS/BOARD_METRICS/SB_*) ---
+var TOOL_META = [
+  { id: 'claude', name: 'Claude', color: 'var(--ts-accent, #fe8019)', hasSource: true },
+  { id: 'codex',  name: 'Codex',  color: 'var(--ts-aqua, #83a598)',   hasSource: true },
+  { id: 'cursor', name: 'Cursor', color: '#504945',                  hasSource: false },
+  { id: 'gemini', name: 'Gemini', color: '#504945',                  hasSource: false }
+];
+var BLOCK_TITLES = { limits: 'Limits', spend: 'Spend', history: 'History', tokens: 'Tokens' };
+// Per-metric groups, titles copied verbatim from main.js CARD_METRICS/BOARD_METRICS.
+var METRIC_GROUPS = [
+  { label: 'Limits', items: [
+      { id: 'card.5h', title: '5h limit' },
+      { id: 'card.week', title: 'Weekly limit' },
+      { id: 'card.weekSonnet', title: 'Sonnet week %' }
+  ] },
+  { label: 'Spend', items: [
+      { id: 'card.daySpend', title: '$ Today' },
+      { id: 'card.weekSpend', title: '$ Week' },
+      { id: 'card.monthSpend', title: '$ Month' }
+  ] },
+  { label: 'Tokens', items: [
+      { id: 'card.tokens', title: 'Token breakdown' }
+  ] },
+  { label: 'Combined', items: [
+      { id: 'board.spark7all', title: 'Combined 7d sparkline' }
+  ] }
+];
+// Chip titles/defaults copied verbatim from main.js SB_TEMPLATES; groups from SB_PROVIDERS.
+var CHIP_TITLES = { name: 'Name', '5h': '5h limit', week: 'Weekly limit', wkReset: 'Weekly reset', today: '$ today', tok: 'Tokens today', reset: '5h reset' };
+var CHIP_DEFAULT_ON = { name: true, '5h': true, week: true, today: true, reset: true, tok: false, wkReset: false };
+var CHIP_GROUPS = [
+  { id: 'claude', label: 'Claude', keys: ['name', '5h', 'week', 'wkReset', 'today', 'tok', 'reset'] },
+  { id: 'codex',  label: 'Codex',  keys: ['name', 'today', 'tok'] }
+];
+function chipOn(provider, key, settings) {
+  var s = settings || {};
+  var k = provider + '.' + key;
+  if (s.chips && Object.prototype.hasOwnProperty.call(s.chips, k)) return !!s.chips[k];
+  return !!CHIP_DEFAULT_ON[key];
+}
+
+// --- settings screen: DOM builders ---
+function renderSectionHeader(label) { return txt('div', 'sechd', label); }
+function renderGroupLabel(label) { return txt('div', 'grpn', label); }
+function renderSwitch(on, onClick) {
+  var sw = ce('span', on ? 'sw on' : 'sw');
+  sw.onclick = onClick;
+  return sw;
+}
+function renderRow(parts, on, onClick) {
+  var row = ce('div', 'row');
+  parts.forEach(function (p) { row.appendChild(p); });
+  row.appendChild(renderSwitch(on, onClick));
+  return row;
+}
+function renderToggleRow(label, on, onClick) {
+  return renderRow([txt('span', 'nm', label)], on, onClick);
+}
+function renderToolRow(tm, settings) {
+  var sq = ce('span', 'sq');
+  sq.style.background = tm.color;
+  var parts = [sq, txt('span', 'nm', tm.name)];
+  if (!tm.hasSource) parts.push(txt('span', 'sub', 'no source'));
+  var on = !!(settings.tools && settings.tools[tm.id] === true);
+  return renderRow(parts, on, function () { post({ type: 'toggleTool', tool: tm.id }); });
+}
+function renderAlertRow(settings) {
+  var row = ce('div', 'row');
+  row.appendChild(txt('span', 'nm', 'Alert threshold'));
+  var alertPct = (settings.alertPct != null) ? settings.alertPct : 80;
+  var step = ce('div', 'step');
+  var minus = txt('span', 'b', '−');
+  minus.onclick = function () { post({ type: 'setAlert', delta: -5 }); };
+  step.appendChild(minus);
+  step.appendChild(txt('span', 'v', fmtPct(alertPct)));
+  var plus = txt('span', 'b', '+');
+  plus.onclick = function () { post({ type: 'setAlert', delta: 5 }); };
+  step.appendChild(plus);
+  row.appendChild(step);
+  return row;
+}
+function renderBlockRow(block, settings) {
+  var grip = txt('span', 'grip', '⠿');
+  var parts = [grip, txt('span', 'nm', BLOCK_TITLES[block] || block)];
+  var on = !settings.blocks || settings.blocks[block] !== false;
+  var row = renderRow(parts, on, function (ev) { ev.stopPropagation(); post({ type: 'toggleBlock', block: block }); });
+
+  row.draggable = true;
+  row.addEventListener('dragstart', function (ev) {
+    ev.dataTransfer.effectAllowed = 'move';
+    ev.dataTransfer.setData('text/plain', block);
+  });
+  row.addEventListener('dragover', function (ev) {
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = 'move';
+    row.classList.add('dragover');
+  });
+  row.addEventListener('dragleave', function () { row.classList.remove('dragover'); });
+  row.addEventListener('drop', function (ev) {
+    ev.preventDefault();
+    row.classList.remove('dragover');
+    var dragged = ev.dataTransfer.getData('text/plain');
+    if (!dragged || dragged === block) return;
+    var order = orderedBlocks(settings.blockOrder);
+    var from = order.indexOf(dragged);
+    var to = order.indexOf(block);
+    if (from < 0 || to < 0) return;
+    order.splice(from, 1);
+    order.splice(to, 0, dragged);
+    post({ type: 'reorderBlocks', order: order });
+  });
+  return row;
+}
+
 function renderSettings() {
   var root = ce('div');
   var hd = ce('div', 'stg-hd');
@@ -481,8 +622,38 @@ function renderSettings() {
   hd.appendChild(close);
   root.appendChild(hd);
 
-  var body = ce('div', 'stg-body');
-  body.textContent = 'Settings…';
+  var settings = STATE.settings || {};
+  var body = ce('div', 'set');
+
+  body.appendChild(renderSectionHeader('Tools'));
+  TOOL_META.forEach(function (tm) { body.appendChild(renderToolRow(tm, settings)); });
+
+  body.appendChild(renderSectionHeader('Alerts'));
+  body.appendChild(renderAlertRow(settings));
+
+  body.appendChild(renderSectionHeader('Display'));
+  body.appendChild(renderToggleRow('Fill scale', settings.showFill !== false, function () { post({ type: 'toggleFill' }); }));
+
+  body.appendChild(renderSectionHeader('Blocks · drag to reorder'));
+  orderedBlocks(settings.blockOrder).forEach(function (block) { body.appendChild(renderBlockRow(block, settings)); });
+
+  body.appendChild(renderSectionHeader('Metrics'));
+  METRIC_GROUPS.forEach(function (grp) {
+    body.appendChild(renderGroupLabel(grp.label));
+    grp.items.forEach(function (m) {
+      body.appendChild(renderToggleRow(m.title, cardMetricOn(m.id, settings), function () { post({ type: 'toggleMetric', id: m.id }); }));
+    });
+  });
+
+  body.appendChild(renderSectionHeader('Status bar chips'));
+  CHIP_GROUPS.forEach(function (grp) {
+    body.appendChild(renderGroupLabel(grp.label));
+    grp.keys.forEach(function (key) {
+      var title = CHIP_TITLES[key] || key;
+      body.appendChild(renderToggleRow(title, chipOn(grp.id, key, settings), function () { post({ type: 'toggleChip', provider: grp.id, key: key }); }));
+    });
+  });
+
   root.appendChild(body);
   return root;
 }

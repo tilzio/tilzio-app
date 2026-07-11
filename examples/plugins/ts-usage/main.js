@@ -567,7 +567,52 @@ ts.onDeactivate(function () { if (timer) clearInterval(timer); });
 
 // Handshake с iframe-панелью: фрейм шлёт {type:'ready'} после монтирования → запоминаем его
 // frameId и сразу пушим текущий снапшот. Остальной message-dispatch реализует Task 4.
-function handleViewMessage(){}
+async function handleViewMessage(msg) {
+  var s = STATE.settings;
+  if (!s) return;
+  switch (msg.type) {
+    case 'refresh': await refresh({ usage: false }); return;           // refresh() calls postState()+renderStatus()
+    case 'toggleCollapse':
+      if (!s.collapsed) s.collapsed = {};
+      s.collapsed[msg.provider] = !(s.collapsed && s.collapsed[msg.provider] === true);
+      break;
+    case 'setBlockViz':
+      if (msg.block === 'limits') s.limitViz = (msg.viz === 'rings') ? 'rings' : 'meter';
+      else if (msg.block === 'history') s.historyViz = (msg.viz === 'line') ? 'line' : 'bars';
+      break;
+    case 'toggleFill':
+      s.showFill = !(s.showFill !== false);   // parity with the old "Fill scale" setting (default on → bare % when off)
+      break;
+    case 'toggleTool':
+      if (!s.tools) s.tools = {};
+      s.tools[msg.tool] = !(s.tools && s.tools[msg.tool]);
+      await saveSettings(s); await refresh({ usage: false }); return;   // refetch tools
+    case 'setAlert':
+      s.alertPct = clampAlert(num(s.alertPct) + num(msg.delta));
+      break;
+    case 'reorderBlocks': {
+      var ord = (msg.order || []).filter(function (b) { return BLOCKS.indexOf(b) >= 0; });
+      if (ord.length) s.blockOrder = ord;
+      break;
+    }
+    case 'toggleBlock':
+      if (!s.blocks) s.blocks = { limits: true, spend: true, history: true, tokens: true };
+      if (BLOCKS.indexOf(msg.block) >= 0) s.blocks[msg.block] = !(s.blocks[msg.block] !== false);
+      break;
+    case 'toggleMetric':
+      if (!s.metrics) s.metrics = {};
+      s.metrics[msg.id] = !cardMetricOn(msg.id, s);
+      break;
+    case 'toggleChip':
+      if (!s.chips) s.chips = {};
+      s.chips[chipKey(msg.provider, msg.key)] = !chipOn(msg.provider, msg.key, s);
+      break;
+    default: return;
+  }
+  await saveSettings(s);
+  renderStatus();   // chip toggles / alert / tool affect the status bar
+  postState();      // reflect the setting in the dashboard
+}
 ts.view.onMessage(function (msg, frameId) {
   if (!msg || typeof msg !== 'object') return;
   STATE.viewFrameId = frameId;              // remember which docked frame to push to
@@ -577,61 +622,5 @@ ts.view.onMessage(function (msg, frameId) {
 
 ts.ui.onEvent(async function (ev) {
   if (!ev || ev.type !== 'command') return;
-  var parts = String(ev.command).split(':');
-  var cmd = parts[0];
-  switch (cmd) {
-    case 'usage.refresh': await refresh({ usage: false }); break;
-    case 'usage.settings': postState(); break;
-    case 'usage.settingsDone': await refresh({ usage: false }); break;
-    case 'usage.toggleMetric':
-      STATE.settings.metrics[parts[1]] = parts[2] === '1'; await saveSettings(STATE.settings);
-      postState(); renderStatus(); break;
-    case 'usage.toggleTool':
-      STATE.settings.tools[parts[1]] = parts[2] === '1'; await saveSettings(STATE.settings); await refresh({ usage: false }); break;
-    case 'usage.alertUp': STATE.settings.alertPct = clampAlert(num(STATE.settings.alertPct) + 5); await saveSettings(STATE.settings); postState(); renderStatus(); break;
-    case 'usage.alertDown': STATE.settings.alertPct = clampAlert(num(STATE.settings.alertPct) - 5); await saveSettings(STATE.settings); postState(); renderStatus(); break;
-    case 'usage.toggleCollapse':
-      STATE.settings.collapsed[parts[1]] = !(STATE.settings.collapsed && STATE.settings.collapsed[parts[1]] === true);
-      await saveSettings(STATE.settings);
-      postState();
-      break;
-    case 'usage.setViz':
-      STATE.settings.limitViz = parts[1] === 'rings' ? 'rings' : 'meter';
-      await saveSettings(STATE.settings);
-      postState(); break;
-    case 'usage.setHistoryViz':
-      STATE.settings.historyViz = parts[1] === 'bars' ? 'bars' : 'line';
-      await saveSettings(STATE.settings);
-      postState(); break;
-    case 'usage.toggleFill':
-      STATE.settings.showFill = parts[1] === '1';
-      await saveSettings(STATE.settings);
-      postState(); break;
-    case 'usage.toggleChip':
-      STATE.settings.chips[chipKey(parts[1], parts[2])] = parts[3] === '1';
-      await saveSettings(STATE.settings);
-      postState(); renderStatus(); break;
-    case 'usage.reorderMetrics': {
-      var rmb = parts[1];
-      var rmValid = orderedMetricIds(rmb, STATE.settings); // все метрики блока
-      var rmo = String(parts[2] || '').split(',').filter(function (id) { return rmValid.indexOf(id) >= 0; });
-      if (rmo.length) {
-        if (!STATE.settings.boardOrder) STATE.settings.boardOrder = { limits: [], spend: [], history: [], tokens: [] };
-        STATE.settings.boardOrder[rmb] = rmo;
-        await saveSettings(STATE.settings);
-        postState();
-      }
-      break;
-    }
-    case 'usage.reorderBoard': {
-      var known = BLOCKS;
-      var ord = String(parts[1] || '').split(',').filter(function (b) { return known.indexOf(b) >= 0; });
-      if (ord.length) {
-        STATE.settings.blockOrder = ord;
-        await saveSettings(STATE.settings);
-        postState();
-      }
-      break;
-    }
-  }
+  if (String(ev.command).split(':')[0] === 'usage.refresh') { await refresh({ usage: false }); }
 });

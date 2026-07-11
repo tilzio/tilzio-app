@@ -270,7 +270,7 @@ function renderLimitsBlock(t, settings) {
   if (limitAlerts(t, settings)) lbl.appendChild(txt('span', 'alertmark', '⚠'));
   lbl.appendChild(document.createTextNode('Limits'));
   hd.appendChild(lbl);
-  hd.appendChild(renderSeg('limits', ['meter', 'rings'], settings.limitViz || 'meter'));
+  if (settings.showFill !== false) hd.appendChild(renderSeg('limits', ['meter', 'rings'], settings.limitViz || 'meter'));
   block.appendChild(hd);
 
   var mode = (settings.showFill === false) ? 'text' : ((settings.limitViz === 'rings') ? 'rings' : 'meter');
@@ -464,6 +464,11 @@ function renderDashboard() {
   var root = ce('div', 'dash');
 
   var topbar = ce('div', 'topbar');
+  var refresh = txt('button', 'gear', '↻');
+  refresh.type = 'button';
+  refresh.title = 'Refresh';
+  refresh.onclick = function () { post({ type: 'refresh' }); };
+  topbar.appendChild(refresh);
   var gear = txt('button', 'gear', '⚙');
   gear.type = 'button';
   gear.title = 'Settings';
@@ -514,6 +519,9 @@ var METRIC_GROUPS = [
       { id: 'card.daySpend', title: '$ Today' },
       { id: 'card.weekSpend', title: '$ Week' },
       { id: 'card.monthSpend', title: '$ Month' }
+  ] },
+  { label: 'History', items: [
+      { id: 'card.spark', title: '7d history' }
   ] },
   { label: 'Tokens', items: [
       { id: 'card.tokens', title: 'Token breakdown' }

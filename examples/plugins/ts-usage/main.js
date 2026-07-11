@@ -108,23 +108,6 @@ function limitsUnavailReason(raw) {
   return 'service unavailable';
 }
 
-// Единый рендер лимита: meter=графическая полоса (хост H4) | rings=кольцо | showFill off=только число. Всегда порог-tone.
-// arrow (опц., '▲'/'▼') ставится после % (тренд §5).
-function limitWidget(label, pct, resetMin, settings, arrow) {
-  var p = num(pct);
-  var tone = threshTone(p);
-  var lbl = threshGlyph(tone) + ' ' + label;
-  var ar = arrow ? ' ' + arrow : '';
-  var rings = !!(settings && settings.limitViz === 'rings');
-  var showFill = !(settings && settings.showFill === false);
-  var resetTxt = (resetMin != null) ? ' · reset ' + fmtDurationMin(resetMin) : '';
-  if (!showFill) return { type: 'text', label: lbl, text: fmtPct(p) + ar + resetTxt, tone: tone };
-  if (rings) return { type: 'chart', kind: 'ring', segments: [{ label: lbl, value: p, tone: tone }], max: 100, caption: lbl + ' ' + fmtPct(p) + ar + resetTxt };
-  var m = { type: 'meter', label: lbl, value: p, max: 100, text: fmtPct(p) + ar, tone: tone };
-  if (resetMin != null) m.caption = 'reset · ' + fmtDurationMin(resetMin);
-  return m;
-}
-
 // --- парсеры расхода (daily / weekly) ---
 function rowCost(row) { return num(row && (row.totalCost != null ? row.totalCost : row.costUSD)); }
 function tokTypes(row) {
@@ -356,102 +339,18 @@ function sbChipUpdates(tools, settings) {
 
 // --- board: показатели уровня карточки (рисуются на каждый выбранный инструмент) ---
 var CARD_METRICS = [
-  { id: 'card.5h', title: '5h limit', block: 'limits', defaultOn: true,
-    card: function (t, c) {
-      if (!(t.hasLimits || (t.window && t.window.utilPct != null))) return [];
-      var v = (t.window && t.window.utilPct != null) ? t.window.utilPct : 0;
-      var rm = t.window ? t.window.resetMin : null;
-      var ar = (c && c.trends) ? c.trends[trendKey(t.id, '5h')] : '';
-      return [limitWidget('5h', v, rm, c && c.settings, ar)];
-    } },
-  { id: 'card.week', title: 'Weekly limit', block: 'limits', defaultOn: true,
-    card: function (t, c) {
-      if (!(t.hasLimits || (t.week && t.week.utilPct != null))) return [];
-      var v = (t.week && t.week.utilPct != null) ? t.week.utilPct : 0;
-      var rm = (t.week && t.week.resetAt) ? minutesUntilISO(t.week.resetAt) : null;
-      var ar = (c && c.trends) ? c.trends[trendKey(t.id, 'week')] : '';
-      return [limitWidget('Weekly', v, rm, c && c.settings, ar)];
-    } },
-  { id: 'card.daySpend', title: '$ Today', block: 'spend', defaultOn: true,
-    card: function (t) {
-      if (!t.today) return [];
-      return [{ type: 'text', label: 'Today', text: fmtMoney(t.today.costUSD) }];
-    } },
-  { id: 'card.weekSpend', title: '$ Week', block: 'spend', defaultOn: true,
-    card: function (t) {
-      if (!t.week) return [];
-      return [{ type: 'text', label: 'Week', text: fmtMoney(t.week.costUSD) }];
-    } },
-  { id: 'card.monthSpend', title: '$ Month', block: 'spend', defaultOn: true,
-    card: function (t) {
-      if (!(t.month && num(t.month.costUSD) > 0)) return [];
-      return [{ type: 'text', label: 'Month', text: fmtMoney(t.month.costUSD) }];
-    } },
-  { id: 'card.spark', title: '7d history', block: 'history', defaultOn: true,
-    card: function (t, c) {
-      if (!t.spark7 || !t.spark7.length) return [];
-      if (c && c.settings && c.settings.historyViz === 'bars')
-        return [{ type: 'chart', kind: 'bar', bars: sparkBars(t.spark7, t.spark7dates) }];
-      return [{ type: 'chart', kind: 'line', values: t.spark7.map(num) }];
-    } },
-  { id: 'card.weekSonnet', title: 'Sonnet week %', block: 'limits', defaultOn: true,
-    card: function (t, c) {
-      if (!t.sonnet || t.sonnet.utilPct == null) return [];
-      var rm = t.sonnet.resetAt ? minutesUntilISO(t.sonnet.resetAt) : null;
-      return [limitWidget('Sonnet wk', t.sonnet.utilPct, rm, c && c.settings)];
-    } },
-  { id: 'card.tokens', title: 'Token breakdown', block: 'tokens', defaultOn: true,
-    card: function (t) {
-      // Макет: один период (текущий, today) — компактный список тип→значение.
-      var p = t.today;
-      if (!p || !p.tok) return [];
-      return [
-        { type: 'text', label: 'Input', text: fmtTokens(p.tok.input) },
-        { type: 'text', label: 'Output', text: fmtTokens(p.tok.output) },
-        { type: 'text', label: 'Cache Create', text: fmtTokens(p.tok.cacheCreate) },
-        { type: 'text', label: 'Cache Read', text: fmtTokens(p.tok.cacheRead) },
-        { type: 'text', label: 'Cost', text: fmtMoney(p.costUSD), tone: 'warn' },
-      ];
-    } },
+  { id: 'card.5h',        title: '5h limit',        block: 'limits',  defaultOn: true },
+  { id: 'card.week',      title: 'Weekly limit',    block: 'limits',  defaultOn: true },
+  { id: 'card.weekSonnet',title: 'Sonnet week %',   block: 'limits',  defaultOn: true },
+  { id: 'card.daySpend',  title: '$ Today',         block: 'spend',   defaultOn: true },
+  { id: 'card.weekSpend', title: '$ Week',          block: 'spend',   defaultOn: true },
+  { id: 'card.monthSpend',title: '$ Month',         block: 'spend',   defaultOn: true },
+  { id: 'card.spark',     title: '7d history',      block: 'history', defaultOn: true },
+  { id: 'card.tokens',    title: 'Token breakdown', block: 'tokens',  defaultOn: true },
 ];
 // --- board: общие виджеты (один раз под карточками) ---
-var BOARD_METRICS = [
-  { id: 'board.spark7all', title: 'Combined 7d sparkline', scope: 'board', defaultOn: false,
-    board: function (c) {
-      var sums = [], dates = null;
-      c.tools.forEach(function (t) {
-        (t.spark7 || []).forEach(function (v, i) { sums[i] = (sums[i] || 0) + num(v); });
-        if (!dates && t.spark7dates && t.spark7dates.length) dates = t.spark7dates;
-      });
-      if (!sums.length) return [];
-      if (c.settings && c.settings.historyViz === 'bars')
-        return [{ type: 'chart', kind: 'bar', bars: sparkBars(sums, dates), caption: 'Σ 7 days $' }];
-      return [{ type: 'chart', kind: 'line', values: sums, caption: 'Σ 7 days $' }];
-    } },
-];
+var BOARD_METRICS = [ { id: 'board.spark7all', title: 'Combined 7d sparkline', defaultOn: false } ];
 
-function sectionCollapsed(id, settings) {
-  return !!(settings && settings.collapsed && settings.collapsed[id] === true);
-}
-
-function providerSummary(t) {
-  var parts = [];
-  if (t.window && t.window.utilPct != null) parts.push(fmtPct(t.window.utilPct));
-  if (t.today) parts.push(fmtMoney(t.today.costUSD));
-  return parts.join(' · ');
-}
-function providerHeader(t, collapsed) {
-  var item = { text: providerSquare(t) + ' ' + t.name, icon: collapsed ? '▸' : '▾',
-               command: 'usage.toggleCollapse:' + t.id, tone: t.available ? 'accent' : 'default' };
-  var b = providerSummary(t);
-  if (b) item.badge = b;
-  return { type: 'list', items: [item] };
-}
-
-var BLOCK_LABELS = { limits: 'LIMITS', spend: 'SPEND', history: 'HISTORY', tokens: 'TOKENS' };
-// Подпись блока в одну строку с заголовком (напр. History · 7 days $) — раньше была
-// отдельным caption у графика на своей строке.
-var BLOCK_CAPTIONS = { history: '7 days $' };
 var BLOCKS = ['limits', 'spend', 'history', 'tokens'];
 function metricsInBlock(block) {
   return CARD_METRICS.filter(function (m) { return m.block === block; }).map(function (m) { return m.id; });
@@ -471,47 +370,11 @@ function orderedMetricIds(block, settings) {
   all.forEach(function (id) { if (out.indexOf(id) < 0) out.push(id); });
   return out;
 }
-function buildProviderSection(t, c) {
-  var collapsed = sectionCollapsed(t.id, c.settings);
-  var out = [providerHeader(t, collapsed)];
-  if (collapsed) return out;
-  var items = [];
-  orderedBlocks(c.settings).forEach(function (bk) {
-    var ws = [];
-    orderedMetricIds(bk, c.settings).forEach(function (id) {
-      if (!cardMetricOn(id, c.settings)) return;
-      var m = CARD_METRICS.find(function (x) { return x.id === id; });
-      if (m) m.card(t, c).forEach(function (w) { ws.push(w); });
-    });
-    if (ws.length) {
-      var hdr = BLOCK_LABELS[bk] + (BLOCK_CAPTIONS[bk] ? ' · ' + BLOCK_CAPTIONS[bk] : '');
-      var item = { id: bk, widgets: [{ type: 'text', text: hdr }].concat(ws) };
-      if (bk === 'limits' && limitAlerts(t, c.settings)) item.alert = true;
-      items.push(item);
-    }
-  });
-  if (items.length) out.push({ type: 'reorder', command: 'usage.reorderBoard', items: items, card: true });
-  return out;
-}
-
 function cardMetricOn(id, settings) {
   var m = CARD_METRICS.concat(BOARD_METRICS).find(function (x) { return x.id === id; });
   if (settings && settings.metrics && Object.prototype.hasOwnProperty.call(settings.metrics, id))
     return !!settings.metrics[id];
   return m ? !!m.defaultOn : false;
-}
-
-function buildBoardWidgets(c) {
-  var widgets = [];
-  c.tools.forEach(function (t) {
-    if (c.settings && c.settings.tools && c.settings.tools[t.id] === false) return;
-    buildProviderSection(t, c).forEach(function (w) { widgets.push(w); });
-  });
-  BOARD_METRICS.forEach(function (m) {
-    if (!cardMetricOn(m.id, c.settings)) return;
-    m.board(c).forEach(function (w) { widgets.push(w); });
-  });
-  return widgets;
 }
 
 // --- алерты: порог + антиспам ---
@@ -548,7 +411,7 @@ function defaultSettings() {
   CARD_METRICS.concat(BOARD_METRICS).forEach(function (m) { metrics[m.id] = !!m.defaultOn; });
   var chips = {};
   SB_PROVIDERS.forEach(function (p) { p.keys.forEach(function (key) { chips[chipKey(p.id, key)] = !!SB_TEMPLATES[key].defaultOn; }); });
-  return { metrics: metrics, tools: { claude: true, codex: true, cursor: false, gemini: false }, alertPct: 80, collapsed: {}, limitViz: 'meter', showFill: true, historyViz: 'bars', chips: chips, boardOrder: { limits: [], spend: [], history: [], tokens: [] }, blockOrder: ['limits', 'spend', 'history', 'tokens'] };
+  return { metrics: metrics, tools: { claude: true, codex: true, cursor: false, gemini: false }, alertPct: 80, collapsed: {}, limitViz: 'meter', showFill: true, historyViz: 'bars', chips: chips, boardOrder: { limits: [], spend: [], history: [], tokens: [] }, blockOrder: ['limits', 'spend', 'history', 'tokens'], blocks: { limits: true, spend: true, history: true, tokens: true } };
 }
 
 // --- настройки: storage, дефолты, тумблеры, режим настроек ---
@@ -572,79 +435,19 @@ async function loadSettings() {
     return out;
   })();
   var blockOrder = Array.isArray(saved.blockOrder) ? saved.blockOrder.filter(function (b) { return typeof b === 'string'; }) : ['limits', 'spend', 'history', 'tokens'];
-  return { metrics: metrics, tools: tools, alertPct: alertPct, collapsed: collapsed, limitViz: limitViz, showFill: showFill, historyViz: historyViz, chips: chips, boardOrder: boardOrder, blockOrder: blockOrder };
+  var blocks = Object.assign({ limits: true, spend: true, history: true, tokens: true }, (saved.blocks && typeof saved.blocks === 'object') ? saved.blocks : {});
+  return { metrics: metrics, tools: tools, alertPct: alertPct, collapsed: collapsed, limitViz: limitViz, showFill: showFill, historyViz: historyViz, chips: chips, boardOrder: boardOrder, blockOrder: blockOrder, blocks: blocks };
 }
 async function saveSettings(s) { try { await ts.storage.set('settings', s); } catch (e) {} }
 function clampAlert(x) { return Math.max(5, Math.min(95, Math.round(num(x)))); }
 
-function buildSettingsWidgets(s) {
-  var toolIds = ['claude', 'codex', 'cursor', 'gemini'];
-  var toolNames = { claude: 'Claude', codex: 'Codex', cursor: 'Cursor', gemini: 'Gemini' };
-  var out = [{ type: 'text', label: 'Settings', text: '⚙ Usage Watcher', tone: 'accent' }];
-
-  // ===== ⚙ GENERAL =====
-  out.push({ type: 'text', label: '⚙ GENERAL', text: 'everywhere', tone: 'accent' });
-  out.push({ type: 'text', text: 'TOOLS' });
-  // toggle-виджеты вместо ✓/◻-кнопок
-  toolIds.forEach(function (id) {
-    var on = s.tools[id] !== false && !!s.tools[id];
-    out.push({ type: 'toggle', label: (PROVIDER_SQUARE[id] || '⬜') + ' ' + toolNames[id],
-               value: on, command: 'usage.toggleTool:' + id });
-  });
-  out.push({ type: 'text', label: 'Alert threshold', text: fmtPct(s.alertPct) });
-  out.push({ type: 'buttons', items: [
-    { text: '− 5%', command: 'usage.alertDown' },
-    { text: '+ 5%', command: 'usage.alertUp' },
-  ] });
-
-  // ===== 📋 PANEL =====
-  out.push({ type: 'text', label: '📋 PANEL', text: 'right column', tone: 'accent' });
-  // Макет: плоский список карточек-тумблеров (без под-заголовков блоков и без реордера —
-  // порядок блоков тащится в самом борде через usage.reorderBoard).
-  out.push({ type: 'text', text: 'CARDS' });
-  orderedBlocks(s).forEach(function (bk) {
-    orderedMetricIds(bk, s).forEach(function (id) {
-      var m = CARD_METRICS.find(function (x) { return x.id === id; });
-      out.push({ type: 'toggle', label: m.title, value: cardMetricOn(id, s), command: 'usage.toggleMetric:' + id });
-    });
-  });
-  BOARD_METRICS.forEach(function (m) {
-    out.push({ type: 'toggle', label: m.title, value: cardMetricOn(m.id, s), command: 'usage.toggleMetric:' + m.id });
-  });
-  // RENDER: segmented-виджеты
-  out.push({ type: 'text', text: 'RENDER' });
-  out.push({ type: 'segmented', label: 'Limits', value: s.limitViz !== 'rings' ? 'meter' : 'rings',
-             command: 'usage.setViz',
-             options: [{ value: 'meter', label: 'Meter' }, { value: 'rings', label: 'Rings' }] });
-  out.push({ type: 'toggle', label: 'Fill scale', value: s.showFill !== false,
-             command: 'usage.toggleFill' });
-  out.push({ type: 'segmented', label: 'History', value: s.historyViz === 'bars' ? 'bars' : 'line',
-             command: 'usage.setHistoryViz',
-             options: [{ value: 'bars', label: 'Bars' }, { value: 'line', label: 'Line' }] });
-
-  // ===== 📡 STATUS BAR =====
-  // Макет: плоский список тумблеров чипов (без групп по провайдеру, без цвет-пикеров —
-  // цвет лимит-чипов считается по порогу). Подпись «провайдер · показатель».
-  out.push({ type: 'text', label: '📡 STATUS BAR', text: 'window bottom', tone: 'accent' });
-  SB_PROVIDERS.forEach(function (p) {
-    var name = p.id.charAt(0).toUpperCase() + p.id.slice(1);
-    orderedChipKeys(p.id).forEach(function (key) {
-      out.push({ type: 'toggle', label: name + ' · ' + SB_TEMPLATES[key].title,
-                 value: chipOn(p.id, key, s), command: 'usage.toggleChip:' + p.id + ':' + key });
-    });
-  });
-
-  out.push({ type: 'buttons', items: [{ text: '✓ Done', command: 'usage.settingsDone' }] });
-  return out;
-}
-
 // --- модульное состояние воркера ---
-var STATE = { settings: null, mode: 'dash', tools: [], hottest: null, alerted: {},
+var STATE = { settings: null, tools: [], hottest: null, alerted: {},
               usage: null, usageDiag: '', ccusageMissing: false, notifiedNoCcusage: false,
-              lastUsageMs: 0, lastCcusageMs: 0, prevPct: {}, trends: {} };
+              lastUsageMs: 0, lastCcusageMs: 0, prevPct: {}, trends: {}, viewFrameId: null };
 
 // fetchUsage пишет короткий код причины в STATE.usageDiag (claude not found / claude exit N /
-// no usage data / claude threw …). renderPanel маппит его через limitsUnavailReason в баннер.
+// no usage data / claude threw …). buildState() маппит его через limitsUnavailReason в diag.limitsUnavail.
 async function fetchUsage() {
   var r;
   try { r = await ts.exec('claude', ['-p', '/usage'], {}); }
@@ -713,7 +516,7 @@ var refresh = async function (opts) {
     ts.notify('Usage Watcher: install ccusage — `npm i -g ccusage`');
   }
   renderStatus();
-  renderPanel({ tools: STATE.tools, hottest: STATE.hottest, settings: STATE.settings, trends: STATE.trends });
+  postState();
   var claude = STATE.tools.find(function (t) { return t.id === 'claude'; });
   var al = checkAlerts(claude, num(STATE.settings.alertPct), STATE.alerted);
   STATE.alerted = al.alerted;
@@ -725,20 +528,25 @@ var renderStatus = function () {
   sbChipUpdates(STATE.tools, STATE.settings).forEach(function (u) { ts.ui.update(u.id, u.data); });
 };
 
-var renderPanel = function (c) {
-  c = c || {};
-  if (c.trends == null) c.trends = STATE.trends;
-  if (STATE.mode === 'settings') {
-    ts.ui.update('usage.panel', { header: { title: 'Settings', actions: [{ icon: '‹', command: 'usage.settingsDone' }, { icon: '✕', command: 'usage.settingsDone' }] }, widgets: buildSettingsWidgets(STATE.settings) });
-  } else {
-    // Макет: в шапке борда только шестерёнка (рефреш — по таймеру и через чип Watcher).
-    // Кнопочной строки ↻/⚙ больше нет; остаются только условные баннеры-предупреждения.
-    var head = [];
-    if (STATE.usageDiag && !STATE.usage) head = head.concat([{ type: 'text', text: 'Limits unavailable: ' + limitsUnavailReason(STATE.usageDiag), tone: 'warn' }]);
-    if (STATE.ccusageMissing) head = head.concat([{ type: 'text', text: '⚠ Install ccusage: npm i -g ccusage', tone: 'warn' }]);
-    ts.ui.update('usage.panel', { header: { title: 'Usage Watcher', icon: '⏱', actions: [{ icon: '⚙', command: 'usage.settings' }] }, widgets: head.concat(buildBoardWidgets(c)) });
-  }
-};
+// Snapshot pushed to the iframe: everything the dashboard/settings need is derivable from these.
+function buildState() {
+  return {
+    tools: STATE.tools,
+    settings: STATE.settings,
+    trends: STATE.trends,
+    diag: {
+      limitsUnavail: (STATE.usageDiag && !STATE.usage) ? limitsUnavailReason(STATE.usageDiag) : null,
+      ccusageMissing: !!STATE.ccusageMissing,
+    },
+  };
+}
+function postState() {
+  if (STATE.viewFrameId == null) return; // iframe not ready yet
+  ts.view.post(STATE.viewFrameId, {
+    type: 'state', tools: STATE.tools, settings: STATE.settings, trends: STATE.trends,
+    diag: buildState().diag,
+  });
+}
 
 // --- lifecycle + cycle ---
 // Один таймер (15с tick). По времени: ccusage каждые ~45с, usage каждые USAGE_EVERY (180с).
@@ -757,42 +565,52 @@ ts.onActivate(async function () {
 });
 ts.onDeactivate(function () { if (timer) clearInterval(timer); });
 
+// Handshake с iframe-панелью: фрейм шлёт {type:'ready'} после монтирования → запоминаем его
+// frameId и сразу пушим текущий снапшот. Остальной message-dispatch реализует Task 4.
+function handleViewMessage(){}
+ts.view.onMessage(function (msg, frameId) {
+  if (!msg || typeof msg !== 'object') return;
+  STATE.viewFrameId = frameId;              // remember which docked frame to push to
+  if (msg.type === 'ready') { postState(); return; }
+  handleViewMessage(msg);                    // defined in Task 4
+});
+
 ts.ui.onEvent(async function (ev) {
   if (!ev || ev.type !== 'command') return;
   var parts = String(ev.command).split(':');
   var cmd = parts[0];
   switch (cmd) {
     case 'usage.refresh': await refresh({ usage: false }); break;
-    case 'usage.settings': STATE.mode = 'settings'; renderPanel({ tools: STATE.tools, hottest: STATE.hottest, settings: STATE.settings }); break;
-    case 'usage.settingsDone': STATE.mode = 'dash'; await refresh({ usage: false }); break;
+    case 'usage.settings': postState(); break;
+    case 'usage.settingsDone': await refresh({ usage: false }); break;
     case 'usage.toggleMetric':
       STATE.settings.metrics[parts[1]] = parts[2] === '1'; await saveSettings(STATE.settings);
-      renderPanel({ tools: STATE.tools, hottest: STATE.hottest, settings: STATE.settings }); renderStatus(); break;
+      postState(); renderStatus(); break;
     case 'usage.toggleTool':
       STATE.settings.tools[parts[1]] = parts[2] === '1'; await saveSettings(STATE.settings); await refresh({ usage: false }); break;
-    case 'usage.alertUp': STATE.settings.alertPct = clampAlert(num(STATE.settings.alertPct) + 5); await saveSettings(STATE.settings); renderPanel({ tools: STATE.tools, hottest: STATE.hottest, settings: STATE.settings }); renderStatus(); break;
-    case 'usage.alertDown': STATE.settings.alertPct = clampAlert(num(STATE.settings.alertPct) - 5); await saveSettings(STATE.settings); renderPanel({ tools: STATE.tools, hottest: STATE.hottest, settings: STATE.settings }); renderStatus(); break;
+    case 'usage.alertUp': STATE.settings.alertPct = clampAlert(num(STATE.settings.alertPct) + 5); await saveSettings(STATE.settings); postState(); renderStatus(); break;
+    case 'usage.alertDown': STATE.settings.alertPct = clampAlert(num(STATE.settings.alertPct) - 5); await saveSettings(STATE.settings); postState(); renderStatus(); break;
     case 'usage.toggleCollapse':
-      STATE.settings.collapsed[parts[1]] = !sectionCollapsed(parts[1], STATE.settings);
+      STATE.settings.collapsed[parts[1]] = !(STATE.settings.collapsed && STATE.settings.collapsed[parts[1]] === true);
       await saveSettings(STATE.settings);
-      renderPanel({ tools: STATE.tools, hottest: STATE.hottest, settings: STATE.settings });
+      postState();
       break;
     case 'usage.setViz':
       STATE.settings.limitViz = parts[1] === 'rings' ? 'rings' : 'meter';
       await saveSettings(STATE.settings);
-      renderPanel({ tools: STATE.tools, hottest: STATE.hottest, settings: STATE.settings }); break;
+      postState(); break;
     case 'usage.setHistoryViz':
       STATE.settings.historyViz = parts[1] === 'bars' ? 'bars' : 'line';
       await saveSettings(STATE.settings);
-      renderPanel({ tools: STATE.tools, hottest: STATE.hottest, settings: STATE.settings }); break;
+      postState(); break;
     case 'usage.toggleFill':
       STATE.settings.showFill = parts[1] === '1';
       await saveSettings(STATE.settings);
-      renderPanel({ tools: STATE.tools, hottest: STATE.hottest, settings: STATE.settings }); break;
+      postState(); break;
     case 'usage.toggleChip':
       STATE.settings.chips[chipKey(parts[1], parts[2])] = parts[3] === '1';
       await saveSettings(STATE.settings);
-      renderPanel({ tools: STATE.tools, hottest: STATE.hottest, settings: STATE.settings }); renderStatus(); break;
+      postState(); renderStatus(); break;
     case 'usage.reorderMetrics': {
       var rmb = parts[1];
       var rmValid = orderedMetricIds(rmb, STATE.settings); // все метрики блока
@@ -801,7 +619,7 @@ ts.ui.onEvent(async function (ev) {
         if (!STATE.settings.boardOrder) STATE.settings.boardOrder = { limits: [], spend: [], history: [], tokens: [] };
         STATE.settings.boardOrder[rmb] = rmo;
         await saveSettings(STATE.settings);
-        renderPanel({ tools: STATE.tools, hottest: STATE.hottest, settings: STATE.settings });
+        postState();
       }
       break;
     }
@@ -811,7 +629,7 @@ ts.ui.onEvent(async function (ev) {
       if (ord.length) {
         STATE.settings.blockOrder = ord;
         await saveSettings(STATE.settings);
-        renderPanel({ tools: STATE.tools, hottest: STATE.hottest, settings: STATE.settings });
+        postState();
       }
       break;
     }

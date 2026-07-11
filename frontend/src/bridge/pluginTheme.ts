@@ -17,6 +17,10 @@ export const TS_THEME_TOKENS: Record<string, string> = {
 
 // Post the theme into a plugin iframe window. Data-only; the injected host prelude
 // applies matching --ts-* keys via style.setProperty.
+// NOTE: `ts:` is a reserved view-message type namespace (see pluginassets.go's
+// viewBridgePrelude and docs/plugins/authoring-guide.md) — the host intercepts and
+// consumes any `type: "ts:*"` message itself instead of forwarding it to the plugin's
+// window.host.onMessage, so plugins must never use `ts:`-prefixed types of their own.
 export function postTheme(win: Window): void {
   win.postMessage({ __tsview: 1, data: { type: 'ts:theme', tokens: TS_THEME_TOKENS } }, '*');
 }

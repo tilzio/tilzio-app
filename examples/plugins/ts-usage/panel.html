@@ -1,0 +1,507 @@
+<!doctype html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: var(--ts-bg, #282828);
+    color: var(--ts-text, #ebdbb2);
+    font: 11px ui-monospace, Menlo, monospace;
+  }
+  button { font: inherit; }
+
+  .dash { padding: 9px 10px 12px; display: flex; flex-direction: column; gap: 9px; }
+
+  .topbar { display: flex; justify-content: flex-end; padding: 4px 6px 0; }
+  .gear {
+    background: transparent; border: none; cursor: pointer; line-height: 1;
+    color: var(--ts-text-dim, #a89984); font-size: 12px; padding: 2px 5px;
+    border-radius: var(--ts-radius, 4px);
+  }
+  .gear:hover { color: var(--ts-text, #ebdbb2); background: var(--ts-bg-elevated, #32302f); }
+
+  .banner {
+    font-size: 10px; color: var(--ts-amber, #fabd2f); padding: 5px 7px;
+    border: 1px solid var(--ts-border, #3c3836); border-radius: var(--ts-radius, 4px);
+    background: var(--ts-bg-elevated, #32302f);
+  }
+
+  /* provider header */
+  .prov { display: flex; align-items: center; gap: 7px; cursor: pointer; }
+  .prov .sq { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+  .prov b { flex: 1; color: var(--ts-text, #ebdbb2); font-size: 12px; font-weight: 400; }
+  .prov .bdg { color: var(--ts-text-dim, #a89984); font-size: 10px; }
+  .prov .cv { color: var(--ts-text-dim, #a89984); font-size: 10px; }
+
+  .alertmark { color: var(--ts-red, #fb4934); margin-right: 3px; }
+
+  /* block */
+  .blkhd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+  .blkhd .lbl { color: var(--ts-text-dim, #a89984); font-size: 8px; letter-spacing: .12em; text-transform: uppercase; }
+
+  /* view-toggle segment */
+  .seg { display: flex; border: 1px solid var(--ts-border, #3c3836); border-radius: var(--ts-radius, 4px); overflow: hidden; cursor: pointer; }
+  .seg span { font-size: 7px; padding: 1px 4px; color: var(--ts-text-dim, #a89984); text-transform: uppercase; letter-spacing: .04em; }
+  .seg span.on { background: var(--ts-border, #3c3836); color: var(--ts-accent, #fe8019); }
+
+  /* limits: meter bar */
+  .meter { height: 7px; border-radius: var(--ts-radius, 4px); background: var(--ts-border, #3c3836); overflow: hidden; margin-top: 3px; }
+  .meter i { display: block; height: 100%; border-radius: var(--ts-radius, 4px); }
+  .mrow { display: flex; justify-content: space-between; font-size: 10px; color: var(--ts-text, #ebdbb2); }
+  .mrow .r { color: var(--ts-text-dim, #a89984); font-size: 9px; }
+
+  /* limits: ring */
+  .ringmini { width: 16px; height: 16px; border-radius: 50%; display: inline-block; }
+
+  /* history: bars */
+  .bars { display: flex; align-items: flex-end; gap: 3px; height: 30px; }
+  .bars i { flex: 1; display: block; min-height: 2px; background: var(--ts-border, #3c3836); border-radius: 2px 2px 0 0; }
+  .bars i.hi { background: var(--ts-accent, #fe8019); }
+
+  /* tokens */
+  .tk { display: flex; justify-content: space-between; font-size: 10px; color: var(--ts-text, #ebdbb2); padding: 1px 0; }
+  .tkgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 10px; }
+
+  .divf { border-top: 1px solid var(--ts-border, #3c3836); margin: 2px 0; }
+  .provdiv { border-top: 1px solid var(--ts-border, #3c3836); margin: 1px 0; }
+
+  /* settings stub */
+  .stg-hd {
+    display: flex; align-items: center; justify-content: space-between; padding: 8px 10px;
+    border-bottom: 1px solid var(--ts-border, #3c3836);
+  }
+  .stg-hd button {
+    background: transparent; border: none; cursor: pointer; color: var(--ts-text-dim, #a89984);
+    font-size: 11px; padding: 2px 4px; border-radius: var(--ts-radius, 4px);
+  }
+  .stg-hd button:hover { color: var(--ts-text, #ebdbb2); background: var(--ts-bg-elevated, #32302f); }
+  .stg-body { padding: 14px; color: var(--ts-text-dim, #a89984); font-size: 11px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+// Usage Watcher — iframe dashboard (style B). Isolated context: no imports, so the
+// formatting/threshold helpers below are a deliberate duplicate of the worker's main.js
+// (same logic, same names where practical).
+
+// --- local pure helpers (copied from main.js) ---
+function num(x) { var n = Number(x); return isFinite(n) ? n : 0; }
+function str(x) { return x == null ? '' : String(x); }
+function fmtMoney(x) { return '$' + num(x).toFixed(2); }
+function fmtPct(x) { return Math.round(num(x)) + '%'; }
+function fmtTokens(x) {
+  var n = num(x);
+  if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+  return String(Math.round(n));
+}
+function fmtDurationMin(m) {
+  m = Math.max(0, Math.round(num(m)));
+  if (m < 60) return m + 'm';
+  if (m < 1440) { var h = Math.floor(m / 60), mm = m % 60; return h + 'h ' + (mm < 10 ? '0' : '') + mm + 'm'; }
+  var d = Math.floor(m / 1440), hh = Math.floor((m % 1440) / 60); return d + 'd ' + hh + 'h';
+}
+function minutesUntilISO(iso, nowMs) {
+  var t = Date.parse(iso);
+  if (!isFinite(t)) return null;
+  var now = isFinite(nowMs) ? nowMs : Date.now();
+  return Math.max(0, Math.round((t - now) / 60000));
+}
+function dayLabel(d) { var s = str(d); var m = s.match(/(\d{1,2})$/); return m ? m[1] : s; }
+// Threshold color: same breakpoints as the worker's threshColorHex, but returns a
+// var(--ts-*, fallback) reference (not a bare hex) so it stays theme-reactive here.
+function threshColorHex(pct, alertPct) {
+  var p = num(pct), thr = num(alertPct) || 80;
+  if (p >= thr) return 'var(--ts-red, #fb4934)';
+  if (p >= thr * 0.6) return 'var(--ts-amber, #fabd2f)';
+  return 'var(--ts-green, #b8bb26)';
+}
+function limitAlerts(t, settings) {
+  var thr = (settings && settings.alertPct != null) ? num(settings.alertPct) : 80;
+  var w = (t.window && t.window.utilPct != null) ? num(t.window.utilPct) : -1;
+  var wk = (t.week && t.week.utilPct != null) ? num(t.week.utilPct) : -1;
+  return (w >= thr) || (wk >= thr);
+}
+// defaultOn map mirroring the worker's CARD_METRICS/BOARD_METRICS metadata.
+var METRIC_DEFAULTS = {
+  'card.5h': true, 'card.week': true, 'card.weekSonnet': true,
+  'card.daySpend': true, 'card.weekSpend': true, 'card.monthSpend': true,
+  'card.spark': true, 'card.tokens': true,
+  'board.spark7all': false
+};
+function cardMetricOn(id, settings) {
+  if (settings && settings.metrics && Object.prototype.hasOwnProperty.call(settings.metrics, id)) return !!settings.metrics[id];
+  return !!METRIC_DEFAULTS[id];
+}
+var BLOCKS = ['limits', 'spend', 'history', 'tokens'];
+function orderedBlocks(blockOrder) {
+  var saved = Array.isArray(blockOrder) ? blockOrder : [];
+  var out = [];
+  saved.forEach(function (b) { if (BLOCKS.indexOf(b) >= 0 && out.indexOf(b) < 0) out.push(b); });
+  BLOCKS.forEach(function (b) { if (out.indexOf(b) < 0) out.push(b); });
+  return out;
+}
+
+// --- provider display helpers ---
+function providerColor(t) {
+  if (t.id === 'claude') return 'var(--ts-accent, #fe8019)';
+  if (t.id === 'codex') return 'var(--ts-aqua, #83a598)';
+  return 'var(--ts-text-dim, #a89984)';
+}
+// badge: "<pct>% · $<today>" when a limit % is available, else "$<today> today", else ''.
+function providerSummary(t) {
+  var parts = [];
+  if (t.window && t.window.utilPct != null) parts.push(fmtPct(t.window.utilPct));
+  if (t.today && t.today.costUSD != null) {
+    if (parts.length) { parts.push(fmtMoney(t.today.costUSD)); return parts.join(' · '); }
+    return fmtMoney(t.today.costUSD) + ' today';
+  }
+  return parts.join(' · ');
+}
+
+// --- module state ---
+var STATE = { tools: [], settings: {}, trends: {}, diag: {} };
+var MODE = 'dash';
+
+// --- DOM build helpers ---
+function ce(tag, cls) { var e = document.createElement(tag); if (cls) e.className = cls; return e; }
+function txt(tag, cls, text) { var e = ce(tag, cls); e.textContent = text; return e; }
+
+function post(msg) { window.host.post(msg); }
+
+function renderSeg(block, options, current) {
+  var seg = ce('div', 'seg');
+  options.forEach(function (opt) {
+    var span = txt('span', opt === current ? 'on' : null, opt);
+    span.onclick = function (ev) { ev.stopPropagation(); post({ type: 'setBlockViz', block: block, viz: opt }); };
+    seg.appendChild(span);
+  });
+  return seg;
+}
+
+function renderSparkBars(vals, dates) {
+  var max = vals.reduce(function (a, b) { return b > a ? b : a; }, 0);
+  var bars = ce('div', 'bars');
+  vals.forEach(function (v, i) {
+    var frac = max > 0 ? v / max : 0;
+    var barEl = ce('i');
+    barEl.style.height = Math.max(2, Math.round(frac * 100)) + '%';
+    if (frac >= 0.8) barEl.className = 'hi';
+    var lbl = (dates && dates[i] != null) ? dayLabel(dates[i]) : String(i + 1);
+    barEl.title = lbl + ': ' + fmtMoney(v);
+    bars.appendChild(barEl);
+  });
+  return bars;
+}
+function renderSparkLine(vals, dates) {
+  var max = vals.reduce(function (a, b) { return b > a ? b : a; }, 0) || 1;
+  var w = 100, h = 30;
+  var pts = vals.map(function (v, i) {
+    var x = vals.length > 1 ? (i / (vals.length - 1)) * w : 0;
+    var y = h - (v / max) * h;
+    return x.toFixed(1) + ',' + y.toFixed(1);
+  }).join(' ');
+  var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+  svg.setAttribute('width', '100%');
+  svg.setAttribute('height', '30');
+  svg.setAttribute('preserveAspectRatio', 'none');
+  var poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+  poly.setAttribute('points', pts);
+  poly.setAttribute('fill', 'none');
+  poly.setAttribute('stroke', 'var(--ts-accent, #fe8019)');
+  poly.setAttribute('stroke-width', '1.5');
+  svg.appendChild(poly);
+  var wrap = ce('div');
+  wrap.style.height = '30px';
+  wrap.appendChild(svg);
+  return wrap;
+}
+function renderSpark(vals, dates, historyViz) {
+  return (historyViz === 'line') ? renderSparkLine(vals, dates) : renderSparkBars(vals, dates);
+}
+
+function renderLimitsBlock(t, settings) {
+  var rows = [];
+  if (cardMetricOn('card.5h', settings) && t.window && t.window.utilPct != null) {
+    rows.push({ label: '5h', pct: t.window.utilPct, trendKey: t.id + '.5h', showReset: true, resetAt: t.window.resetAt, resetMin: t.window.resetMin });
+  }
+  if (cardMetricOn('card.week', settings) && t.week && t.week.utilPct != null) {
+    rows.push({ label: 'Week', pct: t.week.utilPct, trendKey: t.id + '.week' });
+  }
+  if (cardMetricOn('card.weekSonnet', settings) && t.sonnet && t.sonnet.utilPct != null) {
+    rows.push({ label: 'Sonnet', pct: t.sonnet.utilPct });
+  }
+  if (!rows.length) return null;
+
+  var block = ce('div', 'blk');
+  var hd = ce('div', 'blkhd');
+  var lbl = ce('span', 'lbl');
+  if (limitAlerts(t, settings)) lbl.appendChild(txt('span', 'alertmark', '⚠'));
+  lbl.appendChild(document.createTextNode('Limits'));
+  hd.appendChild(lbl);
+  hd.appendChild(renderSeg('limits', ['meter', 'rings'], settings.limitViz || 'meter'));
+  block.appendChild(hd);
+
+  var mode = (settings.showFill === false) ? 'text' : ((settings.limitViz === 'rings') ? 'rings' : 'meter');
+  var alertPct = settings.alertPct;
+
+  rows.forEach(function (r, idx) {
+    var pctClamped = Math.max(0, Math.min(100, num(r.pct)));
+    var color = threshColorHex(r.pct, alertPct);
+
+    var rowEl = ce('div');
+    if (idx > 0) rowEl.style.marginTop = '5px';
+
+    var mrow = ce('div', 'mrow');
+    mrow.appendChild(txt('span', null, r.label));
+    var right = ce('span');
+    right.style.color = color;
+    right.appendChild(document.createTextNode(fmtPct(r.pct)));
+    var arrow = (STATE.trends && r.trendKey) ? STATE.trends[r.trendKey] : '';
+    if (arrow) {
+      var a = txt('span', null, ' ' + arrow);
+      right.appendChild(a);
+    }
+    mrow.appendChild(right);
+    rowEl.appendChild(mrow);
+
+    if (mode === 'meter') {
+      var meter = ce('div', 'meter');
+      var i = ce('i');
+      i.style.width = pctClamped + '%';
+      i.style.background = color;
+      meter.appendChild(i);
+      rowEl.appendChild(meter);
+    } else if (mode === 'rings') {
+      var ringRow = ce('div');
+      ringRow.style.marginTop = '3px';
+      var ring = ce('span', 'ringmini');
+      ring.style.background = 'conic-gradient(' + color + ' 0 ' + pctClamped + '%, var(--ts-border, #3c3836) ' + pctClamped + '% 100%)';
+      ringRow.appendChild(ring);
+      rowEl.appendChild(ringRow);
+    }
+    // mode === 'text' → bare % already shown in mrow, nothing more to draw.
+
+    if (r.showReset) {
+      var resetMin = r.resetAt ? minutesUntilISO(r.resetAt, Date.now()) : r.resetMin;
+      if (resetMin != null) {
+        var rr = ce('div', 'mrow');
+        rr.style.marginTop = '5px';
+        rr.appendChild(txt('span', 'r', '5h resets'));
+        rr.appendChild(txt('span', 'r', fmtDurationMin(resetMin)));
+        rowEl.appendChild(rr);
+      }
+    }
+
+    block.appendChild(rowEl);
+  });
+
+  return block;
+}
+
+function renderSpendBlock(t, settings) {
+  var rows = [];
+  if (cardMetricOn('card.daySpend', settings) && t.today && t.today.costUSD != null) rows.push(['Today', t.today.costUSD]);
+  if (cardMetricOn('card.weekSpend', settings) && t.week && t.week.costUSD != null) rows.push(['Week', t.week.costUSD]);
+  if (cardMetricOn('card.monthSpend', settings) && t.month && num(t.month.costUSD) > 0) rows.push(['Month', t.month.costUSD]);
+  if (!rows.length) return null;
+
+  var block = ce('div', 'blk');
+  var hd = ce('div', 'blkhd');
+  hd.appendChild(txt('span', 'lbl', 'Spend'));
+  block.appendChild(hd);
+
+  rows.forEach(function (r, idx) {
+    var mrow = ce('div', 'mrow');
+    if (idx > 0) mrow.style.marginTop = '3px';
+    mrow.appendChild(txt('span', null, r[0]));
+    var val = txt('span', null, fmtMoney(r[1]));
+    val.style.color = 'var(--ts-green, #b8bb26)';
+    mrow.appendChild(val);
+    block.appendChild(mrow);
+  });
+
+  return block;
+}
+
+function renderHistoryBlock(t, settings) {
+  if (!cardMetricOn('card.spark', settings)) return null;
+  var vals = (t.spark7 || []).map(num);
+  if (!vals.length) return null;
+
+  var block = ce('div', 'blk');
+  var hd = ce('div', 'blkhd');
+  hd.appendChild(txt('span', 'lbl', 'History · 7d $'));
+  hd.appendChild(renderSeg('history', ['bars', 'line'], settings.historyViz || 'bars'));
+  block.appendChild(hd);
+  block.appendChild(renderSpark(vals, t.spark7dates, settings.historyViz));
+  return block;
+}
+
+function renderTokensBlock(t, settings) {
+  if (!cardMetricOn('card.tokens', settings)) return null;
+  if (!t.today || !t.today.tok) return null;
+  var tok = t.today.tok;
+
+  var block = ce('div', 'blk');
+  var hd = ce('div', 'blkhd');
+  hd.appendChild(txt('span', 'lbl', 'Tokens · today'));
+  block.appendChild(hd);
+
+  function tkRow(label, value) {
+    var r = ce('div', 'tk');
+    r.appendChild(txt('span', null, label));
+    r.appendChild(txt('span', null, value));
+    return r;
+  }
+  var grid = ce('div', 'tkgrid');
+  grid.appendChild(tkRow('In', fmtTokens(tok.input)));
+  grid.appendChild(tkRow('Out', fmtTokens(tok.output)));
+  grid.appendChild(tkRow('C·cr', fmtTokens(tok.cacheCreate)));
+  grid.appendChild(tkRow('C·rd', fmtTokens(tok.cacheRead)));
+  block.appendChild(grid);
+
+  var costRow = ce('div', 'tk');
+  costRow.style.marginTop = '2px';
+  costRow.appendChild(txt('span', null, 'Cost'));
+  var val = txt('span', null, fmtMoney(t.today.costUSD));
+  val.style.color = 'var(--ts-amber, #fabd2f)';
+  costRow.appendChild(val);
+  block.appendChild(costRow);
+
+  return block;
+}
+
+function renderBlock(block, t, settings) {
+  if (block === 'limits') return renderLimitsBlock(t, settings);
+  if (block === 'spend') return renderSpendBlock(t, settings);
+  if (block === 'history') return renderHistoryBlock(t, settings);
+  if (block === 'tokens') return renderTokensBlock(t, settings);
+  return null;
+}
+
+function renderProvider(t, settings) {
+  var wrap = ce('div');
+  var collapsed = !!(settings.collapsed && settings.collapsed[t.id]);
+
+  var hd = ce('div', 'prov');
+  hd.onclick = function () { post({ type: 'toggleCollapse', provider: t.id }); };
+  var sq = ce('span', 'sq');
+  sq.style.background = providerColor(t);
+  hd.appendChild(sq);
+  hd.appendChild(txt('b', null, t.name || t.id));
+  var summary = providerSummary(t);
+  if (summary) hd.appendChild(txt('span', 'bdg', summary));
+  hd.appendChild(txt('span', 'cv', collapsed ? '▸' : '▾'));
+  wrap.appendChild(hd);
+
+  if (collapsed) return wrap;
+
+  var blocks = orderedBlocks(settings.blockOrder);
+  var rendered = 0;
+  blocks.forEach(function (block) {
+    if (settings.blocks && settings.blocks[block] === false) return;
+    var blockEl = renderBlock(block, t, settings);
+    if (!blockEl) return;
+    if (rendered > 0) wrap.appendChild(ce('div', 'divf'));
+    wrap.appendChild(blockEl);
+    rendered++;
+  });
+
+  return wrap;
+}
+
+function renderCombinedHistory(tools, settings) {
+  var sums = [];
+  tools.forEach(function (t) {
+    var vals = (t.spark7 || []).map(num);
+    vals.forEach(function (v, i) { sums[i] = (sums[i] || 0) + v; });
+  });
+  if (!sums.length) return null;
+
+  var wrap = ce('div');
+  var hd = ce('div', 'blkhd');
+  hd.appendChild(txt('span', 'lbl', 'Combined · 7d $'));
+  hd.appendChild(renderSeg('history', ['bars', 'line'], settings.historyViz || 'bars'));
+  wrap.appendChild(hd);
+  var dates = (tools[0] && tools[0].spark7dates) || [];
+  wrap.appendChild(renderSpark(sums, dates, settings.historyViz));
+  return wrap;
+}
+
+function renderDashboard() {
+  var root = ce('div', 'dash');
+
+  var topbar = ce('div', 'topbar');
+  var gear = txt('button', 'gear', '⚙');
+  gear.type = 'button';
+  gear.title = 'Settings';
+  gear.onclick = function () { MODE = 'settings'; render(); };
+  topbar.appendChild(gear);
+  root.appendChild(topbar);
+
+  var diag = STATE.diag || {};
+  if (diag.limitsUnavail) root.appendChild(txt('div', 'banner', 'Limits unavailable: ' + diag.limitsUnavail));
+  if (diag.ccusageMissing) root.appendChild(txt('div', 'banner', '⚠ Install ccusage'));
+
+  var settings = STATE.settings || {};
+  var tools = STATE.tools || [];
+  var shown = tools.filter(function (t) { return t && (!settings.tools || settings.tools[t.id] !== false); });
+
+  shown.forEach(function (t, idx) {
+    if (idx > 0) root.appendChild(ce('div', 'provdiv'));
+    root.appendChild(renderProvider(t, settings));
+  });
+
+  if (shown.length && cardMetricOn('board.spark7all', settings)) {
+    var combined = renderCombinedHistory(shown, settings);
+    if (combined) {
+      root.appendChild(ce('div', 'provdiv'));
+      root.appendChild(combined);
+    }
+  }
+
+  return root;
+}
+
+function renderSettings() {
+  var root = ce('div');
+  var hd = ce('div', 'stg-hd');
+  var back = txt('button', null, '‹ Settings');
+  back.type = 'button';
+  back.onclick = function () { MODE = 'dash'; render(); };
+  var close = txt('button', null, '✕');
+  close.type = 'button';
+  close.onclick = function () { MODE = 'dash'; render(); };
+  hd.appendChild(back);
+  hd.appendChild(close);
+  root.appendChild(hd);
+
+  var body = ce('div', 'stg-body');
+  body.textContent = 'Settings…';
+  root.appendChild(body);
+  return root;
+}
+
+function render() {
+  var root = document.getElementById('root');
+  root.innerHTML = '';
+  root.appendChild(MODE === 'settings' ? renderSettings() : renderDashboard());
+}
+
+// --- bridge wiring ---
+window.host.onMessage(function (m) {
+  if (!m || m.type !== 'state') return;
+  STATE = { tools: m.tools || [], settings: m.settings || {}, trends: m.trends || {}, diag: m.diag || {} };
+  render();
+});
+window.addEventListener('load', function () { window.host.post({ type: 'ready' }); });
+setInterval(render, 30000); // re-tick reset countdowns locally (recomputed from resetAt)
+
+render(); // initial paint before the first 'state' snapshot arrives
+</script>
+</body>

@@ -1,0 +1,34 @@
+{
+  "id": "dev.term.usage",
+  "name": "Usage Watcher",
+  "version": "1.0.0",
+  "engine": "tilzio@1",
+  "entry": "main.js",
+  "permissions": ["exec"],
+  "exec": ["ccusage", "claude"],
+  "contributes": {
+    "activityBar": [{ "id": "usage.btn", "icon": "◷", "title": "Usage Watcher", "opens": "usage.panel" }],
+    "statusBar": [
+      { "id": "usage.sb.watcher",      "align": "left", "priority": 60 },
+      { "id": "usage.sb.claude.name",  "align": "left", "priority": 70 },
+      { "id": "usage.sb.claude.5h",    "align": "left", "priority": 71 },
+      { "id": "usage.sb.claude.week",  "align": "left", "priority": 72 },
+      { "id": "usage.sb.claude.today", "align": "left", "priority": 73 },
+      { "id": "usage.sb.claude.tok",   "align": "left", "priority": 74 },
+      { "id": "usage.sb.claude.reset", "align": "left", "priority": 75 },
+      { "id": "usage.sb.codex.name",   "align": "left", "priority": 80 },
+      { "id": "usage.sb.codex.today",  "align": "left", "priority": 81 },
+      { "id": "usage.sb.codex.tok",    "align": "left", "priority": 82 }
+    ],
+    "panels":      [{ "id": "usage.panel", "location": "right", "title": "Usage Watcher", "render": "widgets" }],
+    "commands": [
+      { "id": "usage.refresh",      "title": "Usage: обновить" },
+      { "id": "usage.settings",     "title": "Usage: настройки" },
+      { "id": "usage.settingsDone", "title": "Usage: закрыть настройки" },
+      { "id": "usage.toggleMetric", "title": "Usage: вкл/выкл показатель" },
+      { "id": "usage.toggleTool",   "title": "Usage: вкл/выкл инструмент" },
+      { "id": "usage.alertUp",      "title": "Usage: порог алерта +5%" },
+      { "id": "usage.alertDown",    "title": "Usage: порог алерта −5%" }
+    ]
+  }
+}

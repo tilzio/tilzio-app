@@ -18,7 +18,7 @@
 {:else}
   {#each panels as p (p.id)}
     {@const isCollapsed = collapsed[p.id] === true}
-    <section class="sec">
+    <section class="sec" class:grow={p.render === 'iframe' && !isCollapsed}>
       <div class="sechd">
         <button class="cv" aria-label={(isCollapsed ? 'expand ' : 'collapse ') + p.title} onclick={() => onToggle(p.id)}>{isCollapsed ? '▸' : '▾'}</button>
         <span class="ttl">{p.title}</span>
@@ -40,11 +40,16 @@
 <style>
   .empty { flex: 1; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-style: italic; font-size: 12px; }
   .sec { display: flex; flex-direction: column; border-bottom: 1px solid var(--border); }
+  /* An open iframe section grows to fill the right area (a single docked panel fills
+     the whole column; multiple open iframe panels share it). Collapsed and widget
+     sections stay content-height. */
+  .sec.grow { flex: 1; min-height: 0; }
   .sechd { display: flex; align-items: center; gap: 7px; padding: 5px 8px 5px 6px; color: var(--text-dim); font: 10px var(--ui-font); letter-spacing: .1em; text-transform: uppercase; }
   .sechd .ttl { flex: 1; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .sechd button { background: none; border: none; color: var(--text-dim); cursor: pointer; font: 11px var(--ui-font); padding: 0 2px; }
   .sechd button:hover { color: var(--text); }
   .body { min-height: 0; overflow: auto; }
-  /* iframe sections get a fixed height with internal iframe scroll (spec §11). */
-  .body.iframe { height: 280px; display: flex; overflow: hidden; }
+  /* iframe body fills its (growing) section — a docked panel stretches to the full
+     right-area height instead of a fixed box; the plugin scrolls its own content. */
+  .body.iframe { flex: 1; min-height: 0; display: flex; overflow: hidden; }
 </style>

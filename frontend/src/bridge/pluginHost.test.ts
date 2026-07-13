@@ -162,6 +162,31 @@ describe('pluginHost', () => {
     expect(h.created).toHaveLength(1);
   });
 
+  it('two OVERLAPPING activate() of the same id spawn exactly one record/worker', async () => {
+    __resetForTests();
+    // Deferred readFile: both calls are in flight simultaneously, both past the registry guard.
+    let resolveRead!: (v: Uint8Array) => void;
+    (pluginsBridge.readFile as any).mockReturnValue(new Promise<Uint8Array>((r) => { resolveRead = r; }));
+    const p1 = activate({ id: 'x', name: 'X', entry: 'main.js' } as any);
+    const p2 = activate({ id: 'x', name: 'X', entry: 'main.js' } as any);   // overlaps p1 (no await between)
+    resolveRead(new TextEncoder().encode('//code'));
+    await Promise.all([p1, p2]);
+    expect(pluginHost.active.map((p) => p.id)).toEqual(['x']);
+    expect(h.created).toHaveLength(1);   // no orphaned duplicate worker
+  });
+
+  it('after an in-flight activate completes, a later activate of the same id is still guarded; a failed one can retry', async () => {
+    __resetForTests();
+    // failed readFile → no record; the in-flight guard must be released (finally) so a retry works
+    (pluginsBridge.readFile as any).mockRejectedValueOnce(new Error('boom'));
+    await activate({ id: 'x', name: 'X', entry: 'main.js' } as any);
+    expect(pluginHost.active).toHaveLength(0);
+    (pluginsBridge.readFile as any).mockResolvedValue(new TextEncoder().encode('//code'));
+    await activate({ id: 'x', name: 'X', entry: 'main.js' } as any);
+    expect(pluginHost.active.map((p) => p.id)).toEqual(['x']);
+    expect(h.created).toHaveLength(1);
+  });
+
   it('deactivate removes the plugin\'s terminal subscriptions', async () => {
     await activate({ id: 'pw', name: 'W', entry: 'main.js', permissions: ['terminal:read'] } as any);
     deactivate('pw');
@@ -197,6 +222,67 @@ describe('pluginHost', () => {
       expect(post).toHaveBeenCalledWith(
         expect.objectContaining({ type: 'event', name: 'state-changed', data: snap }),
       );
+    }
+  });
+
+  it('coalesces a flood of ui.update: one flush per macrotask, LAST payload per cid wins', async () => {
+    (pluginsBridge.list as any).mockResolvedValue([
+      { enabled: true, err: '', manifest: { id: 'p1', name: 'P1', entry: 'main.js' } },
+    ]);
+    await init();
+    const sb = h.created[0];
+    vi.useFakeTimers();
+    try {
+      for (let i = 0; i < 50; i++) {
+        sb.onMsg({ v: 1, type: 'rpc', id: i, method: 'ui.update', args: ['demo.status', { n: i }] });
+      }
+      // Not applied synchronously per RPC…
+      expect(pluginHost.active[0].ui['demo.status']).toBeUndefined();
+      // …and the whole flood scheduled exactly ONE flush.
+      expect(vi.getTimerCount()).toBe(1);
+      vi.runAllTimers();
+      expect(pluginHost.active[0].ui['demo.status']).toEqual({ n: 49 });   // last write wins
+      // Nothing left pending; a later timer tick changes nothing.
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('coalescing preserves per-cid values across multiple cids in one flush', async () => {
+    (pluginsBridge.list as any).mockResolvedValue([
+      { enabled: true, err: '', manifest: { id: 'p1', name: 'P1', entry: 'main.js' } },
+    ]);
+    await init();
+    const sb = h.created[0];
+    vi.useFakeTimers();
+    try {
+      sb.onMsg({ v: 1, type: 'rpc', id: 1, method: 'ui.update', args: ['a', { v: 1 }] });
+      sb.onMsg({ v: 1, type: 'rpc', id: 2, method: 'ui.update', args: ['b', { v: 2 }] });
+      sb.onMsg({ v: 1, type: 'rpc', id: 3, method: 'ui.update', args: ['a', { v: 3 }] });
+      vi.runAllTimers();
+      expect(pluginHost.active[0].ui['a']).toEqual({ v: 3 });
+      expect(pluginHost.active[0].ui['b']).toEqual({ v: 2 });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('deactivate with a pending ui buffer drops it — flush after terminate does not crash or resurrect ui', async () => {
+    (pluginsBridge.list as any).mockResolvedValue([
+      { enabled: true, err: '', manifest: { id: 'p1', name: 'P1', entry: 'main.js' } },
+    ]);
+    await init();
+    const sb = h.created[0];
+    vi.useFakeTimers();
+    try {
+      sb.onMsg({ v: 1, type: 'rpc', id: 1, method: 'ui.update', args: ['demo.status', { n: 1 }] });
+      deactivate('p1');
+      expect(() => vi.runAllTimers()).not.toThrow();
+      expect(pluginHost.active).toHaveLength(0);
+      expect(sb.terminated).toBe(true);
+    } finally {
+      vi.useRealTimers();
     }
   });
 

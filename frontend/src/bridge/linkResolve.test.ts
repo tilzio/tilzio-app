@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('./files', () => ({
   files: { statFile: vi.fn() },
@@ -69,5 +69,45 @@ describe('checkPathExists', () => {
     expect(a).toBe(true);
     expect(b).toBe(true);
     expect(files.statFile).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('checkPathExists — TTL + cap', () => {
+  afterEach(() => vi.useRealTimers());
+
+  it('re-checks an entry after the TTL expires (files created later become clickable)', async () => {
+    vi.useFakeTimers();
+    (files.statFile as ReturnType<typeof vi.fn>).mockResolvedValue({ exists: false, isDir: false });
+    expect(await checkPathExists('/proj/new.ts')).toBe(false);
+    expect(await checkPathExists('/proj/new.ts')).toBe(false); // still cached
+    expect(files.statFile).toHaveBeenCalledTimes(1);
+    // The file is created later; after the TTL the cache must re-stat.
+    (files.statFile as ReturnType<typeof vi.fn>).mockResolvedValue({ exists: true, isDir: false });
+    vi.advanceTimersByTime(31_000);
+    expect(await checkPathExists('/proj/new.ts')).toBe(true);
+    expect(files.statFile).toHaveBeenCalledTimes(2);
+  });
+
+  it('serves a fresh entry from cache within the TTL', async () => {
+    vi.useFakeTimers();
+    (files.statFile as ReturnType<typeof vi.fn>).mockResolvedValue({ exists: true, isDir: false });
+    await checkPathExists('/proj/a.ts');
+    vi.advanceTimersByTime(29_000); // < 30s → still fresh
+    await checkPathExists('/proj/a.ts');
+    expect(files.statFile).toHaveBeenCalledTimes(1);
+  });
+
+  it('evicts the oldest entry once the cap (500) is exceeded', async () => {
+    (files.statFile as ReturnType<typeof vi.fn>).mockResolvedValue({ exists: true, isDir: false });
+    for (let i = 0; i < 500; i++) await checkPathExists(`/f${i}`);
+    expect(files.statFile).toHaveBeenCalledTimes(500);
+    await checkPathExists('/f0'); // hit — still cached at exactly the cap
+    expect(files.statFile).toHaveBeenCalledTimes(500);
+    await checkPathExists('/f500'); // 501st entry → evicts the oldest (/f0)
+    expect(files.statFile).toHaveBeenCalledTimes(501);
+    await checkPathExists('/f0'); // evicted → re-stat
+    expect(files.statFile).toHaveBeenCalledTimes(502);
+    await checkPathExists('/f499'); // never evicted → cache hit
+    expect(files.statFile).toHaveBeenCalledTimes(502);
   });
 });

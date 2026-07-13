@@ -34,18 +34,27 @@ export const linkHome = {
 
 // path → whether it exists as a file (not a directory). We cache the Promise (not a bool): two
 // concurrent calls for the same path (the link-provider validates candidates via
-// Promise.all) share a single statFile call. Cache lasts for the session (best-effort, like OSC 7;
-// deleting a file during a session is a rare edge, not critical for the MVP).
-const existsCache = new Map<string, Promise<boolean>>();
+// Promise.all) share a single statFile call. Entries expire after a TTL (~30s) so files
+// created/deleted mid-session eventually flip, and the map is capped (~500) with simple
+// insertion-order eviction so a long session cannot grow it unboundedly.
+const EXISTS_TTL_MS = 30_000;
+const EXISTS_MAX_ENTRIES = 500;
+const existsCache = new Map<string, { p: Promise<boolean>; at: number }>();
 
 export function checkPathExists(path: string): Promise<boolean> {
-  let p = existsCache.get(path);
-  if (p) return p;
-  p = files
+  const now = Date.now();
+  const hit = existsCache.get(path);
+  if (hit && now - hit.at < EXISTS_TTL_MS) return hit.p;
+  const p = files
     .statFile(path)
     .then((st) => st.exists && !st.isDir)
     .catch(() => false);
-  existsCache.set(path, p);
+  existsCache.delete(path); // re-insert so a refreshed entry moves to the back of the eviction order
+  existsCache.set(path, { p, at: now });
+  if (existsCache.size > EXISTS_MAX_ENTRIES) {
+    const oldest = existsCache.keys().next().value;
+    if (oldest !== undefined) existsCache.delete(oldest);
+  }
   return p;
 }
 

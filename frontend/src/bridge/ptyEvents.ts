@@ -2,6 +2,7 @@ import { Events } from '@wailsio/runtime';
 import { base64ToBytes } from '../base64';
 import { hostEvent, type HostEvent } from './pluginProtocol';
 import { markExited } from './exitedPanes.svelte';
+import { reapedPanes } from './reapedPanes';
 
 // Single global fan-out for the two PTY event streams (design §11.4, fork B).
 // One Events.On subscription each; output/exit are dispatched to the per-pane
@@ -60,7 +61,10 @@ export function routeOutput(id: string, bytes: Uint8Array): void {
   }
 }
 export function routeExited(id: string, code: number): void {
-  markExited(id, code); // SSOT (constraints.md §68-70): the first line, before all handlers
+  // A pane closed via paneReaper emits a trailing pty:exited when Go finishes
+  // the kill — recording it would resurrect the just-cleared exitedPanes entry.
+  // SSOT (constraints.md §68-70): markExited stays first, before all handlers.
+  if (!reapedPanes.has(id)) markExited(id, code);
   liveSet.delete(id);
   handlers.get(id)?.onExited(code);
   const keys = paneSubs.get(id);

@@ -9,19 +9,45 @@ function fakeWin(): Window {
 describe('pluginViewBridge', () => {
   beforeEach(() => pluginViewBridge.__resetForTests());
 
-  it('postToFrame delivers to the registered iframe window by frameId', () => {
+  it('postToFrame delivers to the registered iframe window by frameId (owner matches)', () => {
     const win = fakeWin();
     pluginViewBridge.register('pane1', 'p1', win);
-    pluginViewBridge.postToFrame('pane1', { hello: 1 });
+    pluginViewBridge.postToFrame('pane1', { hello: 1 }, 'p1');
     expect(win.postMessage as any).toHaveBeenCalledWith({ __tsview: 1, data: { hello: 1 } }, '*');
   });
 
+  it("a foreign plugin's post into another plugin's live frame is silently dropped", () => {
+    const win = fakeWin();
+    pluginViewBridge.register('pane1', 'p1', win);
+    pluginViewBridge.postToFrame('pane1', { evil: 1 }, 'p2');   // p2 targets p1's frame
+    expect(win.postMessage as any).not.toHaveBeenCalled();
+    pluginViewBridge.postToFrame('pane1', { ok: 1 }, 'p1');     // the owner still gets through
+    expect(win.postMessage as any).toHaveBeenCalledTimes(1);
+    expect(win.postMessage as any).toHaveBeenCalledWith({ __tsview: 1, data: { ok: 1 } }, '*');
+  });
+
   it('buffers messages sent before register, flushes on register in order', () => {
-    pluginViewBridge.postToFrame('pane1', { n: 1 });
-    pluginViewBridge.postToFrame('pane1', { n: 2 });
+    pluginViewBridge.postToFrame('pane1', { n: 1 }, 'p1');
+    pluginViewBridge.postToFrame('pane1', { n: 2 }, 'p1');
     const win = fakeWin();
     pluginViewBridge.register('pane1', 'p1', win);
     expect((win.postMessage as any).mock.calls.map((c: any[]) => c[0].data)).toEqual([{ n: 1 }, { n: 2 }]);
+  });
+
+  it('queued messages from a foreign owner are dropped when the frame registers under a different plugin', () => {
+    pluginViewBridge.postToFrame('pane1', { evil: 1 }, 'p2');       // queued by a foreign plugin
+    pluginViewBridge.postToFrame('pane1', { mine: 1 }, 'p1');       // queued by the future owner
+    pluginViewBridge.postToFrameFromHost('pane1', { theme: 1 });    // host path — unrestricted
+    const win = fakeWin();
+    pluginViewBridge.register('pane1', 'p1', win);
+    expect((win.postMessage as any).mock.calls.map((c: any[]) => c[0].data)).toEqual([{ mine: 1 }, { theme: 1 }]);
+  });
+
+  it('postToFrameFromHost delivers to a live frame regardless of owner', () => {
+    const win = fakeWin();
+    pluginViewBridge.register('pane1', 'p1', win);
+    pluginViewBridge.postToFrameFromHost('pane1', { theme: 1 });
+    expect(win.postMessage as any).toHaveBeenCalledWith({ __tsview: 1, data: { theme: 1 } }, '*');
   });
 
   it('routes an inbound iframe message to the worker stamped with frameId', () => {
@@ -46,7 +72,7 @@ describe('pluginViewBridge', () => {
   });
 
   it('drops a pane\'s buffered messages when it unregisters before the iframe loads', () => {
-    pluginViewBridge.postToFrame('paneX', { stale: 1 });   // buffered before register (iframe not loaded yet)
+    pluginViewBridge.postToFrame('paneX', { stale: 1 }, 'p1');   // buffered before register (iframe not loaded yet)
     pluginViewBridge.unregister('paneX');                 // pane closed before loading (onDestroy without window)
     const win = fakeWin();
     pluginViewBridge.register('paneX', 'p1', win);        // late registration must NOT flush the stale buffer
@@ -58,7 +84,7 @@ describe('pluginViewBridge', () => {
     pluginViewBridge.register('paneA', 'p1', a);
     pluginViewBridge.register('paneB', 'p1', b);
     pluginViewBridge.unregisterPlugin('p1');
-    pluginViewBridge.postToFrame('paneA', { x: 1 });
+    pluginViewBridge.postToFrame('paneA', { x: 1 }, 'p1');
     expect(a.postMessage as any).not.toHaveBeenCalled();
   });
 
@@ -67,11 +93,11 @@ describe('pluginViewBridge', () => {
     pluginViewBridge.register('pane1', 'p1', w1);
     pluginViewBridge.register('pane1', 'p1', w2);   // remount re-registered same paneId, new window
     pluginViewBridge.unregister('pane1', w1);                // old component's onDestroy with its (stale) window
-    pluginViewBridge.postToFrame('pane1', { x: 1 });
+    pluginViewBridge.postToFrame('pane1', { x: 1 }, 'p1');
     expect(w2.postMessage as any).toHaveBeenCalledWith({ __tsview: 1, data: { x: 1 } }, '*');
     pluginViewBridge.unregister('pane1', w2);                // real close
     (w2.postMessage as any).mockClear();
-    pluginViewBridge.postToFrame('pane1', { y: 2 });          // now buffered (no live reg)
+    pluginViewBridge.postToFrame('pane1', { y: 2 }, 'p1');    // now buffered (no live reg)
     expect(w2.postMessage as any).not.toHaveBeenCalled();
   });
 });
@@ -84,7 +110,7 @@ describe('pluginViewBridge frameId (SP-B docked)', () => {
     const post = vi.fn();
     const win = { postMessage: post } as unknown as Window;
     pluginViewBridge.register('panel:right:p:dash', 'p', win);
-    pluginViewBridge.postToFrame('panel:right:p:dash', { hello: 1 });
+    pluginViewBridge.postToFrame('panel:right:p:dash', { hello: 1 }, 'p');
     expect(post).toHaveBeenCalledWith({ __tsview: 1, data: { hello: 1 } }, '*');
   });
   it('inbound iframe message relays with frameId to the worker', () => {

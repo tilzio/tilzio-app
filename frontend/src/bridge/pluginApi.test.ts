@@ -64,6 +64,7 @@ describe('pluginApi', () => {
 });
 
 const simpleCtx = { pluginId: 'p1', setUi: () => {} };
+const writeCtx = { pluginId: 'p1', setUi: () => {}, permissions: ['terminal:write'] };
 
 describe('dispatch SP-5 capabilities', () => {
   beforeEach(() => {
@@ -89,21 +90,40 @@ describe('dispatch SP-5 capabilities', () => {
     expect(snap.activeSpaceId).toBe('sp1');
   });
 
-  it('terminal.paste writes text as-is (no newline) when pane is live', async () => {
+  it('terminal.paste writes text as-is (no newline) when permission granted and pane is live', async () => {
     vi.mocked(ptyEvents.isLive).mockReturnValue(true);
-    await dispatch(simpleCtx, 'terminal.paste', ['p1', 'git pull']);
+    await dispatch(writeCtx, 'terminal.paste', ['p1', 'git pull']);
     expect(coreBridge.write).toHaveBeenCalledWith('p1', 'git pull');
   });
 
-  it('terminal.run appends exactly one newline when pane is live', async () => {
+  it('terminal.run appends exactly one newline when permission granted and pane is live', async () => {
     vi.mocked(ptyEvents.isLive).mockReturnValue(true);
-    await dispatch(simpleCtx, 'terminal.run', ['p1', 'git pull']);
+    await dispatch(writeCtx, 'terminal.run', ['p1', 'git pull']);
     expect(coreBridge.write).toHaveBeenCalledWith('p1', 'git pull\n');
   });
 
   it('terminal.* rejects a non-live pane and does not write', async () => {
     vi.mocked(ptyEvents.isLive).mockReturnValue(false);
-    await expect(dispatch(simpleCtx, 'terminal.run', ['ghost', 'x'])).rejects.toThrow(/not live/);
+    await expect(dispatch(writeCtx, 'terminal.run', ['ghost', 'x'])).rejects.toThrow(/not live/);
+    expect(coreBridge.write).not.toHaveBeenCalled();
+  });
+
+  it('terminal.paste without terminal:write → throws (fail-closed) and does not write', async () => {
+    vi.mocked(ptyEvents.isLive).mockReturnValue(true);
+    await expect(dispatch({ ...simpleCtx, permissions: [] }, 'terminal.paste', ['p1', 'x'])).rejects.toThrow(/terminal:write/);
+    expect(coreBridge.write).not.toHaveBeenCalled();
+  });
+
+  it('terminal.run without terminal:write → throws (fail-closed) and does not write', async () => {
+    vi.mocked(ptyEvents.isLive).mockReturnValue(true);
+    await expect(dispatch({ ...simpleCtx, permissions: [] }, 'terminal.run', ['p1', 'x'])).rejects.toThrow(/terminal:write/);
+    expect(coreBridge.write).not.toHaveBeenCalled();
+  });
+
+  it('terminal.paste/run with undefined permissions field → also throws (fail-closed)', async () => {
+    vi.mocked(ptyEvents.isLive).mockReturnValue(true);
+    await expect(dispatch(simpleCtx, 'terminal.paste', ['p1', 'x'])).rejects.toThrow(/terminal:write/);
+    await expect(dispatch(simpleCtx, 'terminal.run', ['p1', 'x'])).rejects.toThrow(/terminal:write/);
     expect(coreBridge.write).not.toHaveBeenCalled();
   });
 
@@ -161,10 +181,10 @@ describe('dispatch SP-A terminal observe', () => {
 });
 
 describe('dispatch SP-B view bridge', () => {
-  it('dispatch view.post forwards to the view bridge by frameId', async () => {
+  it('dispatch view.post forwards to the view bridge with frameId AND the calling plugin as owner', async () => {
     const spy = vi.spyOn(pluginViewBridge, 'postToFrame').mockImplementation(() => {});
     await dispatch({ pluginId: 'p1', setUi: () => {}, permissions: [] }, 'view.post', ['pane1', { a: 1 }]);
-    expect(spy).toHaveBeenCalledWith('pane1', { a: 1 });
+    expect(spy).toHaveBeenCalledWith('pane1', { a: 1 }, 'p1');   // owner = ctx.pluginId, not attacker-controlled
     spy.mockRestore();
   });
 });

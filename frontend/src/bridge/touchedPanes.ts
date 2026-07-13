@@ -8,6 +8,10 @@ export const touchedPanes = {
   mark(paneId: string): void {
     touched.add(paneId);
   },
+  // Forget a pane that left the layout (paneReaper) — pane ids are never reused.
+  unmark(paneId: string): void {
+    touched.delete(paneId);
+  },
   isTouched(paneId: string): boolean {
     return touched.has(paneId);
   },

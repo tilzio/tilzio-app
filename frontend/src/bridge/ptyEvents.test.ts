@@ -10,10 +10,25 @@ const { mockMarkExited } = vi.hoisted(() => ({ mockMarkExited: vi.fn() }));
 vi.mock('./exitedPanes.svelte', () => ({ markExited: mockMarkExited }));
 
 import { ptyEvents, routeOutput, routeExited, isAlreadySpawnedError, __resetForTests } from './ptyEvents';
+import { reapedPanes, __resetForTests as resetReaped } from './reapedPanes';
 
 beforeEach(() => {
   __resetForTests();
+  resetReaped();
   mockMarkExited.mockClear();
+});
+
+describe('routeExited after a pane is reaped (closed + killed)', () => {
+  it('skips markExited for a reaped pane — the trailing exit of a kill must not resurrect the entry', () => {
+    reapedPanes.mark('gone');
+    routeExited('gone', 0);
+    expect(mockMarkExited).not.toHaveBeenCalled();
+  });
+
+  it('still records exits of panes that were not reaped', () => {
+    routeExited('alive', 3);
+    expect(mockMarkExited).toHaveBeenCalledWith('alive', 3);
+  });
 });
 
 describe('ptyEvents', () => {

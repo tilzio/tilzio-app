@@ -70,12 +70,14 @@ export async function dispatch(ctx: ApiContext, method: string, args: unknown[])
       // The subscription is recorded in the worker (prelude); the host has nothing to do (like ui.onEvent).
       return undefined;
     case 'terminal.paste': {
+      if (!(ctx.permissions ?? []).includes('terminal:write')) throw new Error('permission terminal:write not declared');
       const [paneId, text] = args as [unknown, unknown];
       if (!ptyEvents.isLive(String(paneId))) throw new Error('pane not live');
       await coreBridge.write(String(paneId), String(text)); // as-is, no \n
       return undefined;
     }
     case 'terminal.run': {
+      if (!(ctx.permissions ?? []).includes('terminal:write')) throw new Error('permission terminal:write not declared');
       const [paneId, command] = args as [unknown, unknown];
       if (!ptyEvents.isLive(String(paneId))) throw new Error('pane not live');
       await coreBridge.write(String(paneId), String(command) + '\n'); // +one Enter; internal \n are NOT stripped — cleanliness is the plugin's job (R3, trusted)
@@ -105,7 +107,8 @@ export async function dispatch(ctx: ApiContext, method: string, args: unknown[])
     }
     case 'view.post': {
       const [frameId, msg] = args as [unknown, unknown];
-      pluginViewBridge.postToFrame(String(frameId), msg);
+      // ctx.pluginId as owner: a plugin can only post into ITS OWN frames (mismatch → drop).
+      pluginViewBridge.postToFrame(String(frameId), msg, ctx.pluginId);
       return undefined;
     }
     default:

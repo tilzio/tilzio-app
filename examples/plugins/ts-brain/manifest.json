@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "engine": "tilzio@1",
   "entry": "main.js",
-  "permissions": ["state:read"],
+  "permissions": [],
   "contributes": {
     "views": [{ "id": "main", "title": "Second Brain", "entry": "view.html" }],
     "activityBar": [{ "id": "brain.btn", "icon": "🧠", "title": "Second Brain", "opens": "view:main" }]

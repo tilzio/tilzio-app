@@ -3,7 +3,17 @@
 // so when the iframe reloads (drag / tab switch) the state is restored.
 ts.onActivate(function () {
   var logs = {}; // paneId -> [log lines]
-  function add(paneId, text) { (logs[paneId] = logs[paneId] || []).push(text); return text; }
+  // Cap: keep the last 200 lines per pane (unbounded growth otherwise). The logs are
+  // keyed by VIEW frame ids (iframe tiles), not terminal panes — ts.terminal.onExit
+  // does not apply to them, so there is no exit hook to delete an entry on; the cap
+  // is the bound.
+  var MAX_LINES = 200;
+  function add(paneId, text) {
+    var l = logs[paneId] = logs[paneId] || [];
+    l.push(text);
+    if (l.length > MAX_LINES) l.splice(0, l.length - MAX_LINES);
+    return text;
+  }
   ts.view.onMessage(function (msg, paneId) {
     if (!msg || !msg.type) return;
     if (msg.type === 'sync') {                 // iframe loaded → return the accumulated log

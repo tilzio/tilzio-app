@@ -18,8 +18,33 @@ function statusItems(out) {
     .map(function (l) { return { text: l }; });
 }
 
-async function refresh() {
+// refresh() is throttled (≥500ms between runs, extra calls coalesce into one trailing
+// run), single-flight, and generation-guarded — an out-of-order completion can't
+// overwrite a newer result. Errors show 'no git' instead of an unhandled rejection
+// leaving a stale branch on the chip.
+var refreshGen = 0, refreshInFlight = false, lastRefreshMs = 0, refreshTimer = null;
+
+function refresh() {
+  var wait = 500 - (Date.now() - lastRefreshMs);
+  if (refreshInFlight || wait > 0) {
+    if (!refreshTimer) refreshTimer = setTimeout(function () { refreshTimer = null; refresh(); }, Math.max(wait, 100));
+    return;
+  }
+  lastRefreshMs = Date.now();
+  refreshInFlight = true;
+  var gen = ++refreshGen;
+  doRefresh(gen)
+    .catch(function () {
+      if (gen !== refreshGen) return;
+      ts.ui.update('git.branch', { text: '🌿 no git', tone: 'warn' });
+      ts.ui.update('git.panel', { widgets: [{ type: 'text', text: 'git unavailable', tone: 'warn' }] });
+    })
+    .finally(function () { refreshInFlight = false; });   // finally: даже throw в catch-хендлере не заморозит refresh
+}
+
+async function doRefresh(gen) {
   var snap = await ts.state.get();
+  if (gen !== refreshGen) return;
   var pane = activePane(snap);
   if (!pane) {
     ts.ui.update('git.branch', { text: '🌿 —' });
@@ -28,6 +53,7 @@ async function refresh() {
   }
   var cwd = pane.cwd;
   var br = await ts.exec('git', ['branch', '--show-current'], { cwd: cwd });
+  if (gen !== refreshGen) return;
   if (br.code !== 0) {
     ts.ui.update('git.branch', { text: '🌿 no git', tone: 'warn' });
     ts.ui.update('git.panel', { widgets: [{ type: 'text', label: cwd, text: 'Not a git repository', tone: 'warn' }] });
@@ -38,6 +64,7 @@ async function refresh() {
 
   // br.code!==0 (not a git repository) is already caught above → git is valid here.
   var st = await ts.exec('git', ['status', '--porcelain'], { cwd: cwd });
+  if (gen !== refreshGen) return;
   var items = statusItems(st.stdout);
   ts.ui.update('git.panel', { widgets: [
     { type: 'text', label: 'branch', text: branch + '  ·  ' + cwd, tone: 'accent' },

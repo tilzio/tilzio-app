@@ -4,12 +4,6 @@
 
 // --- утилиты/санитайзеры (function-декларации → видимы тест-харнессу) ---
 function num(x) { var n = Number(x); return isFinite(n) ? n : 0; }
-function limitAlerts(t, settings) {
-  var thr = (settings && settings.alertPct != null) ? num(settings.alertPct) : 80;
-  var w = (t.window && t.window.utilPct != null) ? num(t.window.utilPct) : -1;
-  var wk = (t.week && t.week.utilPct != null) ? num(t.week.utilPct) : -1;
-  return (w >= thr) || (wk >= thr);
-}
 function str(x) { return x == null ? '' : String(x); }
 function fmtMoney(x) { return '$' + num(x).toFixed(2); }
 function fmtPct(x) { return Math.round(num(x)) + '%'; }
@@ -32,22 +26,6 @@ function minutesUntilISO(iso, nowMs) {
   var now = isFinite(nowMs) ? nowMs : Date.now();
   return Math.max(0, Math.round((t - now) / 60000));
 }
-function dayLabel(d) { var s = str(d); var m = s.match(/(\d{1,2})$/); return m ? m[1] : s; }
-function sparkBars(values, dates) {
-  var vals = (values || []).map(num);
-  var max = vals.reduce(function (a, b) { return b > a ? b : a; }, 0);
-  return vals.map(function (v, i) {
-    var lbl = (dates && dates[i] != null) ? dayLabel(dates[i]) : String(i + 1);
-    return { label: lbl, value: v, tone: heightTone(v, max) };
-  });
-}
-
-function threshTone(pct) {
-  var p = num(pct);
-  if (p >= 85) return 'error';
-  if (p >= 60) return 'warn';
-  return 'success';
-}
 // Цвет чипа лимита (status-bar) по порогу алерта — макет красит чип, а не фикс-цветом:
 // ≥ порога → красный, ≥ 60% порога → жёлтый, иначе зелёный (Gruvbox).
 function threshColorHex(pct, alertPct) {
@@ -56,23 +34,6 @@ function threshColorHex(pct, alertPct) {
   if (p >= thr * 0.6) return '#fabd2f';
   return '#b8bb26';
 }
-// --- редизайн Tilzio: общие хелперы ---
-var PROVIDER_SQUARE = { claude: '🟧', codex: '🟦', cursor: '🟪', gemini: '🟨' };
-function providerSquare(t) {
-  if (t && t.available === false) return '⬜';
-  return (t && PROVIDER_SQUARE[t.id]) || '⬜';
-}
-// тепловая шкала по относительной высоте столбика (4 доступных tone хоста)
-function heightTone(value, max) {
-  var f = (num(max) > 0) ? num(value) / num(max) : 0;
-  if (f >= 0.85) return 'error';
-  if (f >= 0.60) return 'accent';
-  if (f >= 0.35) return 'warn';
-  return 'success';
-}
-// глиф порога (как ic-dot/ic-warn/ic-stop в макете)
-function threshGlyph(tone) { return tone === 'error' ? '⏹' : tone === 'warn' ? '▲' : '●'; }
-
 // §5 тренд: сравнение округлённых %, '' если нет прошлого или равно.
 function trendArrow(cur, prev) {
   if (prev == null || cur == null) return '';
@@ -120,9 +81,28 @@ function tokTypes(row) {
   };
 }
 
-function parseDaily(dailyJson) {
+// Дата строки ccusage: реальный CLI пишет period ('2026-07-13' daily/weekly,
+// '2026-07' monthly); date — legacy-запасной.
+function rowDate(row) { return str(row && (row.date != null ? row.date : row.period)); }
+// Локальная дата 'YYYY-MM-DD' (ccusage тоже группирует по локальному дню).
+function localYMD(nowMs) {
+  var d = new Date(isFinite(nowMs) ? nowMs : Date.now());
+  var m = d.getMonth() + 1, day = d.getDate();
+  return d.getFullYear() + '-' + (m < 10 ? '0' : '') + m + '-' + (day < 10 ? '0' : '') + day;
+}
+// 'YYYY-MM-DD…' → номер дня (UTC-базис, только для разницы дат) | null.
+function ymdToDayNum(s) {
+  var m = str(s).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return null;
+  return Math.floor(Date.UTC(num(m[1]), num(m[2]) - 1, num(m[3])) / 86400000);
+}
+
+// Последняя строка = «сегодня» только если period совпадает с текущей локальной датой:
+// утром до первого запроса ccusage отдаёт вчерашний день последним → честные нули.
+function parseDaily(dailyJson, nowMs) {
   var arr = (dailyJson && Array.isArray(dailyJson.daily)) ? dailyJson.daily : [];
   var last = arr.length ? arr[arr.length - 1] : null;
+  if (last && rowDate(last) !== localYMD(nowMs)) last = null;
   var sparkRows = arr.slice(-7);
   return {
     todayCost: last ? rowCost(last) : 0,
@@ -133,15 +113,22 @@ function parseDaily(dailyJson) {
   };
 }
 
-function parseWeekly(weeklyJson) {
+// Неделя валидна, только если «сегодня» ∈ [weekStart, weekStart+7d).
+function parseWeekly(weeklyJson, nowMs) {
   var arr = (weeklyJson && Array.isArray(weeklyJson.weekly)) ? weeklyJson.weekly : [];
   var last = arr.length ? arr[arr.length - 1] : null;
+  if (last) {
+    var ws = ymdToDayNum(rowDate(last)), today = ymdToDayNum(localYMD(nowMs));
+    if (ws == null || today == null || today < ws || today >= ws + 7) last = null;
+  }
   return { weekCost: last ? rowCost(last) : 0, weekTok: tokTypes(last) };
 }
 
-function parseMonthly(monthlyJson) {
+// Месяц валиден, только если 'YYYY-MM' совпадает с текущим локальным месяцем.
+function parseMonthly(monthlyJson, nowMs) {
   var arr = (monthlyJson && Array.isArray(monthlyJson.monthly)) ? monthlyJson.monthly : [];
   var last = arr.length ? arr[arr.length - 1] : null;
+  if (last && rowDate(last).slice(0, 7) !== localYMD(nowMs).slice(0, 7)) last = null;
   return { monthCost: last ? rowCost(last) : 0, monthTok: tokTypes(last) };
 }
 
@@ -173,24 +160,45 @@ function parseResetText(text, nowMs) {
   return d.toISOString();
 }
 
-// Строка с якорем anchor → { utilPct, resetAt } | null (нет строки или нет % → null).
-function parseUsageLine(s, anchor, nowMs) {
-  var lines = String(s || '').split('\n');
-  var line = null;
-  for (var i = 0; i < lines.length; i++) { if (lines[i].indexOf(anchor) >= 0) { line = lines[i]; break; } }
-  if (line == null) return null;
-  var pm = line.match(/(\d+)%/);
+// Одна строка лимита → { utilPct, resetAt } | null (нет % → null).
+function parseLimitFragment(line, nowMs) {
+  var pm = String(line || '').match(/(\d+)%/);
   if (!pm) return null;
-  var rm = line.match(/resets\s+(.+?)\s*$/i);
+  var rm = String(line || '').match(/resets\s+(.+?)\s*$/i);
   return { utilPct: num(pm[1]), resetAt: parseResetText(rm ? rm[1] : '', nowMs) };
 }
 
+// Строка с якорем anchor → { utilPct, resetAt } | null (нет строки или нет % → null).
+function parseUsageLine(s, anchor, nowMs) {
+  var lines = String(s || '').split('\n');
+  for (var i = 0; i < lines.length; i++) {
+    if (lines[i].indexOf(anchor) >= 0) return parseLimitFragment(lines[i], nowMs);
+  }
+  return null;
+}
+
+// Пер-модельная неделя: 'Current week (<model>)', где <model> ≠ 'all models'.
+// CLI печатал 'Sonnet only', теперь напр. 'Fable' — якорь по конкретной модели мёртв,
+// поэтому берём ЛЮБУЮ модельную скобку → { utilPct, resetAt, label } | null.
+function parseModelWeekLine(s, nowMs) {
+  var lines = String(s || '').split('\n');
+  for (var i = 0; i < lines.length; i++) {
+    var m = lines[i].match(/^\s*Current week \(([^)]+)\)/);
+    if (!m || /^all models$/i.test(m[1])) continue;
+    var frag = parseLimitFragment(lines[i], nowMs);
+    if (!frag) continue;
+    return { utilPct: frag.utilPct, resetAt: frag.resetAt, label: m[1] };
+  }
+  return null;
+}
+
 // stdout `claude -p /usage` → { fiveHour, sevenDay, sonnet } | null (нет ни одной валидной строки).
+// Поле называется sonnet для совместимости (стор/панель), но несёт label текущей модели.
 function parseUsageText(stdout, nowMs) {
   var s = String(stdout || '');
   var fiveHour = parseUsageLine(s, 'Current session', nowMs);
   var sevenDay = parseUsageLine(s, 'Current week (all models)', nowMs);
-  var sonnet = parseUsageLine(s, 'Current week (Sonnet only)', nowMs);
+  var sonnet = parseModelWeekLine(s, nowMs);
   if (!fiveHour && !sevenDay && !sonnet) return null;
   return { fiveHour: fiveHour, sevenDay: sevenDay, sonnet: sonnet };
 }
@@ -209,7 +217,10 @@ async function execCcusage(tool, subArgs, execFn) {
     try { json = JSON.parse(r.stdout); } catch (e) { return { ok: false, parse: true }; }
     return { ok: true, json: json };
   } catch (e) {
-    return { ok: false, error: (e && e.message) || String(e) };
+    // Отсутствующий бинарь REJECT'ится брокером ('…executable file not found…'),
+    // а не приходит в r.stderr — иначе баннер '⚠ Install ccusage' никогда не покажется.
+    var em = (e && e.message) || String(e);
+    return { ok: false, notFound: /not found|ENOENT/i.test(em), error: em };
   }
 }
 
@@ -233,13 +244,22 @@ function parseActiveWindow(blocksJson, nowMs) {
 
 function buildClaude(usage, blocksJson, dailyJson, weeklyJson, nowMs, monthlyJson) {
   var win = parseActiveWindow(blocksJson, nowMs);   // {resetAt,resetMin,costUSD,tokens} | null
-  var day = parseDaily(dailyJson);
-  var wk = parseWeekly(weeklyJson);
-  var mo = parseMonthly(monthlyJson);
+  var day = parseDaily(dailyJson, nowMs);
+  var wk = parseWeekly(weeklyJson, nowMs);
+  var mo = parseMonthly(monthlyJson, nowMs);
   var window = win ? { resetAt: win.resetAt, resetMin: win.resetMin, costUSD: win.costUSD, tokens: win.tokens } : undefined;
   if (window && usage && usage.fiveHour) {
     window.utilPct = usage.fiveHour.utilPct;
     if (!window.resetMin && usage.fiveHour.resetAt) window.resetMin = minutesUntilISO(usage.fiveHour.resetAt, nowMs);
+  } else if (!window && usage && usage.fiveHour) {
+    // Нет активного ccusage-окна (ccusage не стоит / блок не найден) — % из
+    // `claude -p /usage` всё равно должен дойти до чипа/панели и алерта 5h.
+    // cost/tokens блока намеренно отсутствуют (без ccusage они неизвестны).
+    window = { utilPct: usage.fiveHour.utilPct };
+    if (usage.fiveHour.resetAt) {
+      window.resetAt = usage.fiveHour.resetAt;
+      window.resetMin = minutesUntilISO(usage.fiveHour.resetAt, nowMs);
+    }
   }
   var week = { costUSD: wk.weekCost };
   if (usage && usage.sevenDay) { week.utilPct = usage.sevenDay.utilPct; week.resetAt = usage.sevenDay.resetAt; }
@@ -270,20 +290,21 @@ function buildCodex(dailyJson, monthlyJson) {
 function buildStub(id, name) {
   return { id: id, name: name, dot: '⚪', available: false, note: 'no local source' };
 }
-function pickHottest(tools) {
-  var withPct = tools.filter(function (t) { return t && t.available && t.window && t.window.utilPct != null; });
-  if (withPct.length) {
-    return withPct.reduce(function (a, b) { return b.window.utilPct > a.window.utilPct ? b : a; });
-  }
-  var avail = tools.filter(function (t) { return t && t.available && t.today; });
-  if (!avail.length) return null;
-  return avail.reduce(function (a, b) { return num(b.today.costUSD) > num(a.today.costUSD) ? b : a; });
-}
 
 // --- статус-бар: per-provider чипы (Этап C) ---
 // thresh:true → цвет чипа считается по порогу (threshColorHex), а не из defaultColor.
+// Оригинальные бренд-иконки (Simple Icons, path 24×24) для чипов имён статус-бара.
+// Хост рендерит их inline-SVG через iconPath/iconColor (pluginSlots.cleanIconPath).
+// Дубликат panel.html GLYPH_PATHS — осознанный (изоляция worker/iframe).
+var SB_ICON_PATHS = {
+  claude: 'm4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z',
+  codex: 'M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2058 5.9894 5.9894 0 0 0 3.9977-2.9001 6.0557 6.0557 0 0 0-.7475-7.0729zm-9.022 12.6081a4.4755 4.4755 0 0 1-2.8764-1.0408l.1419-.0804 4.7783-2.7582a.7948.7948 0 0 0 .3927-.6813v-6.7369l2.02 1.1686a.071.071 0 0 1 .038.052v5.5826a4.504 4.504 0 0 1-4.4945 4.4944zm-9.6607-4.1254a4.4708 4.4708 0 0 1-.5346-3.0137l.142.0852 4.783 2.7582a.7712.7712 0 0 0 .7806 0l5.8428-3.3685v2.3324a.0804.0804 0 0 1-.0332.0615L9.74 19.9502a4.4992 4.4992 0 0 1-6.1408-1.6464zM2.3408 7.8956a4.485 4.485 0 0 1 2.3655-1.9728V11.6a.7664.7664 0 0 0 .3879.6765l5.8144 3.3543-2.0201 1.1685a.0757.0757 0 0 1-.071 0l-4.8303-2.7865A4.504 4.504 0 0 1 2.3408 7.872zm16.5963 3.8558L13.1038 8.364 15.1192 7.2a.0757.0757 0 0 1 .071 0l4.8303 2.7913a4.4944 4.4944 0 0 1-.6765 8.1042v-5.6772a.79.79 0 0 0-.407-.667zm2.0107-3.0231l-.142-.0852-4.7735-2.7818a.7759.7759 0 0 0-.7854 0L9.409 9.2297V6.8974a.0662.0662 0 0 1 .0284-.0615l4.8303-2.7866a4.4992 4.4992 0 0 1 6.6802 4.66zM8.3065 12.863l-2.02-1.1638a.0804.0804 0 0 1-.038-.0567V6.0742a4.4992 4.4992 0 0 1 7.3757-3.4537l-.142.0805L8.704 5.459a.7948.7948 0 0 0-.3927.6813zm1.0976-2.3654l2.602-1.4998 2.6069 1.4998v2.9994l-2.5974 1.4997-2.6067-1.4997Z'
+};
+// Клод — фирменная терракота; Codex монохромный и наследует цвет чипа.
+var SB_ICON_COLORS = { claude: '#D97757' };
+
 var SB_TEMPLATES = {
-  name:  { title: 'Name',         defaultOn: true,  defaultColor: '#ebdbb2', applies: function (t) { return true; },                                  sb: function (t) { return providerSquare(t) + ' ' + t.name; } },
+  name:  { title: 'Name',         defaultOn: true,  defaultColor: '#ebdbb2', applies: function (t) { return true; },                                  sb: function (t) { return t.name; } },
   '5h':  { title: '5h limit',     defaultOn: true,  thresh: true,            defaultColor: '#fabd2f', applies: function (t) { return !!(t.hasLimits || (t.window && t.window.utilPct != null)); },  sb: function (t) { var v = (t.window && t.window.utilPct != null) ? t.window.utilPct : 0; return '5h ' + fmtPct(v); } },
   week:  { title: 'Weekly limit', defaultOn: true,  thresh: true,            defaultColor: '#b8bb26', applies: function (t) { return !!(t.hasLimits || (t.week && t.week.utilPct != null)); },      sb: function (t) { var v = (t.week && t.week.utilPct != null) ? t.week.utilPct : 0; return 'wk ' + fmtPct(v); } },
   today: { title: '$ today',      defaultOn: true,  defaultColor: '#ebdbb2', applies: function (t) { return !!t.today; },                              sb: function (t) { return fmtMoney(t.today.costUSD); } },
@@ -310,7 +331,6 @@ function orderedChipKeys(provider) {
 // Лимит-чипы (thresh) красятся по порогу алерта; остальные — фикс-цветом шаблона.
 function sbChipUpdates(tools, settings) {
   var out = [];
-  out.push({ id: 'usage.sb.watcher', data: { text: 'Watcher', icon: '⏱', color: '#fe8019', fill: true, command: 'usage.refresh', priority: 60 } });
   var alertThr = (settings && settings.alertPct != null) ? num(settings.alertPct) : 80;
   SB_PROVIDERS.forEach(function (p, pIdx) {
     var tool = (tools || []).find(function (t) { return t.id === p.id; });
@@ -322,6 +342,10 @@ function sbChipUpdates(tools, settings) {
       var text = (toolOn && chipOn(p.id, key, settings) && tmpl && tmpl.applies(tool)) ? tmpl.sb(tool) : null;
       if (text == null || text === '') { out.push({ id: id, data: {} }); return; }
       var chipData = { text: text, command: 'usage.refresh', priority: base + idx, group: p.id };
+      if (key === 'name' && SB_ICON_PATHS[p.id]) {
+        chipData.iconPath = SB_ICON_PATHS[p.id];
+        if (SB_ICON_COLORS[p.id]) chipData.iconColor = SB_ICON_COLORS[p.id];
+      }
       if (tmpl.thresh) {
         var chipUtil = (key === '5h')
           ? ((tool && tool.window && tool.window.utilPct != null) ? num(tool.window.utilPct) : 0)
@@ -341,7 +365,7 @@ function sbChipUpdates(tools, settings) {
 var CARD_METRICS = [
   { id: 'card.5h',        title: '5h limit',        block: 'limits',  defaultOn: true },
   { id: 'card.week',      title: 'Weekly limit',    block: 'limits',  defaultOn: true },
-  { id: 'card.weekSonnet',title: 'Sonnet week %',   block: 'limits',  defaultOn: true },
+  { id: 'card.weekSonnet',title: 'Model week %',    block: 'limits',  defaultOn: true },
   { id: 'card.daySpend',  title: '$ Today',         block: 'spend',   defaultOn: true },
   { id: 'card.weekSpend', title: '$ Week',          block: 'spend',   defaultOn: true },
   { id: 'card.monthSpend',title: '$ Month',         block: 'spend',   defaultOn: true },
@@ -352,22 +376,15 @@ var CARD_METRICS = [
 var BOARD_METRICS = [ { id: 'board.spark7all', title: 'Combined 7d sparkline', defaultOn: false } ];
 
 var BLOCKS = ['limits', 'spend', 'history', 'tokens'];
-function metricsInBlock(block) {
-  return CARD_METRICS.filter(function (m) { return m.block === block; }).map(function (m) { return m.id; });
-}
+// Известные id для валидации сообщений из iframe (сообщениям не доверяем):
+var TOOL_IDS = ['claude', 'codex', 'cursor', 'gemini'];
+var METRIC_IDS = CARD_METRICS.concat(BOARD_METRICS).map(function (m) { return m.id; });
+var BLOCK_VIZ = { limits: ['meter', 'rings'], history: ['bars', 'line'] };
 function orderedBlocks(settings) {
   var saved = (settings && Array.isArray(settings.blockOrder)) ? settings.blockOrder : [];
   var out = [];
   saved.forEach(function (b) { if (BLOCKS.indexOf(b) >= 0 && out.indexOf(b) < 0) out.push(b); });
   BLOCKS.forEach(function (b) { if (out.indexOf(b) < 0) out.push(b); });
-  return out;
-}
-function orderedMetricIds(block, settings) {
-  var all = metricsInBlock(block);
-  var saved = (settings && settings.boardOrder && Array.isArray(settings.boardOrder[block])) ? settings.boardOrder[block] : [];
-  var out = [];
-  saved.forEach(function (id) { if (all.indexOf(id) >= 0 && out.indexOf(id) < 0) out.push(id); });
-  all.forEach(function (id) { if (out.indexOf(id) < 0) out.push(id); });
   return out;
 }
 function cardMetricOn(id, settings) {
@@ -379,6 +396,18 @@ function cardMetricOn(id, settings) {
 
 // --- алерты: порог + антиспам ---
 
+// ISO-неделя 'YYYY-Www' — запасной dedup-ключ недельного алерта, когда reset-текст
+// не распарсился (без него алерт молча не срабатывал вовсе).
+function isoWeekKey(nowMs) {
+  var d = new Date(isFinite(nowMs) ? nowMs : Date.now());
+  var t = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  t.setDate(t.getDate() - ((t.getDay() + 6) % 7) + 3);            // четверг текущей недели
+  var jan4 = new Date(t.getFullYear(), 0, 4);
+  jan4.setDate(jan4.getDate() - ((jan4.getDay() + 6) % 7) + 3);   // четверг первой ISO-недели
+  var wk = 1 + Math.round((t - jan4) / 604800000);
+  return t.getFullYear() + '-W' + (wk < 10 ? '0' : '') + wk;
+}
+
 // Возвращает { notify: string|null, alerted: {window?, week?} } — слитое новое состояние.
 function checkAlerts(claude, alertPct, alerted) {
   alerted = alerted || {};
@@ -387,14 +416,16 @@ function checkAlerts(claude, alertPct, alerted) {
   // Макет тоста: заголовок «Claude · <лимит> N%», тело «Threshold X% exceeded · resets in <dur>».
   var breaches = [];
   var w = claude.window;
-  if (w && w.utilPct != null && w.utilPct >= alertPct && w.resetAt && alerted.window !== w.resetAt) {
+  var wKey = (w && w.resetAt) ? w.resetAt : ('5h:' + localYMD(Date.now()));   // без resetAt — раз в день
+  if (w && w.utilPct != null && w.utilPct >= alertPct && alerted.window !== wKey) {
     breaches.push({ label: '5h limit ' + fmtPct(w.utilPct), resetMin: w.resetMin });
-    out.alerted.window = w.resetAt;
+    out.alerted.window = wKey;
   }
   var wk = claude.week;
-  if (wk && wk.utilPct != null && wk.utilPct >= alertPct && wk.resetAt && alerted.week !== wk.resetAt) {
+  var wkKey = (wk && wk.resetAt) ? wk.resetAt : isoWeekKey();   // без resetAt — раз в ISO-неделю
+  if (wk && wk.utilPct != null && wk.utilPct >= alertPct && alerted.week !== wkKey) {
     breaches.push({ label: 'week ' + fmtPct(wk.utilPct), resetMin: wk.resetMin });
-    out.alerted.week = wk.resetAt;
+    out.alerted.week = wkKey;
   }
   if (breaches.length) {
     var first = breaches[0];
@@ -411,7 +442,7 @@ function defaultSettings() {
   CARD_METRICS.concat(BOARD_METRICS).forEach(function (m) { metrics[m.id] = !!m.defaultOn; });
   var chips = {};
   SB_PROVIDERS.forEach(function (p) { p.keys.forEach(function (key) { chips[chipKey(p.id, key)] = !!SB_TEMPLATES[key].defaultOn; }); });
-  return { metrics: metrics, tools: { claude: true, codex: true, cursor: false, gemini: false }, alertPct: 80, collapsed: {}, limitViz: 'meter', showFill: true, historyViz: 'bars', chips: chips, boardOrder: { limits: [], spend: [], history: [], tokens: [] }, blockOrder: ['limits', 'spend', 'history', 'tokens'], blocks: { limits: true, spend: true, history: true, tokens: true } };
+  return { metrics: metrics, tools: { claude: true, codex: true, cursor: false, gemini: false }, alertPct: 80, collapsed: {}, limitViz: 'meter', showFill: true, historyViz: 'bars', chips: chips, blockOrder: ['limits', 'spend', 'history', 'tokens'], blocks: { limits: true, spend: true, history: true, tokens: true } };
 }
 
 // --- настройки: storage, дефолты, тумблеры, режим настроек ---
@@ -429,20 +460,15 @@ async function loadSettings() {
   var showFill = saved.showFill !== false;
   var historyViz = (saved.historyViz === 'line') ? 'line' : 'bars';
   var chips = Object.assign({}, def.chips, (saved.chips && typeof saved.chips === 'object') ? saved.chips : {});
-  var boardOrder = (function () {
-    var v = saved.boardOrder, out = { limits: [], spend: [], history: [], tokens: [] };
-    if (v && typeof v === 'object') BLOCKS.forEach(function (b) { if (Array.isArray(v[b])) out[b] = v[b].filter(function (x) { return typeof x === 'string'; }); });
-    return out;
-  })();
   var blockOrder = Array.isArray(saved.blockOrder) ? saved.blockOrder.filter(function (b) { return typeof b === 'string'; }) : ['limits', 'spend', 'history', 'tokens'];
   var blocks = Object.assign({ limits: true, spend: true, history: true, tokens: true }, (saved.blocks && typeof saved.blocks === 'object') ? saved.blocks : {});
-  return { metrics: metrics, tools: tools, alertPct: alertPct, collapsed: collapsed, limitViz: limitViz, showFill: showFill, historyViz: historyViz, chips: chips, boardOrder: boardOrder, blockOrder: blockOrder, blocks: blocks };
+  return { metrics: metrics, tools: tools, alertPct: alertPct, collapsed: collapsed, limitViz: limitViz, showFill: showFill, historyViz: historyViz, chips: chips, blockOrder: blockOrder, blocks: blocks };
 }
 async function saveSettings(s) { try { await ts.storage.set('settings', s); } catch (e) {} }
 function clampAlert(x) { return Math.max(5, Math.min(95, Math.round(num(x)))); }
 
 // --- модульное состояние воркера ---
-var STATE = { settings: null, tools: [], hottest: null, alerted: {},
+var STATE = { settings: null, tools: [], alerted: {},
               usage: null, usageDiag: '', ccusageMissing: false, notifiedNoCcusage: false,
               lastUsageMs: 0, lastCcusageMs: 0, prevPct: {}, trends: {}, viewFrameId: null };
 
@@ -504,7 +530,6 @@ var refresh = async function (opts) {
   STATE.lastCcusageMs = nowMs;
   var res = await collectTools(STATE.settings, usage, nowMs);
   STATE.tools = res.tools;
-  STATE.hottest = pickHottest(res.tools);
   STATE.ccusageMissing = res.ccusageMissing;
   if (freshUsage) {
     STATE.trends = computeTrends(STATE.tools, STATE.prevPct);
@@ -567,46 +592,64 @@ ts.onDeactivate(function () { if (timer) clearInterval(timer); });
 
 // Handshake с iframe-панелью: фрейм шлёт {type:'ready'} после монтирования → запоминаем его
 // frameId и сразу пушим текущий снапшот. Остальной message-dispatch реализует Task 4.
+// Все поля входящего сообщения валидируются против известных наборов id;
+// мусор игнорируется молча — из malformed message не достижим ни один throw.
 async function handleViewMessage(msg) {
   var s = STATE.settings;
   if (!s) return;
   switch (msg.type) {
     case 'refresh': await refresh({ usage: false }); return;           // refresh() calls postState()+renderStatus()
     case 'toggleCollapse':
+      if (typeof msg.provider !== 'string' || TOOL_IDS.indexOf(msg.provider) < 0) return;
       if (!s.collapsed) s.collapsed = {};
       s.collapsed[msg.provider] = !(s.collapsed && s.collapsed[msg.provider] === true);
       break;
-    case 'setBlockViz':
-      if (msg.block === 'limits') s.limitViz = (msg.viz === 'rings') ? 'rings' : 'meter';
-      else if (msg.block === 'history') s.historyViz = (msg.viz === 'line') ? 'line' : 'bars';
+    case 'setBlockViz': {
+      var allowedViz = BLOCK_VIZ[msg.block];
+      if (!allowedViz || typeof msg.viz !== 'string' || allowedViz.indexOf(msg.viz) < 0) return;
+      if (msg.block === 'limits') s.limitViz = msg.viz;
+      else s.historyViz = msg.viz;
       break;
+    }
     case 'toggleFill':
       s.showFill = !(s.showFill !== false);   // parity with the old "Fill scale" setting (default on → bare % when off)
       break;
     case 'toggleTool':
+      if (typeof msg.tool !== 'string' || TOOL_IDS.indexOf(msg.tool) < 0) return;
       if (!s.tools) s.tools = {};
       s.tools[msg.tool] = !(s.tools && s.tools[msg.tool]);
       await saveSettings(s); await refresh({ usage: false }); return;   // refetch tools
-    case 'setAlert':
-      s.alertPct = clampAlert(num(s.alertPct) + num(msg.delta));
+    case 'setAlert': {
+      var delta = Number(msg.delta);
+      if (!isFinite(delta)) return;
+      s.alertPct = clampAlert(num(s.alertPct) + delta);
       break;
+    }
     case 'reorderBlocks': {
-      var ord = (msg.order || []).filter(function (b) { return BLOCKS.indexOf(b) >= 0; });
-      if (ord.length) s.blockOrder = ord;
+      if (!Array.isArray(msg.order)) return;
+      var ord = [];
+      msg.order.forEach(function (b) { if (BLOCKS.indexOf(b) >= 0 && ord.indexOf(b) < 0) ord.push(b); });
+      if (!ord.length) return;
+      s.blockOrder = ord;
       break;
     }
     case 'toggleBlock':
+      if (typeof msg.block !== 'string' || BLOCKS.indexOf(msg.block) < 0) return;
       if (!s.blocks) s.blocks = { limits: true, spend: true, history: true, tokens: true };
-      if (BLOCKS.indexOf(msg.block) >= 0) s.blocks[msg.block] = !(s.blocks[msg.block] !== false);
+      s.blocks[msg.block] = !(s.blocks[msg.block] !== false);
       break;
     case 'toggleMetric':
+      if (typeof msg.id !== 'string' || METRIC_IDS.indexOf(msg.id) < 0) return;
       if (!s.metrics) s.metrics = {};
       s.metrics[msg.id] = !cardMetricOn(msg.id, s);
       break;
-    case 'toggleChip':
+    case 'toggleChip': {
+      var prov = SB_PROVIDERS.find(function (p) { return p.id === msg.provider; });
+      if (!prov || typeof msg.key !== 'string' || prov.keys.indexOf(msg.key) < 0) return;
       if (!s.chips) s.chips = {};
       s.chips[chipKey(msg.provider, msg.key)] = !chipOn(msg.provider, msg.key, s);
       break;
+    }
     default: return;
   }
   await saveSettings(s);

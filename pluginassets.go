@@ -87,15 +87,44 @@ func pluginCSP(net bool, origin string) string {
 	}, "; ")
 }
 
-// injectViewBridge inserts the prelude after <head> (otherwise after <body>, otherwise at the start).
+// injectViewBridge inserts the prelude right after the opening <head ...> tag
+// (otherwise after <body ...>, otherwise at the start). Tags with attributes and
+// any letter case are matched — a bare-"<head>"-only match would dump the
+// prelude before <!doctype> and flip the iframe into quirks mode.
 func injectViewBridge(html []byte) []byte {
 	s := string(html)
 	low := strings.ToLower(s)
-	for _, tag := range []string{"<head>", "<body>"} {
-		if i := strings.Index(low, tag); i >= 0 {
-			at := i + len(tag)
+	for _, tag := range []string{"<head", "<body"} {
+		if at := openTagEnd(low, tag); at >= 0 {
 			return []byte(s[:at] + viewBridgePrelude + s[at:])
 		}
 	}
 	return []byte(viewBridgePrelude + s)
+}
+
+// openTagEnd returns the index just past the '>' of the first occurrence of tag
+// (e.g. "<head") in low (a lowercased document). The tag name must be followed
+// by '>' or whitespace, so "<header>" never matches "<head". Returns -1 when the
+// tag is absent or its '>' is missing.
+func openTagEnd(low, tag string) int {
+	from := 0
+	for {
+		i := strings.Index(low[from:], tag)
+		if i < 0 {
+			return -1
+		}
+		i += from
+		rest := i + len(tag)
+		if rest >= len(low) {
+			return -1
+		}
+		switch low[rest] {
+		case '>', ' ', '\t', '\n', '\r', '\f':
+			if gt := strings.IndexByte(low[rest:], '>'); gt >= 0 {
+				return rest + gt + 1
+			}
+			return -1
+		}
+		from = i + 1 // e.g. "<header" — keep scanning
+	}
 }

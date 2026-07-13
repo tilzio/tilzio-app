@@ -157,6 +157,42 @@ func TestServiceExecDuplicateId(t *testing.T) {
 	}
 }
 
+// Uninstalling a DUPLICATE-id folder must not wipe the surviving (canonical)
+// plugin's store record: the store is only cleaned when the removed dir is the
+// one Discover resolves for the id.
+func TestUninstallDuplicateDirKeepsCanonicalStoreEntry(t *testing.T) {
+	root := t.TempDir()
+	pluginsDir := filepath.Join(root, "plugins")
+	manifest := `{"id":"git","name":"G","version":"1","engine":"tilzio@1","entry":"main.js"}`
+	// Lexicographic scan order: "aaa" wins the id, "zzz" is the duplicate.
+	writePlugin(t, pluginsDir, "aaa", manifest)
+	writePlugin(t, pluginsDir, "zzz", manifest)
+	svc := NewService(pluginsDir, filepath.Join(root, "plugins.json"))
+	if err := svc.SetEnabled("git", true); err != nil {
+		t.Fatal(err)
+	}
+
+	// Removing the non-canonical duplicate keeps the canonical record intact.
+	if err := svc.Uninstall("zzz"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := os.Stat(filepath.Join(pluginsDir, "zzz")); !os.IsNotExist(err) {
+		t.Fatalf("duplicate folder should be removed, stat err=%v", err)
+	}
+	enabled, _, ok := svc.store.State("git")
+	if !ok || !enabled {
+		t.Fatalf("canonical plugin's store record wiped by duplicate uninstall: ok=%v enabled=%v", ok, enabled)
+	}
+
+	// Removing the canonical folder still cleans the record (keepStorage path).
+	if err := svc.Uninstall("aaa"); err != nil {
+		t.Fatal(err)
+	}
+	if enabled, _, ok := svc.store.State("git"); ok && enabled {
+		t.Fatalf("canonical uninstall should clear the enabled record, got ok=%v enabled=%v", ok, enabled)
+	}
+}
+
 func TestServiceStorageClear(t *testing.T) {
 	root := t.TempDir()
 	svc := NewService(filepath.Join(root, "plugins"), filepath.Join(root, "plugins.json"))

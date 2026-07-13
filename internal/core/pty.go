@@ -88,6 +88,25 @@ func (p *Pty) Wait() error {
 	return p.werr
 }
 
+// ForceKill SIGKILLs the shell's whole process group — the escalation path for
+// a child that ignored the SIGHUP hangup. The child is a session leader
+// (creack/pty starts it with Setsid), so pid == pgid and grandchildren die with
+// it. The Signal(0) probe goes through os.Process's reap guard, so a process
+// already reaped by Wait is never re-signalled (no pid-reuse kill).
+func (p *Pty) ForceKill() error {
+	proc := p.cmd.Process
+	if proc == nil {
+		return nil
+	}
+	if err := proc.Signal(syscall.Signal(0)); err != nil {
+		return nil // already exited / reaped
+	}
+	if err := syscall.Kill(-proc.Pid, syscall.SIGKILL); err != nil {
+		return proc.Kill() // fallback: at least the direct child
+	}
+	return nil
+}
+
 // Close hangs up the shell with SIGHUP (the conventional "terminal closed"
 // signal, which lets the shell save history and run cleanup) and closes the
 // PTY master. Idempotent: a second call is a no-op.

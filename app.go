@@ -18,9 +18,23 @@ type App struct {
 
 func NewApp(c core.Core) *App { return &App{core: c} }
 
+// clampDim bounds a JS-provided terminal dimension to the PTY's valid uint16
+// range before the cast: a silent conversion would wrap (-1 → 65535, 65536 → 0)
+// and hand the kernel a nonsense winsize. The core has no minimum of its own;
+// 1 is the smallest meaningful grid.
+func clampDim(v int) uint16 {
+	if v < 1 {
+		return 1
+	}
+	if v > 65535 {
+		return 65535
+	}
+	return uint16(v)
+}
+
 // Spawn starts a shell for pane id at cwd, sized cols x rows.
 func (a *App) Spawn(id string, cwd string, cols int, rows int) error {
-	return a.core.Spawn(core.PaneID(id), cwd, uint16(cols), uint16(rows))
+	return a.core.Spawn(core.PaneID(id), cwd, clampDim(cols), clampDim(rows))
 }
 
 // Write sends keyboard input (a UTF-8 string) to the pane's shell.
@@ -30,7 +44,7 @@ func (a *App) Write(id string, data string) error {
 
 // Resize informs the pane's PTY of a new size.
 func (a *App) Resize(id string, cols int, rows int) error {
-	return a.core.Resize(core.PaneID(id), uint16(cols), uint16(rows))
+	return a.core.Resize(core.PaneID(id), clampDim(cols), clampDim(rows))
 }
 
 // Kill terminates the pane's shell.

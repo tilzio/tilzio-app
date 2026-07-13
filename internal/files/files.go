@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"errors"
 	"os"
+	"path/filepath"
 )
 
 // MaxFileBytes caps the size of a file the editor will open. Larger files are
@@ -43,13 +44,47 @@ func Read(path string) ([]byte, error) {
 	return data, nil
 }
 
-// Write saves data to path atomically (temp file + rename), mirroring LayoutStore.
+// Write saves data to path atomically (unique temp file in the target's dir +
+// rename). The destination is resolved through symlinks first, so saving through
+// a symlink updates the TARGET file and keeps the link intact, and an existing
+// file keeps its permission bits (0644 only for brand-new files). The temp name
+// comes from os.CreateTemp, so two panes saving the same file concurrently never
+// share (and interleave on) one temp path.
 func Write(path string, data []byte) error {
-	tmp := path + ".tmp"
-	if err := os.WriteFile(tmp, data, 0o644); err != nil {
+	target := path
+	if resolved, err := filepath.EvalSymlinks(path); err == nil {
+		target = resolved
+	} // else: the file doesn't exist yet (or a dangling link) — write to path itself
+	mode := os.FileMode(0o644)
+	if info, err := os.Stat(target); err == nil {
+		mode = info.Mode().Perm()
+	}
+	tmp, err := os.CreateTemp(filepath.Dir(target), filepath.Base(target)+".tmp-*")
+	if err != nil {
 		return err
 	}
-	return os.Rename(tmp, path)
+	tmpName := tmp.Name()
+	fail := func(e error) error {
+		_ = tmp.Close()
+		_ = os.Remove(tmpName)
+		return e
+	}
+	if _, err := tmp.Write(data); err != nil {
+		return fail(err)
+	}
+	// CreateTemp creates 0600; restore the target's bits (exact, not umask-filtered).
+	if err := tmp.Chmod(mode); err != nil {
+		return fail(err)
+	}
+	if err := tmp.Close(); err != nil {
+		_ = os.Remove(tmpName)
+		return err
+	}
+	if err := os.Rename(tmpName, target); err != nil {
+		_ = os.Remove(tmpName)
+		return err
+	}
+	return nil
 }
 
 // StatPath reports whether path exists and whether it is a directory. Any stat

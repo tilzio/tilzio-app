@@ -3,6 +3,8 @@ package core
 import (
 	"bytes"
 	"errors"
+	"os"
+	"path/filepath"
 	"sync"
 	"testing"
 	"time"
@@ -181,6 +183,91 @@ func TestSessionManagerFlushAllNilStore(t *testing.T) {
 	}
 }
 
+// A shell that ignores SIGHUP must still be reaped: Kill escalates to SIGKILL of
+// the process group after killEscalationDelay. Without escalation, cmd.Wait
+// blocks forever → the session is stuck in the map, the readLoop goroutine
+// leaks, and the pane can never be respawned.
+func TestKillEscalatesToSigkillWhenHupIgnored(t *testing.T) {
+	script := filepath.Join(t.TempDir(), "stubborn.sh")
+	if err := os.WriteFile(script, []byte("#!/bin/sh\ntrap '' HUP\necho READY\nsleep 60\n"), 0o755); err != nil {
+		t.Fatal(err)
+	}
+	old := killEscalationDelay
+	killEscalationDelay = 200 * time.Millisecond
+	defer func() { killEscalationDelay = old }()
+
+	sink := &fakeSink{}
+	m := NewSessionManager(sink, nil, script)
+	if err := m.Spawn("hup", "", 80, 24); err != nil {
+		t.Fatal(err)
+	}
+	// Only kill once the trap is installed, so plain SIGHUP cannot win the race.
+	waitFor(t, func() bool { return sink.contains("READY") }, 5*time.Second, "script did not start")
+	if err := m.Kill("hup"); err != nil {
+		t.Fatalf("kill: %v", err)
+	}
+	waitFor(t, sink.hasExited, 5*time.Second, "HUP-ignoring shell was not reaped by the SIGKILL escalation")
+	// The session must be gone, so the pane can be respawned.
+	if err := m.Write("hup", []byte("x")); !errors.Is(err, ErrNoSession) {
+		t.Fatalf("session should be gone after escalated kill, got %v", err)
+	}
+}
+
+// Kill permanently closes a pane: its in-memory ring is dropped and the
+// persisted .log deleted. (Shutdown goes through FlushAll, not Kill, so
+// killed-on-quit panes keep their logs for §9 replay — TestSessionManagerFlushAll.)
+func TestKillRemovesScrollbackRingAndLogFile(t *testing.T) {
+	dir := t.TempDir()
+	sb, _ := NewScrollbackStore(dir, 1<<20)
+	sink := &fakeSink{}
+	m := NewSessionManager(sink, sb, "/bin/sh")
+	if err := m.Spawn("pk", "", 80, 24); err != nil {
+		t.Fatal(err)
+	}
+	if err := m.Write("pk", []byte("echo kill_me\n")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, func() bool {
+		return bytes.Contains(sb.Snapshot("pk"), []byte("kill_me"))
+	}, 5*time.Second, "no output in ring")
+	// Persist a .log (like an earlier shutdown flush) so Kill has a file to delete.
+	if err := sb.Flush("pk"); err != nil {
+		t.Fatal(err)
+	}
+	logPath := filepath.Join(dir, "pk.log")
+	if _, err := os.Stat(logPath); err != nil {
+		t.Fatalf("setup: log file should exist: %v", err)
+	}
+	if err := m.Kill("pk"); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, sink.hasExited, 5*time.Second, "kill did not lead to Exited")
+	if _, err := os.Stat(logPath); !os.IsNotExist(err) {
+		t.Fatalf("killed pane's log must be deleted, stat err=%v", err)
+	}
+	if got := sb.Snapshot("pk"); len(got) != 0 {
+		t.Fatalf("killed pane's ring must be dropped, got %q", got)
+	}
+}
+
+// Natural exit (NOT Kill) keeps flushing the scrollback file for §9 replay.
+func TestNaturalExitStillFlushesScrollback(t *testing.T) {
+	dir := t.TempDir()
+	sb, _ := NewScrollbackStore(dir, 1<<20)
+	sink := &fakeSink{}
+	m := NewSessionManager(sink, sb, "/bin/sh")
+	if err := m.Spawn("pn", "", 80, 24); err != nil {
+		t.Fatal(err)
+	}
+	if err := m.Write("pn", []byte("echo bye; exit 0\n")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, sink.hasExited, 5*time.Second, "no exit")
+	if _, err := os.Stat(filepath.Join(dir, "pn.log")); err != nil {
+		t.Fatalf("natural exit must keep the flushed log: %v", err)
+	}
+}
+
 // ShellTag without a live session falls back to the configured shell's basename (S4.5).
 func TestShellTagFallbackToShellBasename(t *testing.T) {
 	m := NewSessionManager(&fakeSink{}, nil, "/bin/zsh")
@@ -206,5 +293,33 @@ func TestShellTagLiveSessionNonEmpty(t *testing.T) {
 	defer m.Kill("st1")
 	if got := m.ShellTag("st1"); got == "" {
 		t.Fatalf("ShellTag for a live session should be non-empty")
+	}
+}
+
+// A pane whose shell already exited (user typed `exit`, process died) has no live
+// session, but its ring/.log persist. Permanently closing the pane still goes
+// through Kill — the scrollback must be discarded on the no-session path too,
+// otherwise every close-after-exit leaks a log file forever (pane ids are never
+// reused).
+func TestKillOfDeadPaneStillRemovesScrollback(t *testing.T) {
+	dir := t.TempDir()
+	sb, _ := NewScrollbackStore(dir, 1<<20)
+	m := NewSessionManager(&fakeSink{}, sb, "/bin/sh")
+	sb.Append("dead", []byte("old output"))
+	if err := sb.Flush("dead"); err != nil {
+		t.Fatal(err)
+	}
+	logPath := filepath.Join(dir, "dead.log")
+	if _, err := os.Stat(logPath); err != nil {
+		t.Fatalf("setup: log file should exist: %v", err)
+	}
+	if err := m.Kill("dead"); err == nil {
+		t.Fatal("Kill of a dead pane should still report the missing session")
+	}
+	if _, err := os.Stat(logPath); !os.IsNotExist(err) {
+		t.Fatalf("dead pane's log must be deleted on close, stat err=%v", err)
+	}
+	if got := sb.Snapshot("dead"); len(got) != 0 {
+		t.Fatalf("dead pane's ring must be dropped, got %q", got)
 	}
 }

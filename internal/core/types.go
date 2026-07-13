@@ -22,4 +22,7 @@ var (
 	// ErrAlreadySpawned is returned by SessionManager.Spawn when a session
 	// already exists for the given pane id.
 	ErrAlreadySpawned = errors.New("core: session already exists for pane")
+	// ErrBadPaneID is returned by file-touching ScrollbackStore methods when the
+	// pane id is not a safe filename (guards against path traversal).
+	ErrBadPaneID = errors.New("core: invalid pane id")
 )

@@ -52,6 +52,25 @@ func TestRunExecCapTruncates(t *testing.T) {
 	}
 }
 
+// A command that exits but leaves an orphaned grandchild holding the stdout
+// pipe must not block runExec until the grandchild dies (cmd.WaitDelay).
+// Without WaitDelay, Run waits for pipe EOF — here `sleep 5`'s full duration;
+// with it, Run returns ~1s after the child exits, with the captured output.
+func TestRunExecOrphanHoldingPipeReturnsPromptly(t *testing.T) {
+	start := time.Now()
+	res, err := runExec("sh", []string{"-c", "sleep 5 & echo hi"}, "", 10*time.Second, execMaxBytes)
+	elapsed := time.Since(start)
+	if err != nil {
+		t.Fatalf("err=%v (an orphan holding the pipe is not a call error)", err)
+	}
+	if res.Stdout != "hi\n" || res.Code != 0 {
+		t.Fatalf("got %+v", res)
+	}
+	if elapsed > 3*time.Second {
+		t.Fatalf("runExec took %v; must return ~WaitDelay after the child exits", elapsed)
+	}
+}
+
 func TestRunExecNoShell(t *testing.T) {
 	// Shell metachars are literal args, NOT interpreted (no sh -c): echo prints
 	// them verbatim; no command substitution / chaining occurs.

@@ -61,6 +61,60 @@ func TestStoreCorruptBacksUp(t *testing.T) {
 	}
 }
 
+// An EXISTING but unreadable plugins.json (permissions, I/O error) must not be
+// clobbered: reads fall back to an empty registry, but save() refuses until a
+// later load succeeds — otherwise the next mutation would persist an empty file
+// and silently lose every plugin's state.
+func TestStoreUnreadableFileRefusesSave(t *testing.T) {
+	if os.Getuid() == 0 {
+		t.Skip("chmod 0000 does not block reads for root")
+	}
+	dir := t.TempDir()
+	p := filepath.Join(dir, "plugins.json")
+	body := `{"plugins":{"a":{"enabled":true}}}`
+	if err := os.WriteFile(p, []byte(body), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Chmod(p, 0o000); err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = os.Chmod(p, 0o644) })
+
+	s := NewPluginStore(p)
+	// Reads degrade to an empty registry (the store always answers)…
+	if _, _, ok := s.State("a"); ok {
+		t.Fatal("unreadable file should read as an empty registry")
+	}
+	// …but mutations must refuse rather than persist that emptiness.
+	if err := s.SetEnabled("b", true, nil); err == nil {
+		t.Fatal("save over an unreadable store must return an error")
+	}
+	if err := s.StorageSet("b", "k", json.RawMessage(`1`)); err == nil {
+		t.Fatal("StorageSet over an unreadable store must return an error")
+	}
+
+	// Original bytes intact after the failed mutations.
+	if err := os.Chmod(p, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	got, err := os.ReadFile(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(got) != body {
+		t.Fatalf("store clobbered: %q", got)
+	}
+	// Once readable again, the failure is not sticky: mutations work and merge
+	// with the preserved state.
+	if err := s.SetEnabled("b", true, nil); err != nil {
+		t.Fatalf("save after recovery: %v", err)
+	}
+	enabled, _, ok := s.State("a")
+	if !ok || !enabled {
+		t.Fatalf("pre-existing record lost: ok=%v enabled=%v", ok, enabled)
+	}
+}
+
 func TestStoreNullPluginsField(t *testing.T) {
 	p := filepath.Join(t.TempDir(), "plugins.json")
 	if err := os.WriteFile(p, []byte(`{"plugins":null}`), 0o644); err != nil {

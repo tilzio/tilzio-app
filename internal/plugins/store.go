@@ -26,21 +26,36 @@ type storeFile struct {
 // plugins.json atomically, separate from layout.json (design §5/§10). A corrupt
 // or missing file yields an empty registry rather than an error — the store
 // always returns a working state.
+//
+// Fail-safe on unreadable files: reads degrade to the empty registry, but as
+// long as the last load hit a non-NotExist error (permissions, I/O), save()
+// refuses — otherwise the first mutation after such a failure would persist the
+// empty registry and silently wipe every plugin's state. The failure is not
+// sticky: it clears on the next successful load. (A corrupt-JSON file is
+// different: it is backed up aside as .corrupt-*, so overwriting is safe.)
 type PluginStore struct {
-	path string
-	mu   sync.Mutex
+	path    string
+	mu      sync.Mutex
+	loadErr error // guarded by mu; see the fail-safe note above
 }
 
 func NewPluginStore(path string) *PluginStore { return &PluginStore{path: path} }
 
 // load reads the whole file under the caller's lock. Missing → empty; corrupt →
-// backup aside + empty (mirrors layoutstore's corrupt handling).
+// backup aside + empty (mirrors layoutstore's corrupt handling); unreadable →
+// empty for this read, but s.loadErr is set so save() refuses to clobber.
 func (s *PluginStore) load() *storeFile {
 	empty := &storeFile{Plugins: map[string]*pluginState{}}
 	data, err := os.ReadFile(s.path)
 	if err != nil {
-		return empty // missing (or unreadable) → empty registry
+		if os.IsNotExist(err) {
+			s.loadErr = nil // normal first run
+			return empty
+		}
+		s.loadErr = fmt.Errorf("plugins: read %s: %w", s.path, err)
+		return empty
 	}
+	s.loadErr = nil
 	var f storeFile
 	if err := json.Unmarshal(data, &f); err != nil {
 		backup := fmt.Sprintf("%s.corrupt-%d", s.path, time.Now().Unix())
@@ -53,8 +68,13 @@ func (s *PluginStore) load() *storeFile {
 	return &f
 }
 
-// save writes the file atomically (temp + rename), like layoutstore.Save.
+// save writes the file atomically (temp + rename), like layoutstore.Save. It
+// refuses while the store file exists but could not be read (see the type doc) —
+// writing would replace all persisted plugin state with the empty fallback.
 func (s *PluginStore) save(f *storeFile) error {
+	if s.loadErr != nil {
+		return fmt.Errorf("plugins: refusing to overwrite unreadable store: %w", s.loadErr)
+	}
 	data, err := json.MarshalIndent(f, "", "  ")
 	if err != nil {
 		return err

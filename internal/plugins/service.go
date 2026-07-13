@@ -274,11 +274,16 @@ func (s *Service) Uninstall(dirName string) error {
 	if full == s.pluginsDir {
 		return fmt.Errorf("plugins: invalid plugin dir %q", dirName)
 	}
-	// Derive the id (for store cleanup) before removing the folder.
+	// Derive the id (for store cleanup) before removing the folder — but only
+	// clean the store when THIS folder is the canonical one for the id
+	// (Discover's winner): uninstalling a duplicate-id folder must not wipe the
+	// surviving plugin's enabled/permissions/storage.
 	var id string
 	if data, err := os.ReadFile(filepath.Join(full, "manifest.json")); err == nil {
 		if m, err := ParseManifest(data); err == nil {
-			id = m.ID
+			if dirs, _ := Discover(s.pluginsDir); dirs[m.ID] == full {
+				id = m.ID
+			}
 		}
 	}
 	if err := os.RemoveAll(full); err != nil {

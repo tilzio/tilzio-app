@@ -116,6 +116,42 @@ func TestThemeTokenAllowlistRegex(t *testing.T) {
 	}
 }
 
+// Tags with attributes (and any case) must get the prelude right after the
+// opening tag's '>' — never before the doctype (which flips quirks mode).
+func TestInjectViewBridgeTagsWithAttributes(t *testing.T) {
+	cases := []struct{ name, in, wantPrefix string }{
+		{"head with attr", `<html><head lang="en"><title>t</title></head><body>hi</body></html>`,
+			`<html><head lang="en">` + viewBridgePrelude},
+		{"body with attr", `<html><body class="dark">hi</body></html>`,
+			`<html><body class="dark">` + viewBridgePrelude},
+		{"uppercase head", `<HTML><HEAD LANG="EN"></HEAD><BODY>hi</BODY></HTML>`,
+			`<HTML><HEAD LANG="EN">` + viewBridgePrelude},
+		{"uppercase bare body", `<HTML><BODY>hi</BODY></HTML>`,
+			`<HTML><BODY>` + viewBridgePrelude},
+		{"doctype + attr body", `<!doctype html><html><body class="dark">hi</body></html>`,
+			`<!doctype html><html><body class="dark">` + viewBridgePrelude},
+		{"multiline attrs", "<html><head\n  data-x=\"1\">t</head><body>hi</body></html>",
+			"<html><head\n  data-x=\"1\">" + viewBridgePrelude},
+	}
+	for _, c := range cases {
+		out := string(injectViewBridge([]byte(c.in)))
+		if !strings.HasPrefix(out, c.wantPrefix) {
+			t.Errorf("%s: prelude misplaced;\n got: %.160q\nwant prefix: %.160q", c.name, out, c.wantPrefix)
+		}
+	}
+}
+
+// <header> must not be mistaken for <head>; with no head/body the prelude is
+// prepended (fallback unchanged).
+func TestInjectViewBridgeNoHeadNoBody(t *testing.T) {
+	for _, in := range []string{"hello, plain fragment", `<header>nav</header><div>x</div>`} {
+		out := string(injectViewBridge([]byte(in)))
+		if out != viewBridgePrelude+in {
+			t.Errorf("fallback should prepend the prelude; got %.120q", out)
+		}
+	}
+}
+
 func TestPluginAsset_NonPluginPathDelegates(t *testing.T) {
 	svc := tempPluginSvc(t, map[string]string{"manifest.json": manifestP1})
 	delegated := false

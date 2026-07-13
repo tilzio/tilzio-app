@@ -67,6 +67,13 @@ func runExec(bin string, args []string, cwd string, timeout time.Duration, maxBy
 	cmd := exec.CommandContext(ctx, bin, args...)
 	cmd.Dir = cwd
 	cmd.Env = os.Environ()
+	// Stdout/Stderr are pipes drained by os/exec's copy goroutines; Wait blocks
+	// until pipe EOF. An orphaned grandchild that inherited the pipes would hold
+	// them open past the child's exit AND past the context kill (which only
+	// signals the direct child) — hanging Run forever. WaitDelay bounds that:
+	// 1s after the child exits or the context is canceled, the pipes are closed
+	// forcibly and Wait returns (exec.ErrWaitDelay — handled below).
+	cmd.WaitDelay = time.Second
 	out := &capBuffer{max: maxBytes, onFull: cancel}
 	errb := &capBuffer{max: maxBytes, onFull: cancel}
 	cmd.Stdout = out
@@ -93,6 +100,15 @@ func runExec(bin string, args []string, cwd string, timeout time.Duration, maxBy
 		var ee *exec.ExitError
 		if errors.As(runErr, &ee) {
 			res.Code = ee.ExitCode() // non-zero / signal-killed → normal result
+			return res, nil
+		}
+		if errors.Is(runErr, exec.ErrWaitDelay) {
+			// The child itself exited fine; only an orphaned grandchild kept the
+			// pipes open past WaitDelay. Output captured so far + the child's real
+			// exit code are a normal result, not a call error.
+			if cmd.ProcessState != nil {
+				res.Code = cmd.ProcessState.ExitCode()
+			}
 			return res, nil
 		}
 		return res, runErr // e.g. binary not found

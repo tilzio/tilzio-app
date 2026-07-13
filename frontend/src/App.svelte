@@ -10,7 +10,7 @@
   import type { NavRow } from './state/selectors';
   import { files } from './bridge/files';
   import { restoreDrafts } from './bridge/draftRestore';
-  import { editorBuffers } from './bridge/editorBuffers.svelte';
+  import { editorBuffers, markSaveFailed } from './bridge/editorBuffers.svelte';
   import { editorDirty } from './bridge/editorDirty.svelte';
   import { pendingGoto } from './bridge/pendingGoto.svelte';
   import type { PaneNode } from './state/types';
@@ -239,15 +239,19 @@
       await files.clearDraft(fileId);
     } catch {
       editorDirty.set(fileId, true);                      // write failed — restore "dirty"
-      editorBuffers.set(fileId, { ...buf, dirty: true });
+      // Re-read the CURRENT buffer: writing back the pre-await `buf` would roll
+      // back text the user typed while writeFile was in flight.
+      markSaveFailed(fileId);
     }
   }
 
   // Completely forget editor files (permanent close): erase draft + buffer + dirty.
+  // purge (not delete) tombstones the id so a still-mounted EditorFileBody.onDestroy
+  // doesn't resurrect the buffer on its final flush (per-closed-file memory leak).
   function purgeEditorFiles(fs: { fileId: string }[]) {
     fs.forEach((f) => {
       void files.clearDraft(f.fileId);
-      editorBuffers.delete(f.fileId);
+      editorBuffers.purge(f.fileId);
       editorDirty.delete(f.fileId);
     });
   }
@@ -530,6 +534,10 @@
     await restoreDrafts(store.app);   // B4c: drafts are restored BEFORE mounting the editor bodies
     ready = true;
     window.addEventListener('beforeunload', flushSave);
+    // WKWebView fires pagehide more reliably than beforeunload on app quit —
+    // flush the layout autosave there too (drafts flush via draftFlushRegistry,
+    // which registers its own pagehide/beforeunload listeners).
+    window.addEventListener('pagehide', flushSave);
     // Alerts are caught in the core (pty:bell) — this works for background tabs too, whose
     // panes are unmounted. We don't accumulate for the active visible pane.
     Events.On('pty:bell', (e: { data: { id: string; count: number } }) => {

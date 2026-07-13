@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { ConflictInfo } from '../bridge/plugins';
+  import { focusTrap } from './focusTrap';
   import { t } from '../i18n/index.svelte';
 
   let { status, errorMsg = '', conflict = null, onFileBytes, onUrl, onConfirmOverwrite, onClose }: {
@@ -41,7 +42,7 @@
 </script>
 
 <div class="overlay" role="presentation" onclick={(e) => { if (e.target === e.currentTarget && !busy) onClose(); }}>
-  <div class="dialog" role="dialog" aria-modal="true" aria-label={t('ext.installTitle')} tabindex="-1">
+  <div class="dialog" role="dialog" aria-modal="true" aria-label={t('ext.installTitle')} tabindex="-1" use:focusTrap>
     <div class="head">
       <div class="title">{t('ext.installTitle')}</div>
       <!-- ✕ — safe autofocus target; aria-label is required for a11y (icon without visible text) -->

@@ -1,6 +1,7 @@
 <script lang="ts">
   import ColorRow from './ColorRow.svelte';
   import BrandMark from './BrandMark.svelte';
+  import { focusTrap } from './focusTrap';
   import { AVAILABLE_LOCALES, t } from '../i18n/index.svelte';
   import {
     FONT_PRESETS, FONT_SIZE_MIN, FONT_SIZE_MAX, clampFontSize,
@@ -54,7 +55,7 @@
 </script>
 
 <div class="overlay" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-  <div class="window" role="dialog" aria-modal="true" aria-label={t('settings.title')} tabindex="-1">
+  <div class="window" role="dialog" aria-modal="true" aria-label={t('settings.title')} tabindex="-1" use:focusTrap>
     <!-- Left column of categories: brand lockup + 6 buttons -->
     <div class="cats">
       <div class="brand">

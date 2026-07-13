@@ -109,6 +109,18 @@
     endDrag();
     onMovePane(dragId, target);
   }
+  // Clear the drop highlight when the drag actually leaves the leaf; without this
+  // it lingered after the pointer moved off the pane. dragleave also fires when
+  // moving onto a CHILD of the leaf — relatedTarget containment filters that noise.
+  // Only this leaf's own candidate is cleared: a late dragleave from leaf A must
+  // not clobber the fresh candidate already set on leaf B.
+  function onLeafDragLeave(e: DragEvent, leafId: string) {
+    if (dragState.dragId === null) return;
+    const to = e.relatedTarget as Node | null;
+    if (to && (e.currentTarget as HTMLElement).contains(to)) return;
+    const c = dragState.candidate;
+    if (c && (c.kind === 'swap' || c.kind === 'edge') && c.leafId === leafId) setCandidate(null);
+  }
 
   function onDividerDragOver(e: DragEvent, splitId: string, index: number) {
     if (dragState.dragId === null) return;
@@ -144,6 +156,7 @@
     style:position="relative"
     style:display={zoomedPaneId === null || zoomedPaneId === node.id ? '' : 'none'}
     ondragover={(e) => onLeafDragOver(e, node.id)}
+    ondragleave={(e) => onLeafDragLeave(e, node.id)}
     ondrop={(e) => onLeafDrop(e, node.id)}
   >
     <TerminalPane
@@ -179,6 +192,7 @@
     style:position="relative"
     style:display={zoomedPaneId === null || zoomedPaneId === node.id ? '' : 'none'}
     ondragover={(e) => onLeafDragOver(e, node.id)}
+    ondragleave={(e) => onLeafDragLeave(e, node.id)}
     ondrop={(e) => onLeafDrop(e, node.id)}
   >
     <EditorPane
@@ -218,6 +232,7 @@
     style:position="relative"
     style:display={zoomedPaneId === null || zoomedPaneId === node.id ? '' : 'none'}
     ondragover={(e) => onLeafDragOver(e, node.id)}
+    ondragleave={(e) => onLeafDragLeave(e, node.id)}
     ondrop={(e) => onLeafDrop(e, node.id)}
   >
     <PluginPane

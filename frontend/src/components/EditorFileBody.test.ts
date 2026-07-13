@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, cleanup, waitFor } from '@testing-library/svelte';
+import { render, cleanup, fireEvent, waitFor } from '@testing-library/svelte';
 const handle = vi.hoisted(() => ({
   getDoc: vi.fn(() => 'file body'),
   getCursor: vi.fn(() => 0),
@@ -17,7 +17,9 @@ vi.mock('../bridge/files', () => ({
     writeFile: vi.fn(async () => undefined),
   },
 }));
+vi.mock('@wailsio/runtime', () => ({ Browser: { OpenURL: vi.fn(async () => undefined) } }));
 import EditorFileBody from './EditorFileBody.svelte';
+import { Browser } from '@wailsio/runtime';
 import { mountEditor } from '../bridge/editorSetup';
 import { files } from '../bridge/files';
 import { editorBuffers, __resetForTests } from '../bridge/editorBuffers.svelte';
@@ -166,4 +168,94 @@ it('discards a pending goto target when the file fails to load (no leak)', async
   render(EditorFileBody, { props: props({ fileId: 'f1' }) });
   await waitFor(() => expect(pendingGoto.get('f1')).toBeUndefined()); // consumed, doesn't hang
   expect(handle.gotoLine).not.toHaveBeenCalled(); // CM6 not mounted — no jump
+});
+
+describe('preview link clicks (FIX: navigation escaped the WKWebView)', () => {
+  it('http(s) link in preview → preventDefault + Browser.OpenURL', async () => {
+    (files.readFile as ReturnType<typeof vi.fn>).mockResolvedValueOnce('[site](https://example.com/x)');
+    const { container } = render(EditorFileBody, { props: props({ path: '/r.md', mode: 'preview' }) });
+    await waitFor(() => expect(container.querySelector('.preview a')).toBeTruthy());
+    const notCancelled = await fireEvent.click(container.querySelector('.preview a')!);
+    expect(notCancelled).toBe(false); // preventDefault was called — no webview navigation
+    expect(Browser.OpenURL).toHaveBeenCalledWith('https://example.com/x');
+  });
+
+  it('mailto link in preview → preventDefault + Browser.OpenURL', async () => {
+    (files.readFile as ReturnType<typeof vi.fn>).mockResolvedValueOnce('[mail](mailto:a@b.c)');
+    const { container } = render(EditorFileBody, { props: props({ path: '/r.md', mode: 'preview' }) });
+    await waitFor(() => expect(container.querySelector('.preview a')).toBeTruthy());
+    const notCancelled = await fireEvent.click(container.querySelector('.preview a')!);
+    expect(notCancelled).toBe(false);
+    expect(Browser.OpenURL).toHaveBeenCalledWith('mailto:a@b.c');
+  });
+
+  it('relative / anchor links are neutralized (preventDefault, no OpenURL)', async () => {
+    (files.readFile as ReturnType<typeof vi.fn>).mockResolvedValueOnce('[rel](./other.md) [anchor](#sec)');
+    const { container } = render(EditorFileBody, { props: props({ path: '/r.md', mode: 'preview' }) });
+    await waitFor(() => expect(container.querySelectorAll('.preview a').length).toBe(2));
+    for (const a of Array.from(container.querySelectorAll('.preview a'))) {
+      const notCancelled = await fireEvent.click(a);
+      expect(notCancelled).toBe(false);
+    }
+    expect(Browser.OpenURL).not.toHaveBeenCalled();
+  });
+
+  it('split-mode prevpane links are intercepted too', async () => {
+    (files.readFile as ReturnType<typeof vi.fn>).mockResolvedValueOnce('[site](https://example.com/y)');
+    const { container } = render(EditorFileBody, { props: props({ path: '/r.md', mode: 'split' }) });
+    await waitFor(() => expect(container.querySelector('.prevpane a')).toBeTruthy());
+    const notCancelled = await fireEvent.click(container.querySelector('.prevpane a')!);
+    expect(notCancelled).toBe(false);
+    expect(Browser.OpenURL).toHaveBeenCalledWith('https://example.com/y');
+  });
+
+  it('a click on non-link preview content is left alone', async () => {
+    (files.readFile as ReturnType<typeof vi.fn>).mockResolvedValueOnce('# Title');
+    const { container } = render(EditorFileBody, { props: props({ path: '/r.md', mode: 'preview' }) });
+    await waitFor(() => expect(container.querySelector('.preview h1')).toBeTruthy());
+    const notCancelled = await fireEvent.click(container.querySelector('.preview h1')!);
+    expect(notCancelled).toBe(true); // not prevented
+    expect(Browser.OpenURL).not.toHaveBeenCalled();
+  });
+});
+
+describe('draft flush on app quit (FIX: debounce tail lost)', () => {
+  it('flushes the pending draft on window pagehide', async () => {
+    render(EditorFileBody, { props: props() });
+    await waitFor(() => expect(mountEditor).toHaveBeenCalled());
+    lastOnChange()('edited tail');       // schedules the 400ms draft debounce
+    window.dispatchEvent(new Event('pagehide'));
+    expect(files.saveDraft).toHaveBeenCalledWith('f1', '/proj/files.ts', 'edited tail');
+  });
+
+  it('unregisters its flush on unmount (no stale flush for a dead component)', async () => {
+    const { unmount } = render(EditorFileBody, { props: props() });
+    await waitFor(() => expect(mountEditor).toHaveBeenCalled());
+    unmount();
+    (files.saveDraft as ReturnType<typeof vi.fn>).mockClear();
+    window.dispatchEvent(new Event('pagehide'));
+    expect(files.saveDraft).not.toHaveBeenCalled();
+  });
+});
+
+describe('purge tombstone (FIX: onDestroy resurrected purged buffers)', () => {
+  it('purge then destroy → buffer map stays empty', async () => {
+    const { unmount } = render(EditorFileBody, { props: props() });
+    await waitFor(() => expect(mountEditor).toHaveBeenCalled());
+    lastOnChange()('edited');            // buffer now populated
+    // Permanent close: App.purgeEditorFiles deletes buffer + dirty and tombstones the id.
+    editorBuffers.purge('f1');
+    editorDirty.delete('f1');
+    unmount();                           // onDestroy must NOT re-write the buffer
+    expect(editorBuffers.has('f1')).toBe(false);
+  });
+
+  it('a plain unmount (no purge) still persists the buffer (§9 intact)', async () => {
+    handle.getDoc.mockReturnValue('kept');
+    const { unmount } = render(EditorFileBody, { props: props() });
+    await waitFor(() => expect(mountEditor).toHaveBeenCalled());
+    lastOnChange()('kept');
+    unmount();
+    expect(editorBuffers.get('f1')?.doc).toBe('kept');
+  });
 });

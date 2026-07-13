@@ -3,6 +3,7 @@
   import { declaredPermissions, resolvePermission, type PermLabel } from '../state/permissionLabels';
   import { parseContributes } from '../state/pluginContributions';
   import { pluginAccent } from '../state/pluginColor';
+  import { focusTrap } from './focusTrap';
   import { t } from '../i18n/index.svelte';
 
   let { info, storage, runtimeError = null, busy = false, onToggle, onUninstall, onReset, onBack }: {
@@ -49,7 +50,7 @@
 </script>
 
 <div class="overlay" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) onBack(); }}>
-  <div class="dialog" role="dialog" aria-modal="true" aria-label={t('ext.extensionAria', { name })} tabindex="-1">
+  <div class="dialog" role="dialog" aria-modal="true" aria-label={t('ext.extensionAria', { name })} tabindex="-1" use:focusTrap>
     <!-- Back: quiet text link at the top (Variant 2) -->
     <div class="backbar">
       <button class="back" use:autofocus onclick={() => onBack()}>

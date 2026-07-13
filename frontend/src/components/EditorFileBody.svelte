@@ -1,7 +1,8 @@
 <script lang="ts">
   import { onMount, onDestroy, untrack } from 'svelte';
+  import { Browser } from '@wailsio/runtime';
   import { files } from '../bridge/files';
-  import { editorBuffers, type EditorBuffer } from '../bridge/editorBuffers.svelte';
+  import { editorBuffers, draftFlushRegistry, type EditorBuffer } from '../bridge/editorBuffers.svelte';
   import { editorDirty } from '../bridge/editorDirty.svelte';
   import { mountEditor, type EditorHandle } from '../bridge/editorSetup';
   import { renderMarkdown } from '../bridge/mdPreview';
@@ -43,6 +44,23 @@
     const content = editorBuffers.get(fileId)?.doc ?? doc;
     void files.saveDraft(fileId, path, content);
   }, 400);
+
+  // App quit (pagehide/beforeunload) must flush the debounce tail — onDestroy never
+  // runs then. Registered for the component's lifetime; unregistered in onDestroy.
+  const flushDraft = () => draftDebounced.flush();
+  draftFlushRegistry.register(flushDraft);
+
+  // Links inside the sanitized preview are live <a href> — a click would navigate the
+  // whole WKWebView away from the app. Delegated handler on the preview containers:
+  // external http(s)/mailto → system browser via Wails Browser.OpenURL; everything
+  // else (relative paths, #anchors) → swallowed (no in-app target for them yet).
+  function onPreviewClick(e: MouseEvent) {
+    const a = (e.target as HTMLElement | null)?.closest?.('a');
+    if (!a) return;
+    e.preventDefault();
+    const href = a.getAttribute('href') ?? '';
+    if (/^(https?:|mailto:)/i.test(href)) void Browser.OpenURL(href);
+  }
 
   function onDocChange(next: string) {
     doc = next;
@@ -126,8 +144,16 @@
   });
 
   onDestroy(() => {
+    draftFlushRegistry.unregister(flushDraft);
     draftDebounced.flush();   // persist the unsaved draft (guard inside); NOT cancel
     previewDebounced.cancel();
+    // Permanently closed (App purged the buffer synchronously before this destroy):
+    // re-writing it below would resurrect the entry → per-closed-file memory leak.
+    // consumePurged also clears the tombstone so the id doesn't accumulate.
+    if (editorBuffers.consumePurged(fileId)) {
+      handle?.destroy();
+      return;
+    }
     // §9-analog unmount: we save the buffer into the store by fileId (do NOT delete) — a remount restores it.
     // handle exists in source/split (we read it live), not in preview (we read $state doc/cursor).
     // mode: effectiveMode — for non-md it degrades to source (intentional: a remount opens source).
@@ -145,14 +171,15 @@
   <div class="welcome"><div class="wtext">{t('editor.failedOpen')}</div><div class="whint">{loadError}</div></div>
 {:else if loaded}
   {#if effectiveMode === 'preview'}
-    <!-- previewHtml = renderMarkdown() — DOMPurify-sanitized; the only {@html}, invariant §5.1 -->
-    <div class="md preview">{@html previewHtml}</div>
+    <!-- previewHtml = renderMarkdown() — DOMPurify-sanitized; the only {@html}, invariant §5.1.
+         onclick — delegated link interception (external → Browser.OpenURL), see onPreviewClick. -->
+    <div class="md preview" role="presentation" onclick={onPreviewClick}>{@html previewHtml}</div>
   {:else}
     <div class="edrow" class:split={effectiveMode === 'split'}>
       <div class="editor-host" use:cm></div>
       {#if effectiveMode === 'split'}
         <!-- previewHtml = renderMarkdown() — DOMPurify-sanitized -->
-        <div class="md prevpane">{@html previewHtml}</div>
+        <div class="md prevpane" role="presentation" onclick={onPreviewClick}>{@html previewHtml}</div>
       {/if}
     </div>
   {/if}

@@ -26,11 +26,17 @@
   }
 </script>
 
+{#snippet chipBody(it: ResolvedStatusItem)}
+  <!-- iconPath: sanitized SVG path data (pluginSlots.cleanIconPath) → inline brand
+       icon in currentColor, optionally tinted by iconColor (e.g. brand terracotta). -->
+  {#if it.iconPath}<svg class="pi-ic" viewBox="0 0 24 24" fill="currentColor" style:color={it.iconColor}><path d={it.iconPath} /></svg>{/if}{it.icon ? it.icon + ' ' : ''}{it.text}
+{/snippet}
+
 {#snippet chip(it: ResolvedStatusItem)}
   {#if it.command}
-    <button class="pi" class:fill={it.fill} class:alert={it.alert} style:color={it.fill ? 'var(--sidebar)' : (it.color ?? toneColor(it.tone))} style:background={it.fill ? (it.color ?? toneColor(it.tone)) : undefined} onclick={() => onPluginCommand?.(it.pluginId, it.command as string)}>{it.icon ? it.icon + ' ' : ''}{it.text}</button>
+    <button class="pi" class:fill={it.fill} class:alert={it.alert} style:color={it.fill ? 'var(--sidebar)' : (it.color ?? toneColor(it.tone))} style:background={it.fill ? (it.color ?? toneColor(it.tone)) : undefined} onclick={() => onPluginCommand?.(it.pluginId, it.command as string)}>{@render chipBody(it)}</button>
   {:else}
-    <span class="pi" class:fill={it.fill} class:alert={it.alert} style:color={it.fill ? 'var(--sidebar)' : (it.color ?? toneColor(it.tone))} style:background={it.fill ? (it.color ?? toneColor(it.tone)) : undefined}>{it.icon ? it.icon + ' ' : ''}{it.text}</span>
+    <span class="pi" class:fill={it.fill} class:alert={it.alert} style:color={it.fill ? 'var(--sidebar)' : (it.color ?? toneColor(it.tone))} style:background={it.fill ? (it.color ?? toneColor(it.tone)) : undefined}>{@render chipBody(it)}</span>
   {/if}
 {/snippet}
 
@@ -87,6 +93,8 @@
   .panel-toggle:hover { color: var(--text); }
   .panel-toggle.open { color: var(--accent); }
   .pi { background: none; border: none; font: inherit; color: var(--text-dim); cursor: default; padding: 0; white-space: nowrap; }
+  /* Inline brand icon on a chip: sized to the 11px bar font, baseline-tucked. */
+  .pi .pi-ic { width: 11px; height: 11px; display: inline-block; vertical-align: -1.5px; margin-right: 4px; }
   button.pi { cursor: pointer; }
   button.pi:hover { color: var(--text); }
   .pi.fill { padding: 1px 8px; border-radius: 5px; font-weight: 500; }

@@ -3,6 +3,7 @@
   import { declaredPermissions, resolvePermission } from '../state/permissionLabels';
   import { parseContributes } from '../state/pluginContributions';
   import { pluginAccent } from '../state/pluginColor';
+  import { focusTrap } from './focusTrap';
   import { t } from '../i18n/index.svelte';
 
   let { plugins, runtimeErrorFor, busyId, onToggle, onRefresh, onClose, onInstall, onUninstall, onOpenDetail, onOpenFolder = undefined }: {
@@ -86,7 +87,7 @@
 </script>
 
 <div class="overlay" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-  <div class="dialog" role="dialog" aria-modal="true" aria-label={t('ext.title')} tabindex="-1">
+  <div class="dialog" role="dialog" aria-modal="true" aria-label={t('ext.title')} tabindex="-1" use:focusTrap>
     <div class="head">
       <div class="title">{t('ext.title')}</div>
       <div class="hbtns">

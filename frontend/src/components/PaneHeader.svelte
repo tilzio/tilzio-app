@@ -59,6 +59,20 @@
   } = $props();
 
   let menuFor = $state<null | 'v' | 'h'>(null);
+  // $state: bind:this inside {#if} re-assigns after the initial render (Svelte
+  // warns non_reactive_update otherwise). Only read inside the event handler.
+  let menuEl = $state<HTMLElement | undefined>(undefined);
+
+  // Close the SplitMenu on a pointerdown outside it (same pattern as
+  // GridConsolesButton): capture-phase window listener, active only while open.
+  function onWindowDown(e: PointerEvent) {
+    if (menuEl && !menuEl.contains(e.target as Node)) menuFor = null;
+  }
+  $effect(() => {
+    if (menuFor === null) return;
+    window.addEventListener('pointerdown', onWindowDown, true);
+    return () => window.removeEventListener('pointerdown', onWindowDown, true);
+  });
 
   // Display: explicit user title, else the cwd, else a generic label.
   const displayName = $derived(title ?? (cwd || 'shell'));
@@ -186,12 +200,13 @@
     <button aria-label={t('header.zoom')} title={t('header.zoomTitle')} onclick={stop(() => onZoom?.())}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 9 4 4 9 4"/><polyline points="20 15 20 20 15 20"/><polyline points="15 4 20 4 20 9"/><polyline points="9 20 4 20 4 15"/></svg>
     </button>
-    <!-- close pane: ✕ cross SVG -->
-    <button aria-label={t('header.closePane')} title={t('header.close')} onclick={stop(() => onClose?.())}>
+    <!-- close pane: ✕ cross SVG. .close-btn — stable hook for the :hover rule
+         (the selector must not depend on the localized aria-label). -->
+    <button class="close-btn" aria-label={t('header.closePane')} title={t('header.close')} onclick={stop(() => onClose?.())}>
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6.5" y1="6.5" x2="17.5" y2="17.5"/><line x1="17.5" y1="6.5" x2="6.5" y2="17.5"/></svg>
     </button>
     {#if menuFor !== null}
-      <div aria-label={t('header.splitMenu')}>
+      <div aria-label={t('header.splitMenu')} bind:this={menuEl}>
         <SplitMenu
           onTerminal={() => onSplit?.(menuFor!)}
           onEditor={() => onSplitAs?.(menuFor!)}
@@ -248,8 +263,8 @@
   .tools button { background: none; border: none; color: inherit; cursor: pointer; font-size: 12px; line-height: 1; padding: 2px 2px; display: flex; align-items: center; justify-content: center; }
   .tools button svg { width: 14px; height: 14px; display: block; }
   .tools button:hover { color: var(--text); }
-  /* close button on hover — exit color */
-  .tools button[aria-label="close pane"]:hover { color: var(--exit); }
+  /* close button on hover — exit color (stable class, survives label localization) */
+  .tools button.close-btn:hover { color: var(--exit); }
   /* file tab strip — S4.6: gap 3px, inactive without background, active — outline pill */
   .strip { flex: 1; min-width: 0; overflow-x: auto; overflow-y: hidden; display: flex; align-items: center; gap: 3px; scrollbar-width: none; }
   .strip::-webkit-scrollbar { display: none; }

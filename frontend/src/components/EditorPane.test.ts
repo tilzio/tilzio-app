@@ -41,3 +41,17 @@ it('lights the chip ● live when editorDirty flips (de-risk §1 reactivity)', a
   editorDirty.set('f1', true);
   await waitFor(() => expect(container.querySelector('.ftab .dot')).toBeTruthy()); // ● lit up reactively
 });
+
+// FIX: the welcome card stole focus on every remount even for inactive panes,
+// and a stray ⏎ then converted the wrong pane to a terminal.
+it('welcome card does NOT autofocus when the pane is inactive', () => {
+  const { getByText } = render(EditorPane, { props: base({ active: false }) });
+  const btn = getByText('Terminal').closest('button');
+  expect(document.activeElement).not.toBe(btn);
+});
+
+it('welcome card autofocuses the Terminal button when the pane is active', () => {
+  const { getByText } = render(EditorPane, { props: base({ active: true }) });
+  const btn = getByText('Terminal').closest('button');
+  expect(document.activeElement).toBe(btn);
+});

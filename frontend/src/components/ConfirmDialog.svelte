@@ -1,5 +1,6 @@
 <script lang="ts">
   import { splitHighlight } from './splitHighlight';
+  import { focusTrap } from './focusTrap';
   import { t } from '../i18n/index.svelte';
 
   let {
@@ -31,7 +32,7 @@
 </script>
 
 <div class="overlay" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) onCancel(); }}>
-  <div class="dialog" role="dialog" aria-modal="true" tabindex="-1">
+  <div class="dialog" role="dialog" aria-modal="true" tabindex="-1" use:focusTrap>
     <div class="row">
       <span class="chip" class:danger={tone === 'danger'} class:accent={tone === 'accent'} aria-hidden="true">{icon}</span>
       <span class="msg">

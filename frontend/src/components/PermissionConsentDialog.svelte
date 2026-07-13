@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { PermLabel } from '../state/permissionLabels';
+  import { focusTrap } from './focusTrap';
   import { t } from '../i18n/index.svelte';
   let { pluginName, pluginId, version, permissions, onConfirm, onCancel }: {
     pluginName: string;
@@ -15,7 +16,7 @@
 </script>
 
 <div class="overlay" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) onCancel(); }}>
-  <div class="dialog" role="dialog" aria-modal="true" aria-label={t('plugin.consentAria')} tabindex="-1">
+  <div class="dialog" role="dialog" aria-modal="true" aria-label={t('plugin.consentAria')} tabindex="-1" use:focusTrap>
     <!-- S9.5: header with a 🔌 avatar chip and title/subtitle in flex -->
     <div class="head">
       <div class="avatar" aria-hidden="true">🔌</div>

@@ -54,9 +54,11 @@
     })),
   );
 
-  // use:-action for autofocus without an attribute (no svelte-ignore)
+  // use:-action for autofocus without an attribute (no svelte-ignore).
+  // Only for the ACTIVE pane: an inactive welcome card must not steal focus on
+  // remount (tab switch) — a stray ⏎ then converted the wrong pane to a terminal.
   function autofocus(node: HTMLElement) {
-    node.focus();
+    if (active) node.focus();
   }
 </script>
 

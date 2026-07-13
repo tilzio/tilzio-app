@@ -48,6 +48,18 @@ describe('StatusBar', () => {
     expect(getByText('✓ ok')).toBeTruthy();
   });
 
+  it('renders an inline SVG brand icon for an item with iconPath (tinted by iconColor)', () => {
+    const { container, getByText } = render(StatusBar, { props: {
+      activePath: 'x', consoleCount: 1,
+      pluginLeft: [sItem('l', 'Claude', { iconPath: 'M12 2 L22 12 Z', iconColor: '#d97757' })],
+    } });
+    expect(getByText('Claude')).toBeTruthy();
+    const path = container.querySelector('.pi svg path');
+    expect(path?.getAttribute('d')).toBe('M12 2 L22 12 Z');
+    const svg = container.querySelector('.pi svg') as SVGElement;
+    expect(svg.style.color).toBe('rgb(217, 119, 87)');
+  });
+
   it('clicking a plugin item with a command calls onPluginCommand', async () => {
     const onPluginCommand = vi.fn();
     const { getByText } = render(StatusBar, { props: {

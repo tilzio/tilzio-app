@@ -72,4 +72,23 @@ describe('ConfirmDialog', () => {
     expect(container.querySelector('img')).toBeNull();
     expect(container.querySelector('script')).toBeNull();
   });
+
+  // FIX: Tab escaped the modal to background buttons — the dialog root traps focus.
+  it('traps Tab inside the dialog (wraps from the last button to the first)', async () => {
+    const { getByText } = render(ConfirmDialog, { props: { message: 'x', onConfirm: vi.fn(), onCancel: vi.fn() } });
+    const cancel = getByText('Cancel');
+    const confirm = getByText('Close');
+    confirm.focus();
+    await fireEvent.keyDown(confirm, { key: 'Tab' });
+    expect(document.activeElement).toBe(cancel);
+  });
+
+  it('traps Shift+Tab (wraps from the first button to the last)', async () => {
+    const { getByText } = render(ConfirmDialog, { props: { message: 'x', onConfirm: vi.fn(), onCancel: vi.fn() } });
+    const cancel = getByText('Cancel');
+    const confirm = getByText('Close');
+    cancel.focus();
+    await fireEvent.keyDown(cancel, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(confirm);
+  });
 });

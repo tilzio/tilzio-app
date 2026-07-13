@@ -109,6 +109,46 @@ describe('SplitContainer — leaf drop zones', () => {
     await fireEvent.drop(leaf, { clientX: 50, clientY: 50 });
     expect(p.onMovePane).not.toHaveBeenCalled();
   });
+
+  // FIX: without dragleave the highlight lingered after the drag left the pane.
+  it('clears the drop highlight when the drag leaves the leaf', async () => {
+    const a = newLeaf(); const b = newLeaf();
+    const { container } = render(SplitContainer, { props: props(newSplit('v', [a, b])) });
+    const leaf = container.querySelector('.leaf') as HTMLElement;
+    stubRect(leaf);
+    dragState.dragId = b.id;
+    await fireEvent.dragOver(leaf, { clientX: 50, clientY: 50 });
+    expect(leaf.querySelector('.drop-hl')).toBeTruthy();
+    await fireEvent.dragLeave(leaf, { relatedTarget: document.body });
+    expect(leaf.querySelector('.drop-hl')).toBeNull();
+    endDrag();
+  });
+
+  it('keeps the highlight when dragleave only moves onto a child element (noise)', async () => {
+    const a = newLeaf(); const b = newLeaf();
+    const { container } = render(SplitContainer, { props: props(newSplit('v', [a, b])) });
+    const leaf = container.querySelector('.leaf') as HTMLElement;
+    stubRect(leaf);
+    dragState.dragId = b.id;
+    await fireEvent.dragOver(leaf, { clientX: 50, clientY: 50 });
+    const child = leaf.querySelector('[data-pane-id]') as HTMLElement;
+    await fireEvent.dragLeave(leaf, { relatedTarget: child });
+    expect(leaf.querySelector('.drop-hl')).toBeTruthy();
+    endDrag();
+  });
+
+  it('does not clobber another leaf\'s candidate on dragleave', async () => {
+    const a = newLeaf(); const b = newLeaf();
+    const { container } = render(SplitContainer, { props: props(newSplit('v', [a, b])) });
+    const leaves = container.querySelectorAll<HTMLElement>('.leaf');
+    stubRect(leaves[0]); stubRect(leaves[1]);
+    dragState.dragId = 'drag-x';
+    // Candidate already moved to leaf B; a late dragleave from leaf A must not clear it.
+    dragState.candidate = { kind: 'swap', leafId: b.id };
+    await fireEvent.dragLeave(leaves[0], { relatedTarget: document.body });
+    expect(dragState.candidate).toEqual({ kind: 'swap', leafId: b.id });
+    endDrag();
+  });
 });
 
 describe('SplitContainer zoom fill', () => {

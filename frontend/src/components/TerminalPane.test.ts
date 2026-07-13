@@ -45,7 +45,18 @@ vi.mock('@xterm/xterm', () => ({
   },
 }));
 vi.mock('@xterm/addon-fit', () => ({ FitAddon: class { fit() {} } }));
-vi.mock('@xterm/addon-webgl', () => ({ WebglAddon: class {} }));
+// Capture the WebglAddon instance so tests can drive its context-loss callback.
+const webglHooks = vi.hoisted(() => ({
+  instance: null as null | { onContextLoss: ReturnType<typeof vi.fn>; dispose: ReturnType<typeof vi.fn>; lossCb: (() => void) | null },
+}));
+vi.mock('@xterm/addon-webgl', () => ({
+  WebglAddon: class {
+    lossCb: (() => void) | null = null;
+    onContextLoss = vi.fn((cb: () => void) => { this.lossCb = cb; return { dispose() {} }; });
+    dispose = vi.fn();
+    constructor() { webglHooks.instance = this as any; }
+  },
+}));
 vi.mock('../bridge/linkResolve', () => ({
   linkCwd: { set: vi.fn(), get: vi.fn(() => '/proj'), delete: vi.fn() },
   linkHome: { setFrom: vi.fn(), get: vi.fn(() => '/Users/me') },
@@ -67,7 +78,7 @@ vi.mock('../bridge/core', () => ({
     spawn: vi.fn().mockResolvedValue(undefined),
     write: vi.fn(),
     resize: vi.fn().mockResolvedValue(undefined),
-    kill: vi.fn(),
+    kill: vi.fn().mockResolvedValue(undefined),
     shellTag: vi.fn().mockResolvedValue('zsh'),
   },
 }));
@@ -93,6 +104,8 @@ import TerminalPane from './TerminalPane.svelte';
 import { coreBridge } from '../bridge/core';
 import { ptyEvents } from '../bridge/ptyEvents';
 import { linkCwd } from '../bridge/linkResolve';
+// Real module (deliberately not mocked): the tombstone set the reaper marks on pane close.
+import { reapedPanes, __resetForTests as resetReaped } from '../bridge/reapedPanes';
 
 beforeEach(() => {
   hooks.onExited = null;
@@ -100,6 +113,7 @@ beforeEach(() => {
   capturedOsc7 = null;
   capturedTermOpts = null;
   capturedTerm = null;
+  webglHooks.instance = null;
   vi.clearAllMocks();
   // Default: pane already live → onMount skips spawn (matches pre-existing tests).
   // Reattach tests override this per-case; reset here so overrides don't leak.
@@ -200,6 +214,17 @@ describe('TerminalPane fontSize prop', () => {
   });
 });
 
+describe('TerminalPane WebGL context loss (FIX: blank pane after GPU context loss)', () => {
+  it('registers a context-loss handler that disposes the addon (xterm falls back to DOM renderer)', async () => {
+    render(TerminalPane, { props: { paneId: 'p1' } });
+    await waitFor(() => expect(webglHooks.instance).not.toBeNull());
+    expect(webglHooks.instance!.onContextLoss).toHaveBeenCalled();
+    expect(webglHooks.instance!.lossCb).toBeTruthy();
+    webglHooks.instance!.lossCb!();
+    expect(webglHooks.instance!.dispose).toHaveBeenCalled();
+  });
+});
+
 describe('TerminalPane reattach after reload (ErrAlreadySpawned)', () => {
   it('treats ErrAlreadySpawned as live and wires input/links instead of erroring', async () => {
     // Simulate a webview reload: JS liveSet is empty but Go still has the session,
@@ -249,6 +274,55 @@ describe('TerminalPane scrollback replay resets sticky mouse modes', () => {
       .flat()
       .some((a: unknown) => typeof a === 'string' && a.includes('\x1b[?1003l'));
     expect(wroteReset).toBe(false);
+  });
+});
+
+describe('TerminalPane close/unmount races (spawn in flight)', () => {
+  beforeEach(() => resetReaped());
+
+  it('kills the freshly spawned session when the pane was closed mid-spawn', async () => {
+    vi.mocked(ptyEvents.isLive).mockReturnValue(false);
+    let resolveSpawn!: () => void;
+    (coreBridge.spawn as ReturnType<typeof vi.fn>).mockReturnValueOnce(
+      new Promise<void>((r) => { resolveSpawn = r; }),
+    );
+    const { unmount } = render(TerminalPane, { props: { paneId: 'p1' } });
+    await waitFor(() => expect(coreBridge.spawn).toHaveBeenCalled());
+    // The reaper ran (pane left the layout) while spawn was still in flight —
+    // its kill hit Go before the session existed. The pane must re-kill.
+    reapedPanes.mark('p1');
+    unmount();
+    resolveSpawn();
+    await waitFor(() => expect(coreBridge.kill).toHaveBeenCalledWith('p1'));
+  });
+
+  it('a plain unmount (tab switch) mid-spawn keeps the session alive for reattach', async () => {
+    vi.mocked(ptyEvents.isLive).mockReturnValue(false);
+    let resolveSpawn!: () => void;
+    (coreBridge.spawn as ReturnType<typeof vi.fn>).mockReturnValueOnce(
+      new Promise<void>((r) => { resolveSpawn = r; }),
+    );
+    const { unmount } = render(TerminalPane, { props: { paneId: 'p1' } });
+    await waitFor(() => expect(coreBridge.spawn).toHaveBeenCalled());
+    unmount(); // NOT reaped — the pane still exists in the layout
+    resolveSpawn();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(coreBridge.kill).not.toHaveBeenCalled();
+    // The session is live in Go — the global registry must reflect that for remount.
+    expect(ptyEvents.markLive).toHaveBeenCalledWith('p1');
+  });
+
+  it('does not register pty handlers when destroyed during the scrollback load', async () => {
+    let resolveSb!: (b: Uint8Array) => void;
+    (coreBridge.loadScrollback as ReturnType<typeof vi.fn>).mockReturnValueOnce(
+      new Promise<Uint8Array>((r) => { resolveSb = r; }),
+    );
+    const { unmount } = render(TerminalPane, { props: { paneId: 'p1' } });
+    unmount();
+    resolveSb(new Uint8Array());
+    await new Promise((r) => setTimeout(r, 0));
+    // Registering after destroy would clobber a newer instance of the same pane.
+    expect(ptyEvents.register).not.toHaveBeenCalled();
   });
 });
 

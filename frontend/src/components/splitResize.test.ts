@@ -44,6 +44,20 @@ describe('computeResizeRatios', () => {
     expect(overshot[0]).toBeCloseTo(0.2); // still pinned at the floor
   });
 
+  it('never commits a negative ratio when the pair cannot satisfy 2*minFrac (no-op)', () => {
+    // Verified overshoot: the sequential double-clamp used to yield [-0.12, 0.32, 0.8].
+    const out = computeResizeRatios([0.1, 0.1, 0.8], 0, 0.01, 0.32);
+    expect(out).toEqual([0.1, 0.1, 0.8]); // pair share 0.2 < 0.64 → keep the previous ratios
+    expect(out.every((r) => r >= 0)).toBe(true);
+  });
+
+  it('keeps both adjacent panes >= minFrac when the pair share is exactly 2*minFrac', () => {
+    const out = computeResizeRatios([0.3, 0.3, 0.4], 0, 0.25, 0.3);
+    expect(out[0]).toBeCloseTo(0.3);
+    expect(out[1]).toBeCloseTo(0.3);
+    expect(out[2]).toBe(0.4);
+  });
+
   it('preserves the total of all ratios', () => {
     const start = [0.2, 0.3, 0.5];
     expect(total(computeResizeRatios(start, 0, 0.07, 0.05))).toBeCloseTo(total(start));

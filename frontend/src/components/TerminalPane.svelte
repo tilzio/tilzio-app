@@ -6,6 +6,7 @@
   import '@xterm/xterm/css/xterm.css';
   import { coreBridge } from '../bridge/core';
   import { ptyEvents, isAlreadySpawnedError } from '../bridge/ptyEvents';
+  import { reapedPanes } from '../bridge/reapedPanes';
   import { paneRestart } from '../bridge/paneRestart';
   import { touchedPanes } from '../bridge/touchedPanes';
   import { alerts, clearAlerts } from '../bridge/alerts.svelte';
@@ -45,6 +46,10 @@
 
   let host: HTMLDivElement;
   let paneEl: HTMLDivElement;
+  // onMount below is async: the component can be destroyed while its awaits are
+  // in flight (tab switch or pane close). The continuations check this flag so a
+  // dead instance never registers handlers over a newer instance of the same pane.
+  let disposed = false;
   let term: Terminal;
   let fit: FitAddon;
   let resizeObs: ResizeObserver | undefined;
@@ -161,7 +166,11 @@
     term.loadAddon(fit);
     term.open(host);
     try {
-      term.loadAddon(new WebglAddon());
+      const webgl = new WebglAddon();
+      // GPU context loss (sleep/GPU switch/driver reset) would leave the pane
+      // permanently blank; disposing the addon drops xterm back to the DOM renderer.
+      webgl.onContextLoss(() => webgl.dispose());
+      term.loadAddon(webgl);
     } catch {
       // WebGL unavailable / context limit — xterm falls back to its default renderer.
     }
@@ -187,6 +196,11 @@
     } catch {
       // No persisted scrollback — normal for a fresh pane.
     }
+
+    // Destroyed while loadScrollback was in flight: registering now would
+    // clobber the registration of a newer instance of this pane (register is
+    // keyed by paneId), freezing the visible terminal. Bail before wiring.
+    if (disposed) return;
 
     ptyEvents.register(
       paneId,
@@ -220,6 +234,17 @@
         }
       }
     }
+
+    // The pane may have been closed while spawn was in flight — the reaper's
+    // kill can land in Go before Spawn finishes, orphaning the fresh session.
+    // The tombstone check closes that race with a re-kill. A plain unmount
+    // (tab switch) is NOT a close: the session stays alive for the remount's
+    // replay+reattach (§9), we only skip the wiring below.
+    if (reapedPanes.has(paneId)) {
+      void coreBridge.kill(paneId).catch(() => {});
+      return;
+    }
+    if (disposed) return;
 
     // Initial process tag (foreground/fallback). §9: read-only.
     coreBridge.shellTag(paneId).then((t) => { shellTag = t; }).catch(() => {});
@@ -275,6 +300,7 @@
   });
 
   onDestroy(() => {
+    disposed = true;
     clearTimeout(resizeTimer);
     document.removeEventListener('copy', onCopy, true);
     resizeObs?.disconnect();

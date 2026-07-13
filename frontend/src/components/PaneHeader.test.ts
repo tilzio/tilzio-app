@@ -200,6 +200,40 @@ describe('PaneHeader — split type menu (right click)', () => {
     await fireEvent.click(getByLabelText('split right'));
     expect(onSplit).toHaveBeenCalledWith('v');
   });
+
+  // FIX: the menu ignored clicks elsewhere — it only closed via Escape or picking an item.
+  it('closes the SplitMenu on a pointerdown outside', async () => {
+    const { getByLabelText, queryByLabelText } = render(PaneHeader, {
+      props: { paneId: 'p', title: 't', onSplit: vi.fn(), onSplitAs: vi.fn(), onSplitOpenFile: vi.fn() },
+    });
+    await fireEvent.contextMenu(getByLabelText('split right'));
+    expect(getByLabelText('split menu')).toBeTruthy();
+    await fireEvent.pointerDown(document.body);
+    expect(queryByLabelText('split menu')).toBeNull();
+  });
+
+  it('keeps the SplitMenu open on a pointerdown inside the menu', async () => {
+    const { getByLabelText } = render(PaneHeader, {
+      props: { paneId: 'p', title: 't', onSplit: vi.fn(), onSplitAs: vi.fn(), onSplitOpenFile: vi.fn() },
+    });
+    await fireEvent.contextMenu(getByLabelText('split right'));
+    await fireEvent.pointerDown(getByLabelText('split menu'));
+    expect(getByLabelText('split menu')).toBeTruthy();
+  });
+});
+
+describe('PaneHeader — close button hover styling (stable class)', () => {
+  it('close button carries the stable .close-btn class', () => {
+    const { getByLabelText } = render(PaneHeader, { props: { paneId: 'p', title: 't' } });
+    expect(getByLabelText('close pane').classList.contains('close-btn')).toBe(true);
+  });
+
+  it('hover rule targets .close-btn, not the localized aria-label (dead selector fix)', () => {
+    const src = readPaneHeaderSource();
+    const styleBlock = src.match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? '';
+    expect(styleBlock).toMatch(/\.tools\s+button\.close-btn:hover\s*\{[^}]*var\(--exit\)/s);
+    expect(styleBlock).not.toContain('[aria-label="close pane"]');
+  });
 });
 
 describe('PaneHeader — file tabs strip', () => {

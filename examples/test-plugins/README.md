@@ -1,4 +1,8 @@
-# Tilzio demo plugins
+# Tilzio test/demo plugins
+
+Dev fixtures for smoke-testing the plugin sandbox and docked panels. The real
+extensions (ts-usage, ts-git, ts-watch, ts-brain) live in `examples/plugins/`
+and in the `tilzio-extensions` repo.
 
 ## ts-demo (SP-3)
 
@@ -8,7 +12,7 @@ worker cannot see `window`/`document`/Wails bindings (while `fetch` is available
 
 ### Install for a smoke test (macOS)
 
-    cp -R examples/plugins/ts-demo "$HOME/Library/Application Support/Tilzio/plugins/ts-demo"
+    cp -R examples/test-plugins/ts-demo "$HOME/Library/Application Support/Tilzio/plugins/ts-demo"
 
 Run `wails3 dev`, then enable the plugin in the webview devtools console:
 

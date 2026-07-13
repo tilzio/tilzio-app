@@ -58,3 +58,13 @@ describe('ActivityBar', () => {
     expect(btn.textContent).toBe('⎇');
   });
 });
+
+describe('ActivityBar plugin icon', () => {
+  it('a button with iconPath renders an inline SVG instead of the text glyph', () => {
+    const b: ResolvedActivityButton = { pluginId: 'p', id: 'b', icon: '◷', iconPath: 'M4 17A9 9 0 1 1 20 17Z', title: 'AI Limits', opens: 'panel' };
+    const { getByLabelText } = render(ActivityBar, { props: { pluginButtons: [b], onPluginButton: () => {} } });
+    const btn = getByLabelText('AI Limits');
+    expect(btn.querySelector('svg path')?.getAttribute('d')).toBe('M4 17A9 9 0 1 1 20 17Z');
+    expect(btn.textContent?.trim()).toBe('');
+  });
+});

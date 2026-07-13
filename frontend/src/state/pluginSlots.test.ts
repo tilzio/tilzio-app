@@ -112,6 +112,11 @@ describe('activityBarButtons', () => {
     const p = view('p', { activityBar: [{ id: 'btn', icon: '🎛', title: 'T', opens: 'panel' }] });
     expect(activityBarButtons([p])).toEqual([{ pluginId: 'p', id: 'btn', icon: '🎛', title: 'T', opens: 'panel' }]);
   });
+
+  it('passes iconPath through from the manifest', () => {
+    const p = view('p', { activityBar: [{ id: 'btn', icon: '◷', title: 'T', opens: 'panel', iconPath: 'M4 17A9 9 0 1 1 20 17Z' }] });
+    expect(activityBarButtons([p])).toEqual([{ pluginId: 'p', id: 'btn', icon: '◷', title: 'T', opens: 'panel', iconPath: 'M4 17A9 9 0 1 1 20 17Z' }]);
+  });
 });
 
 describe('panelsFor', () => {

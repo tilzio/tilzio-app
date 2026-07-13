@@ -17,7 +17,9 @@
 <div class="activitybar">
   <button class="ab-btn toggle" class:active={!collapsed} aria-label={t('activityBar.toggleSidebar')} aria-expanded={!collapsed} title={t('activityBar.navigationSidebar')} onclick={() => onToggleSidebar?.()}>☰</button>
   {#each pluginButtons as b (b.pluginId + ':' + b.id)}
-    <button class="ab-btn plugin" aria-label={b.title} title={b.title} onclick={() => onPluginButton?.(b.pluginId, b.opens)}>{b.icon}</button>
+    <button class="ab-btn plugin" aria-label={b.title} title={b.title} onclick={() => onPluginButton?.(b.pluginId, b.opens)}>
+      {#if b.iconPath}<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d={b.iconPath} /></svg>{:else}{b.icon}{/if}
+    </button>
   {/each}
   <div class="spacer"></div>
   <button class="ab-btn ext" aria-label={t('activityBar.extensions')} title={t('activityBar.extensions')} onclick={() => onOpenExtensions?.()}>
@@ -35,6 +37,7 @@
   .ab-btn.active { color: var(--text); box-shadow: inset 2px 0 0 var(--accent); }
   /* plugin icons a bit smaller than the base ones (S2.2) */
   .ab-btn.plugin { font-size: 15px; }
+  .ab-btn.plugin svg { width: 16px; height: 16px; display: block; }
   .settings { font-size: 22px; }
   .ext svg { display: block; }
 </style>

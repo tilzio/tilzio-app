@@ -41,6 +41,16 @@ const HEX6 = /^#[0-9a-fA-F]{6}$/;
 export function cleanHexColor(v: unknown): string | undefined {
   return typeof v === 'string' && HEX6.test(v) ? v.toLowerCase() : undefined;
 }
+// SVG path data for an inline 24×24 icon (status chips, activity buttons). Whitelisted to
+// path-data characters only (never markup) and length-capped — real brand marks
+// (Simple Icons) run ~2.7k chars, so 4096 leaves headroom without inviting abuse.
+const ICON_PATH_RE = /^[MmLlHhVvCcSsQqTtAaZz0-9\s,.\-+eE]+$/;
+export function cleanIconPath(v: unknown): string | undefined {
+  if (typeof v !== 'string') return undefined;
+  const s = v.trim();
+  if (!s || s.length > 4096 || !ICON_PATH_RE.test(s)) return undefined;
+  return s;
+}
 
 export function toneColor(tone: Tone = 'default'): string {
   switch (tone) {

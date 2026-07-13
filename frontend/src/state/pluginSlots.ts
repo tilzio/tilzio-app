@@ -1,25 +1,14 @@
 // Pure selectors: from active plugins (declarations + ui data), assemble the
 // render-ready items for each slot (spec §6). No Svelte/reactivity.
 import type { Contributions } from './pluginContributions';
-import { cleanStr, cleanTone, cleanHexColor, sanitizeWidgets, asObj, asArray, type Tone, type Widget } from './widgets';
+import { cleanStr, cleanTone, cleanHexColor, cleanIconPath, sanitizeWidgets, asObj, asArray, type Tone, type Widget } from './widgets';
 
 export interface PluginView { id: string; contributes: Contributions; ui: Record<string, unknown> }
 
 export interface ResolvedStatusItem { pluginId: string; id: string; align: 'left' | 'right'; priority: number; text: string; icon?: string; iconPath?: string; iconColor?: string; tone: Tone; command?: string; color?: string; alert?: boolean; fill?: boolean; group?: string }
 export interface ResolvedBreadcrumbItem { pluginId: string; id: string; text: string; icon?: string; tone: Tone; command?: string; color?: string }
-export interface ResolvedActivityButton { pluginId: string; id: string; icon: string; title: string; opens: string }
+export interface ResolvedActivityButton { pluginId: string; id: string; icon: string; iconPath?: string; title: string; opens: string }
 export interface ResolvedPanel { pluginId: string; id: string; title: string; location: 'bottom' | 'right'; render?: 'widgets' | 'iframe'; entry?: string; widgets: Widget[]; header?: { title?: string; icon?: string; actions: { icon: string; command: string; args?: unknown }[] } }
-
-// SVG path data for an inline 24×24 brand icon on a status chip. Whitelisted to
-// path-data characters only (never markup) and length-capped — real brand marks
-// (Simple Icons) run ~2.7k chars, so 4096 leaves headroom without inviting abuse.
-const ICON_PATH_RE = /^[MmLlHhVvCcSsQqTtAaZz0-9\s,.\-+eE]+$/;
-function cleanIconPath(v: unknown): string | undefined {
-  if (typeof v !== 'string') return undefined;
-  const s = v.trim();
-  if (!s || s.length > 4096 || !ICON_PATH_RE.test(s)) return undefined;
-  return s;
-}
 
 // A bar item (status/breadcrumb) is shown only when its data has text or an icon.
 function barData(ui: Record<string, unknown>, id: string): { text: string; icon?: string; iconPath?: string; iconColor?: string; tone: Tone; command?: string; color?: string; alert?: boolean; fill?: boolean; group?: string } | null {
@@ -77,7 +66,7 @@ export function activityBarButtons(plugins: PluginView[]): ResolvedActivityButto
   const out: ResolvedActivityButton[] = [];
   for (const p of plugins) {
     for (const d of p.contributes.activityBar) {
-      out.push({ pluginId: p.id, id: d.id, icon: d.icon, title: d.title, opens: d.opens });
+      out.push({ pluginId: p.id, id: d.id, icon: d.icon, ...(d.iconPath ? { iconPath: d.iconPath } : {}), title: d.title, opens: d.opens });
     }
   }
   return out;

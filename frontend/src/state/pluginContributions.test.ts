@@ -16,6 +16,18 @@ describe('parseContributes', () => {
     expect(c.statusBar).toEqual([]);
   });
 
+  it('activityBar: valid iconPath is kept; markup or oversized data is dropped', () => {
+    const path = 'M4.21 17.5A9 9 0 1 1 19.79 17.5Z';
+    const c = parseContributes({ activityBar: [
+      { id: 'a', icon: '◷', title: 'A', opens: 'p', iconPath: path },
+      { id: 'b', icon: '◷', title: 'B', opens: 'p', iconPath: '<script>alert(1)</script>' },
+      { id: 'c', icon: '◷', title: 'C', opens: 'p', iconPath: 'M'.repeat(5000) },
+    ] });
+    expect(c.activityBar[0]).toEqual({ id: 'a', icon: '◷', title: 'A', opens: 'p', iconPath: path });
+    expect(c.activityBar[1]).toEqual({ id: 'b', icon: '◷', title: 'B', opens: 'p' });
+    expect(c.activityBar[2]).toEqual({ id: 'c', icon: '◷', title: 'C', opens: 'p' });
+  });
+
   it('statusBar: align defaults to left, priority defaults to 0', () => {
     const c = parseContributes({ statusBar: [{ id: 's1' }, { id: 's2', align: 'right', priority: 5 }] });
     expect(c.statusBar).toEqual([

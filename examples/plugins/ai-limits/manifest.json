@@ -1,6 +1,6 @@
 {
-  "id": "dev.term.usage",
-  "name": "Usage Watcher",
+  "id": "io.tilzio.ai-limits",
+  "name": "AI Limits",
   "version": "1.0.0",
   "engine": "tilzio@1",
   "entry": "main.js",
@@ -16,7 +16,7 @@
       {
         "id": "usage.btn",
         "icon": "◷",
-        "title": "Usage Watcher",
+        "title": "AI Limits",
         "opens": "usage.panel"
       }
     ],
@@ -76,7 +76,7 @@
       {
         "id": "usage.panel",
         "location": "right",
-        "title": "Usage Watcher",
+        "title": "AI Limits",
         "render": "iframe",
         "entry": "panel.html"
       }

@@ -1,4 +1,4 @@
-// Usage Watcher — сторонний плагин Tilzio. Классический Web Worker, глобал `ts`.
+// AI Limits — сторонний плагин Tilzio. Классический Web Worker, глобал `ts`.
 // NO import/export/require. Чистые функции — function-декларации (тестируемы харнессом).
 // Контракт: docs/plugins/api-reference.md. Spec: 2026-06-10-tilzio-usage-watcher-design.md.
 
@@ -538,7 +538,7 @@ var refresh = async function (opts) {
   }
   if (res.ccusageMissing && !STATE.notifiedNoCcusage) {
     STATE.notifiedNoCcusage = true;
-    ts.notify('Usage Watcher: install ccusage — `npm i -g ccusage`');
+    ts.notify('AI Limits: install ccusage — `npm i -g ccusage`');
   }
   renderStatus();
   postState();

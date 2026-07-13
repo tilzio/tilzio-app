@@ -1,4 +1,4 @@
-# Usage Watcher (Tilzio plugin)
+# AI Limits (Tilzio plugin)
 
 Мониторинг расхода/лимитов Claude Code и Codex в интерактивной панели (правая боковая колонка) и статус-баре.
 
@@ -22,7 +22,7 @@
 - Видимость статус-бар чипсов — синхронизация с их отображением в статус-баре.
 
 **Статус-бар (хост-сторона):**
-- Кнопка «Usage Watcher» (◷) — клик открывает панель в правой колонке.
+- Кнопка «AI Limits» (◷) — клик открывает панель в правой колонке.
 - Чипсы для каждого провайдера (включение/отключение через настройки):
   - Claude: watcher, name, 5h %, week %, today $, токены, reset daily, reset weekly
   - Codex: name, today $, токены
@@ -59,10 +59,10 @@
 
 ```bash
 # Скопировать в каталог плагинов Tilzio
-cp -R examples/plugins/ts-usage/* "$HOME/Library/Application Support/Tilzio/plugins/dev.term.usage/"
+cp -R examples/plugins/ai-limits/* "$HOME/Library/Application Support/Tilzio/plugins/ai-limits/"
 ```
 
-В приложении Tilzio: **Настройки** → **Расширения** → **Usage Watcher** → включить.
+В приложении Tilzio: **Настройки** → **Расширения** → **AI Limits** → включить.
 
 ## Использование
 

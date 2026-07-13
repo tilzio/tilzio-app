@@ -3,7 +3,7 @@
 Dev fixtures and API demos for smoke-testing the plugin sandbox and docked
 panels: ts-demo/ts-showcase (sandbox runtime), ts-dash (docked panel),
 ts-watch (terminal observation, SP-A), ts-brain (iframe panel + worker state).
-The real extension (ts-usage) lives in `examples/plugins/` and in the
+The real extension (ai-limits) lives in `examples/plugins/` and in the
 `tilzio-extensions` repo.
 
 ## ts-demo (SP-3)

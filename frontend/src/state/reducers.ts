@@ -155,7 +155,8 @@ export function splitPane(s: AppState, paneId: PaneId, dir: 'h' | 'v'): AppState
     ...sp,
     tabs: sp.tabs.map((t) =>
       t.id === tab.id
-        ? { ...t, root: splitNode(t.root, paneId, dir, fresh), activePaneId: fresh.id }
+        // Splitting is an explicit "show more panes" — exit zoom of the modified tab.
+        ? { ...t, root: splitNode(t.root, paneId, dir, fresh), activePaneId: fresh.id, zoomedPaneId: null }
         : t,
     ),
   }));
@@ -173,7 +174,8 @@ export function splitAsEditor(s: AppState, paneId: PaneId, dir: 'h' | 'v'): AppS
     ...sp,
     tabs: sp.tabs.map((t) =>
       t.id === tab.id
-        ? { ...t, root: splitNode(t.root, paneId, dir, fresh), activePaneId: fresh.id }
+        // New pane → exit zoom (a zoomed tab would render the new active pane hidden).
+        ? { ...t, root: splitNode(t.root, paneId, dir, fresh), activePaneId: fresh.id, zoomedPaneId: null }
         : t),
   }));
 }
@@ -190,7 +192,8 @@ export function openFileInNewSplit(s: AppState, paneId: PaneId, path: string, di
     ...sp,
     tabs: sp.tabs.map((t) =>
       t.id === tab.id
-        ? { ...t, root: splitNode(t.root, paneId, dir, fresh), activePaneId: fresh.id }
+        // New pane → exit zoom (a zoomed tab would render the new active pane hidden).
+        ? { ...t, root: splitNode(t.root, paneId, dir, fresh), activePaneId: fresh.id, zoomedPaneId: null }
         : t),
   }));
 }
@@ -213,7 +216,10 @@ export function openPluginView(s: AppState, pluginId: string, viewId: string): A
   return mapSpace(s, space.id, (sp) => ({
     ...sp,
     tabs: sp.tabs.map((t) =>
-      t.id === tab.id ? { ...t, root: splitNode(t.root, targetId, dir, fresh), activePaneId: fresh.id } : t),
+      t.id === tab.id
+        // Only the tab that receives the tile exits zoom; other tabs stay untouched.
+        ? { ...t, root: splitNode(t.root, targetId, dir, fresh), activePaneId: fresh.id, zoomedPaneId: null }
+        : t),
   }));
 }
 
@@ -349,10 +355,20 @@ function setRatioNode(node: PaneNode, splitId: string, ratios: number[]): PaneNo
 }
 
 export function setRatio(s: AppState, splitId: string, ratios: number[]): AppState {
+  // Reject broken ratios early (NaN/Infinity/negative/all-zero would corrupt the
+  // persisted layout); length-vs-children is checked per node in setRatioNode.
+  if (!ratios.every((r) => Number.isFinite(r) && r >= 0)) return s;
+  if (ratios.reduce((a, b) => a + b, 0) <= 0) return s;
   return mapActiveTabRoot(s, (root) => setRatioNode(root, splitId, ratios));
 }
 
 export function setZoom(s: AppState, tabId: TabId, paneId: PaneId | null): AppState {
+  if (paneId !== null) {
+    // A zoom target must be a leaf of the tab — a dangling id hides ALL cells.
+    const space = s.spaces.find((sp) => sp.id === s.activeSpaceId);
+    const tab = space?.tabs.find((t) => t.id === tabId);
+    if (!tab || !findLeaf(tab.root, paneId)) return s;
+  }
   return mapSpace(s, s.activeSpaceId, (sp) => ({
     ...sp,
     tabs: sp.tabs.map((t) => (t.id === tabId ? { ...t, zoomedPaneId: paneId } : t)),
@@ -401,7 +417,16 @@ export function convertPaneToTerminal(s: AppState, paneId: PaneId): AppState {
   };
   return mapSpace(s, space.id, (sp) => ({
     ...sp,
-    tabs: sp.tabs.map((t) => (t.id === tab.id ? { ...t, root: apply(t.root), activePaneId: fresh.id } : t)),
+    tabs: sp.tabs.map((t) =>
+      t.id === tab.id
+        ? {
+            ...t,
+            root: apply(t.root),
+            activePaneId: fresh.id,
+            // 1:1 replacement — zoom follows the new terminal (a dangling id would hide all cells).
+            zoomedPaneId: t.zoomedPaneId === paneId ? fresh.id : t.zoomedPaneId,
+          }
+        : t),
   }));
 }
 
@@ -420,6 +445,7 @@ export function focusNeighbor(s: AppState, dir: Dir): AppState {
   if (!space) return s;
   const tab = space.tabs.find((t) => t.id === space.activeTabId);
   if (!tab) return s;
+  if (tab.zoomedPaneId !== null) return s; // zoomed: siblings are hidden — navigation is meaningless
   const target = neighbor(leafRects(tab.root), tab.activePaneId, dir);
   return target ? focusPane(s, target) : s;
 }

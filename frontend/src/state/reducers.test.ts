@@ -281,15 +281,32 @@ describe('setRatio', () => {
     const r = setRatio(s, split.id, [1.0]);
     expect((r.spaces[0].tabs[0].root as Split).ratio).toEqual([0.5, 0.5]);
   });
+
+  it('rejects non-finite, negative, and all-zero ratios (same ref)', () => {
+    const { state, leafId } = stateWithLeafCwd('');
+    const s = splitPane(state, leafId, 'v');
+    const split = s.spaces[0].tabs[0].root as Split;
+    expect(setRatio(s, split.id, [NaN, 0.5])).toBe(s);
+    expect(setRatio(s, split.id, [Infinity, 0.5])).toBe(s);
+    expect(setRatio(s, split.id, [-0.2, 1.2])).toBe(s);
+    expect(setRatio(s, split.id, [0, 0])).toBe(s);      // sum must be > 0
+  });
 });
 
 describe('setZoom', () => {
   it('sets and clears the zoomed pane of a tab', () => {
     const s = initialState();
     const tabId = s.spaces[0].tabs[0].id;
-    const z = setZoom(s, tabId, 'p1');
-    expect(z.spaces[0].tabs[0].zoomedPaneId).toBe('p1');
+    const paneId = (s.spaces[0].tabs[0].root as Leaf).id;
+    const z = setZoom(s, tabId, paneId);
+    expect(z.spaces[0].tabs[0].zoomedPaneId).toBe(paneId);
     expect(setZoom(z, tabId, null).spaces[0].tabs[0].zoomedPaneId).toBeNull();
+  });
+
+  it('ignores a paneId that is not a leaf of the tab (same ref)', () => {
+    const s = initialState();
+    const tabId = s.spaces[0].tabs[0].id;
+    expect(setZoom(s, tabId, 'no-such-pane')).toBe(s);
   });
 });
 
@@ -1284,6 +1301,27 @@ describe('convertPaneToTerminal', () => {
     expect(leaf.kind).toBe('terminal');
     expect(activeTabOf(next).activePaneId).toBe(leaf.id);
   });
+
+  it('re-points zoom at the new terminal when the replaced editor was zoomed', () => {
+    const ed = newEditorLeaf();
+    let s = editorStateWithRoot(newSplit('v', [newLeaf('/a'), ed]));
+    s = setZoom(s, activeTabOf(s).id, ed.id);         // zoom the editor being replaced
+    const next = convertPaneToTerminal(s, ed.id);
+    const tab = activeTabOf(next);
+    const fresh = collectLeaves(tab.root).find((l) => l.id !== (tab.root as Split).children[0].id)!;
+    expect(fresh.kind).toBe('terminal');
+    expect(tab.zoomedPaneId).toBe(fresh.id);          // zoom follows the 1:1 replacement
+    expect(tab.activePaneId).toBe(fresh.id);
+  });
+
+  it('keeps zoom untouched when a DIFFERENT pane is zoomed', () => {
+    const term = newLeaf('/a');
+    const ed = newEditorLeaf();
+    let s = editorStateWithRoot(newSplit('v', [term, ed]));
+    s = setZoom(s, activeTabOf(s).id, term.id);       // zoom the sibling terminal
+    const next = convertPaneToTerminal(s, ed.id);
+    expect(activeTabOf(next).zoomedPaneId).toBe(term.id);
+  });
 });
 
 describe('splitAsEditor', () => {
@@ -1442,6 +1480,59 @@ describe('openPluginView', () => {
     expect(leaves.some((l) => l.kind === 'plugin')).toBe(false);
     expect(leaves.length).toBe(1);                                 // split collapsed into a console
     expect(s.spaces[0].tabs[0].root.kind).toBe('terminal');
+  });
+});
+
+// FIX 2: structure/focus reducers vs zoom — creating a new pane while the tab is
+// zoomed must EXIT zoom (otherwise the new pane is focused yet display:none).
+describe('zoom vs structure/focus reducers', () => {
+  it('splitPane exits zoom of the modified tab', () => {
+    const { state, leafId } = stateWithLeafCwd('/w');
+    let s = setZoom(state, 't', leafId);
+    s = splitPane(s, leafId, 'v');
+    expect(s.spaces[0].tabs[0].zoomedPaneId).toBeNull();
+  });
+
+  it('splitAsEditor exits zoom of the modified tab', () => {
+    const { state, leafId } = stateWithLeafCwd('/w');
+    let s = setZoom(state, 't', leafId);
+    s = splitAsEditor(s, leafId, 'v');
+    expect(s.spaces[0].tabs[0].zoomedPaneId).toBeNull();
+  });
+
+  it('openFileInNewSplit exits zoom of the modified tab', () => {
+    const { state, leafId } = stateWithLeafCwd('/w');
+    let s = setZoom(state, 't', leafId);
+    s = openFileInNewSplit(s, leafId, '/proj/a.ts', 'v');
+    expect(s.spaces[0].tabs[0].zoomedPaneId).toBeNull();
+  });
+
+  it('openPluginView exits zoom of the tab that receives the tile', () => {
+    const base = initialState();
+    const tabId = base.spaces[0].tabs[0].id;
+    const leafId = (base.spaces[0].tabs[0].root as Leaf).id;
+    let s = setZoom(base, tabId, leafId);
+    s = openPluginView(s, 'p1', 'main');
+    expect(s.spaces[0].tabs[0].zoomedPaneId).toBeNull();
+  });
+
+  it('openPluginView leaves the zoom of an UNRELATED tab intact', () => {
+    let s = initialState();
+    const tab1 = s.spaces[0].tabs[0];
+    const tab1Leaf = (tab1.root as Leaf).id;
+    s = addTab(s, s.spaces[0].id, 't2');        // tab2 becomes active
+    s = setZoom(s, tab1.id, tab1Leaf);          // zoom lives in the inactive tab1
+    s = openPluginView(s, 'p1', 'main');        // tile lands in tab2
+    expect(s.spaces[0].tabs[0].zoomedPaneId).toBe(tab1Leaf); // tab1 untouched
+    expect(s.spaces[0].tabs[1].zoomedPaneId).toBeNull();
+  });
+
+  it('focusNeighbor is a no-op while the active tab is zoomed', () => {
+    const a = newLeaf();
+    const b = newLeaf();
+    const s0 = stateWithRoot(newSplit('v', [a, b]), a.id);
+    const s = setZoom(s0, 't', a.id);
+    expect(focusNeighbor(s, 'right')).toBe(s);  // same ref — hidden siblings are not navigable
   });
 });
 

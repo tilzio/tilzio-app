@@ -5,19 +5,36 @@ import { cleanStr, cleanTone, cleanHexColor, sanitizeWidgets, asObj, asArray, ty
 
 export interface PluginView { id: string; contributes: Contributions; ui: Record<string, unknown> }
 
-export interface ResolvedStatusItem { pluginId: string; id: string; align: 'left' | 'right'; priority: number; text: string; icon?: string; tone: Tone; command?: string; color?: string; alert?: boolean; fill?: boolean; group?: string }
+export interface ResolvedStatusItem { pluginId: string; id: string; align: 'left' | 'right'; priority: number; text: string; icon?: string; iconPath?: string; iconColor?: string; tone: Tone; command?: string; color?: string; alert?: boolean; fill?: boolean; group?: string }
 export interface ResolvedBreadcrumbItem { pluginId: string; id: string; text: string; icon?: string; tone: Tone; command?: string; color?: string }
 export interface ResolvedActivityButton { pluginId: string; id: string; icon: string; title: string; opens: string }
 export interface ResolvedPanel { pluginId: string; id: string; title: string; location: 'bottom' | 'right'; render?: 'widgets' | 'iframe'; entry?: string; widgets: Widget[]; header?: { title?: string; icon?: string; actions: { icon: string; command: string; args?: unknown }[] } }
 
-// A bar item (status/breadcrumb) is shown only when its data has text or icon.
-function barData(ui: Record<string, unknown>, id: string): { text: string; icon?: string; tone: Tone; command?: string; color?: string; alert?: boolean; fill?: boolean; group?: string } | null {
+// SVG path data for an inline 24×24 brand icon on a status chip. Whitelisted to
+// path-data characters only (never markup) and length-capped — real brand marks
+// (Simple Icons) run ~2.7k chars, so 4096 leaves headroom without inviting abuse.
+const ICON_PATH_RE = /^[MmLlHhVvCcSsQqTtAaZz0-9\s,.\-+eE]+$/;
+function cleanIconPath(v: unknown): string | undefined {
+  if (typeof v !== 'string') return undefined;
+  const s = v.trim();
+  if (!s || s.length > 4096 || !ICON_PATH_RE.test(s)) return undefined;
+  return s;
+}
+
+// A bar item (status/breadcrumb) is shown only when its data has text or an icon.
+function barData(ui: Record<string, unknown>, id: string): { text: string; icon?: string; iconPath?: string; iconColor?: string; tone: Tone; command?: string; color?: string; alert?: boolean; fill?: boolean; group?: string } | null {
   const d = asObj(ui[id]);
   const text = cleanStr(d.text);
   const icon = d.icon !== undefined ? cleanStr(d.icon, 8) : undefined;
-  if (!text && !icon) return null;
-  const out: { text: string; icon?: string; tone: Tone; command?: string; color?: string; alert?: boolean; fill?: boolean; group?: string } = { text, tone: cleanTone(d.tone) };
+  const iconPath = cleanIconPath(d.iconPath);
+  if (!text && !icon && !iconPath) return null;
+  const out: { text: string; icon?: string; iconPath?: string; iconColor?: string; tone: Tone; command?: string; color?: string; alert?: boolean; fill?: boolean; group?: string } = { text, tone: cleanTone(d.tone) };
   if (icon) out.icon = icon;
+  if (iconPath) {
+    out.iconPath = iconPath;
+    const ic = cleanHexColor(d.iconColor);
+    if (ic) out.iconColor = ic;
+  }
   if (typeof d.command === 'string') out.command = cleanStr(d.command, 100);
   const color = cleanHexColor(d.color);
   if (color) out.color = color;

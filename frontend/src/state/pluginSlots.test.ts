@@ -28,6 +28,37 @@ describe('statusBarItems', () => {
     expect(statusBarItems([p]).left).toEqual([]);
   });
 
+  it('iconPath: valid SVG path data passes through and shows an iconPath-only item', () => {
+    const p = view('p', { statusBar: [{ id: 'x', align: 'left', priority: 0 }] }, {
+      x: { iconPath: 'M12 2 L22 12 Z' },
+    });
+    const { left } = statusBarItems([p]);
+    expect(left).toHaveLength(1);
+    expect(left[0].iconPath).toBe('M12 2 L22 12 Z');
+  });
+
+  it('iconPath: markup/foreign characters and over-long data are rejected', () => {
+    const bad = view('p', { statusBar: [{ id: 'x', align: 'left', priority: 0 }] }, {
+      x: { text: 'T', iconPath: 'M0 0"/><script>alert(1)</script>' },
+    });
+    expect(statusBarItems([bad]).left[0].iconPath).toBeUndefined();
+    const long = view('p', { statusBar: [{ id: 'y', align: 'left', priority: 0 }] }, {
+      y: { text: 'T', iconPath: 'M ' + '0 '.repeat(3000) },
+    });
+    expect(statusBarItems([long]).left[0].iconPath).toBeUndefined();
+  });
+
+  it('iconColor: sanitized as hex; invalid ignored', () => {
+    const ok = view('p', { statusBar: [{ id: 'x', align: 'left', priority: 0 }] }, {
+      x: { text: 'T', iconPath: 'M0 0Z', iconColor: '#D97757' },
+    });
+    expect(statusBarItems([ok]).left[0].iconColor).toBe('#d97757');
+    const bad = view('p', { statusBar: [{ id: 'x', align: 'left', priority: 0 }] }, {
+      x: { text: 'T', iconPath: 'M0 0Z', iconColor: 'url(javascript:x)' },
+    });
+    expect(statusBarItems([bad]).left[0].iconColor).toBeUndefined();
+  });
+
   it('color: a valid #rrggbb makes it into the data', () => {
     const p = view('p', { statusBar: [{ id: 'a', align: 'left', priority: 0 }] }, { a: { text: 'A', tone: 'accent', color: '#ABCDEF' } });
     expect(statusBarItems([p]).left[0]).toMatchObject({ text: 'A', tone: 'accent', color: '#abcdef' });

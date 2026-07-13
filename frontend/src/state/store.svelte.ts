@@ -2,7 +2,9 @@ import { type AppState, initialState, type PaneId, type SpaceId, type TabId } fr
 import * as R from './reducers';
 import { serialize, loadOrDefault } from './serialize';
 import { debounce } from './autosave';
+import { removedTerminalPanes } from './paneLifecycle';
 import { coreBridge } from '../bridge/core';
+import { reapPanes } from '../bridge/paneReaper';
 import type { Dir } from './paneGeometry';
 import type { DropTarget } from './dropZone';
 
@@ -15,8 +17,14 @@ const saver = debounce(() => {
 }, 500);
 
 function commit(next: AppState): void {
+  // Terminal leaves this reducer step removed from the layout: their Go PTY
+  // sessions and runtime-registry entries must die with them. Diffing the whole
+  // state here (not per close-handler) covers every removal path — pane, tab,
+  // space, and any future reducer — while moves stay untouched (paneLifecycle).
+  const removed = removedTerminalPanes(store.app, next);
   store.app = next;
   saver.schedule();
+  if (removed.length) reapPanes(removed);
 }
 
 // Load persisted layout at startup (default on missing/corrupt).

@@ -85,7 +85,7 @@
     "commands": [
       {
         "id": "usage.refresh",
-        "title": "Usage: обновить"
+        "title": "Usage: refresh"
       }
     ]
   }

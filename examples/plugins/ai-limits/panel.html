@@ -240,8 +240,8 @@ function brandColor(id) { return BRAND_COLOR[id] || BRAND_COLOR._default; }
 // --- module state ---
 var STATE = { tools: [], settings: {}, trends: {}, diag: {} };
 var MODE = 'dash';
-// Пока идёт drag строк-блоков, любой render() (30s-тик / push state из воркера)
-// уничтожил бы перетаскиваемый DOM — откладываем перерисовку до dragend/drop.
+// While a card-row drag is in progress, any render() (30s tick / state push from the worker)
+// would destroy the dragged DOM — defer re-rendering until dragend/drop.
 var dragging = false, pendingRender = false;
 function endDrag() {
   dragging = false;
@@ -317,7 +317,7 @@ function renderLimitsBlock(t, settings) {
     rows.push({ label: 'Week', pct: t.week.utilPct, trendKey: t.id + '.week' });
   }
   if (cardMetricOn('card.weekSonnet', settings) && t.sonnet && t.sonnet.utilPct != null) {
-    // label приходит из воркера: имя модели из 'Current week (<model>)' (напр. 'Fable').
+    // label comes from the worker: the model name from 'Current week (<model>)' (e.g. 'Fable').
     rows.push({ label: str(t.sonnet.label) || 'Model', pct: t.sonnet.utilPct });
   }
   if (!rows.length) return null;
@@ -693,8 +693,8 @@ function renderBlockRow(block, settings) {
     ev.dataTransfer.effectAllowed = 'move';
     ev.dataTransfer.setData('text/plain', block);
   });
-  // dragend приходит на источнике и после drop, и после отмены (Esc / мимо цели) —
-  // единая точка снятия флага + чистки повисших .dragover.
+  // dragend fires on the source both after a drop and after a cancel (Esc / missed target) —
+  // the single point that clears the flag and cleans up stale .dragover.
   row.addEventListener('dragend', endDrag);
   row.addEventListener('dragover', function (ev) {
     ev.preventDefault();
@@ -770,7 +770,7 @@ function renderSettings() {
 }
 
 function render() {
-  if (dragging) { pendingRender = true; return; }   // не рушить DOM под курсором — дорисуем на dragend
+  if (dragging) { pendingRender = true; return; }   // don't tear down the DOM under the cursor — re-render on dragend
   var root = document.getElementById('root');
   root.innerHTML = '';
   root.appendChild(MODE === 'settings' ? renderSettings() : renderDashboard());

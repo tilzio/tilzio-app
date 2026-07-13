@@ -1,83 +1,83 @@
 # AI Limits (Tilzio plugin)
 
-Мониторинг расхода/лимитов Claude Code и Codex в интерактивной панели (правая боковая колонка) и статус-баре.
+Claude Code / Codex usage and limits monitoring in an interactive panel (right side column) and the status bar.
 
-## Что показывает
+## What it shows
 
-**Панель (iframe-дашборд, style B):**
-- **Claude:** процент реального 5-часового окна / недели / лимита Sonnet (`claude -p /usage`), расход за сегодня / неделю / месяц, 7-дневная история (столбцы или линия), разбор токенов (используемые/лимит).
-- **Codex:** расход за сегодня / неделю / месяц, 7-дневная история, разбор токенов.
-- Каждый провайдер можно развернуть/свернуть (▾/▸).
+**Panel (iframe dashboard, style B):**
+- **Claude:** real 5-hour window / week / per-model limit percentages (`claude -p /usage`), spend for today / week / month, 7-day history (bars or line), token breakdown.
+- **Codex:** spend for today / week / month, 7-day history, token breakdown.
+- Each provider section can be expanded/collapsed (▾/▸).
 
-**Встроенная конфигурация панели:**
-- Переключение типа визуализации лимитов: `meter` ↔ `rings` (с сохранением).
-- Переключение типа истории: `bars` (столбцы) ↔ `line` (линия) (с сохранением).
-- Настройка показателей: ⚙ → откроется встроенная секция настроек.
+**Built-in panel configuration:**
+- Limits visualization toggle: `meter` ↔ `rings` (persisted).
+- History visualization toggle: `bars` ↔ `line` (persisted).
+- Metric configuration: ⚙ opens the inline settings section.
 
-**Настройки (⚙ в заголовке панели):**
-- Включение/отключение инструментов (Claude, Codex) — исчезают секция и статус-бар чипсы.
-- Порог алерта (±5% от стандартного 80%).
-- Порядок блоков данных (drag & drop) — персист в хранилище.
-- Видимость отдельных метрик (процент/расход/история/токены) — персист в хранилище.
-- Видимость статус-бар чипсов — синхронизация с их отображением в статус-баре.
+**Settings (⚙ in the panel header):**
+- Enable/disable tools (Claude, Codex) — their section and status-bar chips disappear.
+- Alert threshold (±5% around the default 80%).
+- Data block order (drag & drop) — persisted in storage.
+- Per-metric visibility (percent/spend/history/tokens) — persisted in storage.
+- Status-bar chip visibility — synced with what the status bar shows.
 
-**Статус-бар (хост-сторона):**
-- Кнопка «AI Limits» (◷) — клик открывает панель в правой колонке.
-- Чипсы для каждого провайдера (включение/отключение через настройки):
-  - Claude: watcher, name, 5h %, week %, today $, токены, reset daily, reset weekly
-  - Codex: name, today $, токены
+**Status bar (host side):**
+- The "AI Limits" button (gauge icon) — click opens the panel in the right column.
+- Chips per provider (toggled in settings):
+  - Claude: name, 5h %, week %, today $, tokens, reset daily, reset weekly
+  - Codex: name, today $, tokens
 
-## Архитектура
+## Architecture
 
-1. **Worker** (`main.js`): фоновый воркер, который:
-   - Запускает `claude -p /usage` и `ccusage` (+ `ccusage codex`) с интервалом.
-   - Подстраивает данные под структуру состояния.
-   - Проверяет алерты (≥ порог).
-   - Отправляет состояние в iframe через `postMessage`.
+1. **Worker** (`main.js`): a background worker that:
+   - Runs `claude -p /usage` and `ccusage` (+ `ccusage codex`) on an interval.
+   - Normalizes the data into the state shape.
+   - Checks alerts (≥ threshold).
+   - Pushes state to the iframe via `postMessage`.
 
-2. **Panel** (`panel.html`): iframe-дашборд, который:
-   - Получает состояние от воркера.
-   - Рендерит скомпилированный HTML (style B).
-   - Отправляет события (collapse toggle, view toggle, settings change) обратно в воркер.
-   - Стилизуется переменными хоста `--ts-*` (цвета, шрифты).
+2. **Panel** (`panel.html`): an iframe dashboard that:
+   - Receives state from the worker.
+   - Renders the dashboard (style B).
+   - Sends events (collapse toggle, view toggle, settings change) back to the worker.
+   - Is styled by the host `--ts-*` variables (colors, fonts).
 
 3. **Host** (Tilzio):
-   - Рендерит Activity Bar кнопку (◷) и регулирует статус-бар.
-   - Применяет CSS-переменные темы к iframe.
+   - Renders the Activity Bar button and manages the status bar.
+   - Applies theme CSS variables to the iframe.
 
-## Требования
+## Requirements
 
-- `ccusage` в PATH: `npm i -g ccusage`.
-- `claude` (Claude Code CLI) в PATH с выполненным входом — для получения % лимитов (`claude -p /usage`).
-- macOS 12+. Linux/Windows — планируется.
+- `ccusage` on PATH: `npm i -g ccusage`.
+- `claude` (Claude Code CLI) on PATH and signed in — for limit percentages (`claude -p /usage`).
+- macOS 12+. Linux/Windows — planned.
 
-## Права
+## Permissions
 
-- `exec`: `ccusage`, `claude` — для получения данных расходов и лимитов.
+- `exec`: `ccusage`, `claude` — to fetch spend and limit data.
 
-## Установка (разработка)
+## Installing (development)
 
 ```bash
-# Скопировать в каталог плагинов Tilzio
+# Copy into the Tilzio plugins directory
 cp -R examples/plugins/ai-limits/* "$HOME/Library/Application Support/Tilzio/plugins/ai-limits/"
 ```
 
-В приложении Tilzio: **Настройки** → **Расширения** → **AI Limits** → включить.
+In Tilzio: **Settings** → **Extensions** → **AI Limits** → enable.
 
-## Использование
+## Usage
 
-1. Нажать ◷ в Activity Bar → открывается панель в правой колонке.
-2. Закрыть/развернуть провайдеры (▾/▸); переключить тип визуализации (meter ↔ rings, bars ↔ line).
-3. Нажать ⚙ → настроить инструменты, порог алерта, метрики, чипсы, порядок блоков.
-4. Статус-бар чипсы отражают текущее состояние и обновляются в реальном времени.
-5. При превышении порога алерта → toast-уведомление в приложении.
+1. Click the gauge icon in the Activity Bar → the panel opens in the right column.
+2. Collapse/expand providers (▾/▸); switch the visualizations (meter ↔ rings, bars ↔ line).
+3. Click ⚙ → configure tools, alert threshold, metrics, chips, and block order.
+4. Status-bar chips reflect the current state and update live.
+5. When the alert threshold is exceeded → an in-app toast notification.
 
-## Тема
+## Theming
 
-Панель автоматически стилизуется переменными хоста `--ts-*`:
-- `--ts-bg-primary`, `--ts-bg-secondary` — фоны.
-- `--ts-text-primary`, `--ts-text-secondary` — текст.
-- `--ts-accent`, `--ts-accent-alt` — акценты.
-- Остальные переменные спецификации Tilzio.
+The panel is styled automatically by the host `--ts-*` variables:
+- `--ts-bg-primary`, `--ts-bg-secondary` — backgrounds.
+- `--ts-text-primary`, `--ts-text-secondary` — text.
+- `--ts-accent`, `--ts-accent-alt` — accents.
+- The rest of the Tilzio variable spec.
 
-Нет дополнительной CSS — только встроенные стили в `panel.html`.
+No extra CSS — only the inline styles in `panel.html`.

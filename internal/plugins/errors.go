@@ -38,3 +38,7 @@ var ErrDownload = errors.New("plugins: download failed")
 
 // ErrChecksum — the downloaded archive does not match the catalog's sha256.
 var ErrChecksum = errors.New("plugins: downloaded archive checksum mismatch")
+
+// ErrManifestMismatch — the downloaded zip's manifest declares permissions or
+// exec binaries beyond what the catalog entry advertised (consent-gate integrity).
+var ErrManifestMismatch = errors.New("plugins: zip manifest exceeds catalog permissions")

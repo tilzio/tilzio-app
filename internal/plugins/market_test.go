@@ -322,6 +322,39 @@ func TestStoreInstallChecksumMismatch(t *testing.T) {
 	}
 }
 
+func TestStoreInstallManifestPermsSubsetOK(t *testing.T) {
+	// testEntry declares Permissions: []string{"state:read"}; a zip manifest
+	// declaring the SAME permission is a subset (equal), not a growth, and
+	// must install fine.
+	mf := `{"id":"dev.s","name":"X","version":"1.0.0","engine":"tilzio@1","entry":"main.js","permissions":["state:read"]}`
+	zipData := makeZip(t, map[string]string{"manifest.json": mf, "main.js": "//s"})
+	srv, _ := storeServer(t, "dev.s", "1.0.0", zipData, "")
+	m := newTestMarket(t, srv.URL)
+	res, err := m.StoreInstall("dev.s")
+	if err != nil {
+		t.Fatalf("StoreInstall: %v", err)
+	}
+	if res.Status != "installed" || res.Info == nil || res.Info.Manifest.ID != "dev.s" {
+		t.Fatalf("bad result: %+v", res)
+	}
+}
+
+func TestStoreInstallManifestExceedsCatalogPerms(t *testing.T) {
+	// testEntry declares Permissions: []string{"state:read"}; a zip manifest
+	// declaring "terminal:read" (not in the catalog entry) must be rejected —
+	// the catalog cannot be trusted to reflect what the zip actually enforces.
+	mf := `{"id":"dev.s","name":"X","version":"1.0.0","engine":"tilzio@1","entry":"main.js","permissions":["terminal:read"]}`
+	zipData := makeZip(t, map[string]string{"manifest.json": mf, "main.js": "//s"})
+	srv, _ := storeServer(t, "dev.s", "1.0.0", zipData, "")
+	m := newTestMarket(t, srv.URL)
+	if _, err := m.StoreInstall("dev.s"); !errors.Is(err, ErrManifestMismatch) {
+		t.Fatalf("want ErrManifestMismatch, got %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(m.svc.pluginsDir, "dev.s")); !os.IsNotExist(err) {
+		t.Fatal("nothing must be installed on manifest mismatch")
+	}
+}
+
 func TestStoreInstallUnknownID(t *testing.T) {
 	srv := fakeRegistry(t, []StoreEntry{testEntry("a", "1.0.0")}, "", new(atomic.Int64))
 	m := newTestMarket(t, srv.URL)

@@ -1,6 +1,8 @@
 package plugins
 
 import (
+	"archive/zip"
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -300,7 +302,75 @@ func (m *Market) StoreInstall(id string) (InstallResult, error) {
 	if !strings.EqualFold(hex.EncodeToString(sum[:]), entry.SHA256) {
 		return InstallResult{}, fmt.Errorf("%w: %s@%s", ErrChecksum, id, entry.Version)
 	}
+	// The catalog entry's permissions/exec are what the consent gate showed the
+	// user (StoreCheckUpdates, frontend consent dialog); what actually gets
+	// enforced at runtime is the zip's own manifest.json. A hostile registry
+	// could advertise benign permissions in the catalog while shipping a zip
+	// whose manifest declares more — the zip manifest must not exceed it.
+	m2, err := manifestFromZip(data)
+	if err != nil {
+		return InstallResult{}, err
+	}
+	if hasNew(entry.Permissions, m2.Permissions) || hasNew(entry.Exec, m2.Exec) {
+		return InstallResult{}, fmt.Errorf("%w: %s@%s", ErrManifestMismatch, id, entry.Version)
+	}
 	return m.svc.InstallZip(data, true)
+}
+
+// manifestFromZip reads and parses manifest.json out of a not-yet-installed
+// zip so StoreInstall can check it against the catalog entry before handing
+// the zip to InstallZip.
+func manifestFromZip(data []byte) (*Manifest, error) {
+	zr, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", ErrBadArchive, err)
+	}
+	f := findManifestEntry(zr)
+	if f == nil {
+		return nil, fmt.Errorf("%w: no manifest.json in zip", ErrNoManifest)
+	}
+	rc, err := f.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer rc.Close()
+	raw, err := io.ReadAll(io.LimitReader(rc, defaultUnzipLimits.maxFileBytes+1))
+	if err != nil {
+		return nil, err
+	}
+	if int64(len(raw)) > defaultUnzipLimits.maxFileBytes {
+		return nil, fmt.Errorf("%w: manifest.json exceeds per-file limit", ErrTooLarge)
+	}
+	return ParseManifest(raw)
+}
+
+// findManifestEntry locates manifest.json in the zip, mirroring
+// locateManifestRoot's on-disk search (install.go): the archive root first,
+// else the archive's single top-level directory.
+func findManifestEntry(zr *zip.Reader) *zip.File {
+	topDirs := map[string]bool{}
+	for _, f := range zr.File {
+		if f.Name == "manifest.json" {
+			return f
+		}
+		if i := strings.IndexByte(f.Name, '/'); i > 0 {
+			topDirs[f.Name[:i]] = true
+		}
+	}
+	if len(topDirs) != 1 {
+		return nil
+	}
+	var dir string
+	for d := range topDirs {
+		dir = d
+	}
+	want := dir + "/manifest.json"
+	for _, f := range zr.File {
+		if f.Name == want {
+			return f
+		}
+	}
+	return nil
 }
 
 // UpdateInfo describes one available update (spec §5.1). PermsChanged gates

@@ -168,4 +168,26 @@ describe('SettingsDialog', () => {
     expect(getByText('Tilzio')).toBeTruthy();
     expect(getByText('1.2.3')).toBeTruthy();
   });
+
+  describe('extensions auto-update toggle', () => {
+    it('renders the toggle reflecting the prop and fires the callback with the inverse', async () => {
+      const onStoreAutoUpdate = vi.fn();
+      const { getByText, getByRole } = render(SettingsDialog, {
+        props: { ...base, storeAutoUpdate: true, onStoreAutoUpdate },
+      });
+      await fireEvent.click(getByText('Extensions')); // left-nav category
+      const sw = getByRole('switch', { name: 'Auto-update extensions' });
+      expect(sw.getAttribute('aria-checked')).toBe('true');
+      await fireEvent.click(sw);
+      expect(onStoreAutoUpdate).toHaveBeenCalledWith(false);
+    });
+
+    it('off state renders unchecked', async () => {
+      const { getByText, getByRole } = render(SettingsDialog, {
+        props: { ...base, storeAutoUpdate: false, onStoreAutoUpdate: vi.fn() },
+      });
+      await fireEvent.click(getByText('Extensions'));
+      expect(getByRole('switch', { name: 'Auto-update extensions' }).getAttribute('aria-checked')).toBe('false');
+    });
+  });
 });

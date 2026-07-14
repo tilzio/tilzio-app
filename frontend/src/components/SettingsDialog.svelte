@@ -16,6 +16,8 @@
     onOpenExtensions,
     appVersion,
     locale, onLocale,
+    storeAutoUpdate = true,
+    onStoreAutoUpdate = undefined,
   }: {
     activeColor: string; exitColor: string; alertColor: string;
     uiFont: FontKey; uiFontSize: number;
@@ -33,6 +35,8 @@
     appVersion?: string;
     locale: string;
     onLocale: (l: string) => void;
+    storeAutoUpdate?: boolean;
+    onStoreAutoUpdate?: (on: boolean) => void;
   } = $props();
 
   // App version — defaults to 'dev' if the prop is not passed
@@ -265,6 +269,22 @@
             <button class="ext-btn" onclick={onOpenExtensions}>{t('settings.ext.open')} →</button>
           {/if}
 
+          <!-- Task 14: Auto-update extensions toggle -->
+          <div class="frow">
+            <div class="frow-label">{t('settings.ext.autoUpdate')}</div>
+            <button
+              class="toggle"
+              class:on={storeAutoUpdate}
+              role="switch"
+              aria-checked={storeAutoUpdate}
+              aria-label={t('settings.ext.autoUpdate')}
+              onclick={() => onStoreAutoUpdate?.(!storeAutoUpdate)}
+            >
+              <span class="knob"></span>
+            </button>
+          </div>
+          <p class="ext-hint">{t('settings.ext.autoUpdateHint')}</p>
+
         {:else if activeCategory === 'about'}
           <!-- S7.5: About — brand lockup + version + tagline -->
           <div class="about-wrap">
@@ -363,6 +383,13 @@
   .ext-desc { font-size: 12.5px; color: var(--text-dim); margin: 0 0 14px; }
   .ext-btn { background: var(--bg); border: 1px solid var(--border); color: var(--accent); border-radius: 5px; padding: 7px 14px; cursor: pointer; font: inherit; font-size: 13px; }
   .ext-btn:hover { background: var(--active-row); }
+
+  /* Task 14: Auto-update extensions toggle — mirrors the ExtensionsScreen switch pattern */
+  .toggle { width: 34px; height: 18px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg); position: relative; cursor: pointer; padding: 0; }
+  .toggle .knob { position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--text-dim); transition: left 0.15s ease; }
+  .toggle.on { background: var(--accent); border-color: var(--accent); }
+  .toggle.on .knob { left: 18px; background: var(--bg); }
+  .ext-hint { color: var(--text-faint); font-size: 11px; margin: 6px 0 0; }
 
   /* S7.5: About tab */
   .about-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 28px; }

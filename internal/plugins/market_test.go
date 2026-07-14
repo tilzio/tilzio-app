@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -423,6 +424,137 @@ func TestStoreCheckUpdatesPermissionRemovalDoesNotFlag(t *testing.T) {
 	}
 	if len(ups) != 1 || ups[0].PermsChanged {
 		t.Fatalf("permission removal must not gate: %+v", ups)
+	}
+}
+
+// recorder collects emitted events safely (the cycle may run on a goroutine
+// in future tests; the direct-call tests below are single-threaded anyway).
+type recorder struct {
+	mu     sync.Mutex
+	events []struct {
+		Name string
+		Data any
+	}
+}
+
+func (r *recorder) emit(name string, data any) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.events = append(r.events, struct {
+		Name string
+		Data any
+	}{name, data})
+}
+
+func (r *recorder) names() []string {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	out := make([]string, len(r.events))
+	for i, e := range r.events {
+		out[i] = e.Name
+	}
+	return out
+}
+
+func TestAutoUpdateCycleInstallsAndEmits(t *testing.T) {
+	zipV2 := makeZip(t, map[string]string{"manifest.json": manifestJSON("dev.a", "2.0.0"), "main.js": "//v2"})
+	srv, _ := storeServer(t, "dev.a", "2.0.0", zipV2, "")
+	rec := &recorder{}
+	m := newTestMarket(t, srv.URL)
+	m.emit = rec.emit
+	// testEntry declares permissions ["state:read"]; install v1 with the SAME
+	// set so the gate stays closed for this silent-update test.
+	installPlugin(t, m, "dev.a", "1.0.0", []string{"state:read"}, nil)
+
+	m.autoUpdateCycle()
+
+	names := rec.names()
+	if len(names) != 2 || names[0] != EventStoreUpdates || names[1] != EventStoreUpdated {
+		t.Fatalf("want [store:updates store:updated], got %v", names)
+	}
+	// v2 actually landed on disk.
+	b, err := os.ReadFile(filepath.Join(m.svc.pluginsDir, "dev.a", "main.js"))
+	if err != nil || string(b) != "//v2" {
+		t.Fatalf("v2 not installed: %q %v", b, err)
+	}
+}
+
+func TestAutoUpdateCyclePermissionGateBlocks(t *testing.T) {
+	e := testEntry("dev.a", "2.0.0")
+	e.Permissions = []string{"state:read", "terminal:read"}
+	zipV2 := makeZip(t, map[string]string{"manifest.json": manifestJSON("dev.a", "2.0.0"), "main.js": "//v2"})
+	sum := sha256.Sum256(zipV2)
+	e.SHA256 = hex.EncodeToString(sum[:])
+	body := catalogJSON(t, []StoreEntry{e})
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/v1/registry" {
+			_, _ = w.Write(body)
+			return
+		}
+		http.NotFound(w, r)
+	}))
+	t.Cleanup(srv.Close)
+	rec := &recorder{}
+	m := newTestMarket(t, srv.URL)
+	m.emit = rec.emit
+	installPlugin(t, m, "dev.a", "1.0.0", []string{"state:read"}, nil)
+
+	m.autoUpdateCycle()
+
+	names := rec.names()
+	if len(names) != 2 || names[0] != EventStoreUpdates || names[1] != EventStoreConsentNeeded {
+		t.Fatalf("want [store:updates store:consent-needed], got %v", names)
+	}
+	b, _ := os.ReadFile(filepath.Join(m.svc.pluginsDir, "dev.a", "main.js"))
+	if string(b) == "//v2" {
+		t.Fatal("permission growth must NOT be installed silently")
+	}
+}
+
+func TestAutoUpdateCycleRespectsToggle(t *testing.T) {
+	zipV2 := makeZip(t, map[string]string{"manifest.json": manifestJSON("dev.a", "2.0.0"), "main.js": "//v2"})
+	srv, _ := storeServer(t, "dev.a", "2.0.0", zipV2, "")
+	rec := &recorder{}
+	m := newTestMarket(t, srv.URL)
+	m.emit = rec.emit
+	installPlugin(t, m, "dev.a", "1.0.0", []string{"state:read"}, nil)
+	if err := m.svc.SetAutoUpdate(false); err != nil {
+		t.Fatal(err)
+	}
+
+	m.autoUpdateCycle()
+
+	names := rec.names()
+	if len(names) != 1 || names[0] != EventStoreUpdates {
+		t.Fatalf("toggle off: want only store:updates, got %v", names)
+	}
+	b, _ := os.ReadFile(filepath.Join(m.svc.pluginsDir, "dev.a", "main.js"))
+	if string(b) == "//v2" {
+		t.Fatal("toggle off must not install")
+	}
+}
+
+func TestAutoUpdateCycleSilentOnNetworkError(t *testing.T) {
+	srv := httptest.NewServer(http.NotFoundHandler())
+	srv.Close()
+	rec := &recorder{}
+	m := newTestMarket(t, srv.URL)
+	m.emit = rec.emit
+	m.autoUpdateCycle() // must not panic, must not emit
+	if len(rec.names()) != 0 {
+		t.Fatalf("network error must be silent, got %v", rec.names())
+	}
+}
+
+func TestAutoUpdateCycleNoUpdatesNoEvents(t *testing.T) {
+	srv := fakeRegistry(t, []StoreEntry{testEntry("dev.a", "1.0.0")}, "", new(atomic.Int64))
+	rec := &recorder{}
+	m := newTestMarket(t, srv.URL)
+	m.emit = rec.emit
+	installPlugin(t, m, "dev.a", "1.0.0", []string{"state:read"}, nil)
+	m.autoUpdateCycle()
+	if len(rec.names()) != 0 {
+		t.Fatalf("no updates must mean no events, got %v", rec.names())
 	}
 }
 

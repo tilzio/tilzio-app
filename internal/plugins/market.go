@@ -372,3 +372,57 @@ func hasNew(base, add []string) bool {
 	}
 	return false
 }
+
+const autoUpdateInterval = 24 * time.Hour
+
+// Wails event names for the store. The frontend subscribes to all three BEFORE
+// calling StartAutoUpdate (via the binding), so startup events are not lost.
+const (
+	EventStoreUpdates       = "store:updates"        // {"updates": []UpdateInfo}
+	EventStoreUpdated       = "store:updated"        // {"id": string, "version": string}
+	EventStoreConsentNeeded = "store:consent-needed" // UpdateInfo
+)
+
+// StartAutoUpdate launches the background update loop once: an immediate
+// cycle, then every 24h (spec §5.1). Idempotent — extra calls are no-ops.
+func (m *Market) StartAutoUpdate() {
+	m.startOnce.Do(func() {
+		go func() {
+			m.autoUpdateCycle()
+			ticker := time.NewTicker(autoUpdateInterval)
+			defer ticker.Stop()
+			for range ticker.C {
+				m.autoUpdateCycle()
+			}
+		}()
+	})
+}
+
+// autoUpdateCycle runs one check-and-install pass. Updates that grow
+// permissions/exec are NOT installed — they are announced via consent events.
+// Failures are logged and swallowed: no toast spam, retry next cycle (spec §7).
+func (m *Market) autoUpdateCycle() {
+	updates, err := m.StoreCheckUpdates()
+	if err != nil {
+		log.Printf("plugins: store update check: %v", err)
+		return
+	}
+	if len(updates) == 0 {
+		return
+	}
+	m.emit(EventStoreUpdates, map[string]any{"updates": updates})
+	if !m.svc.AutoUpdate() {
+		return
+	}
+	for _, u := range updates {
+		if u.PermsChanged {
+			m.emit(EventStoreConsentNeeded, u)
+			continue
+		}
+		if _, err := m.StoreInstall(u.ID); err != nil {
+			log.Printf("plugins: auto-update %s: %v", u.ID, err)
+			continue
+		}
+		m.emit(EventStoreUpdated, map[string]any{"id": u.ID, "version": u.To})
+	}
+}

@@ -58,6 +58,17 @@ export interface InstallResult {
   conflict?: ConflictInfo;
 }
 
+// Store (registry client, spec §5) interfaces — json tags of Go types.
+export interface StoreEntry {
+  id: string; name: string; description: string; version: string; engine: string;
+  permissions: string[] | null; exec: string[] | null; size: number; sha256: string;
+  publisher: string; homepage?: string; updatedAt: string;
+}
+export interface Catalog { extensions: StoreEntry[]; stale: boolean; fetchedAt: string }
+export interface StoreVersionInfo { version: string; sha256: string; size: number; createdAt: string }
+export interface StoreDetail extends StoreEntry { readme: string; versions: StoreVersionInfo[] | null }
+export interface UpdateInfo { id: string; from: string; to: string; permsChanged: boolean }
+
 // Typed wrapper over the Plugins service (mirroring bridge/core.ts over App.*).
 export const pluginsBridge = {
   list: (): Promise<PluginInfo[]> => callPlugin<PluginInfo[]>('PluginsList'),
@@ -103,4 +114,27 @@ export const pluginsBridge = {
   // are not touched (Go StorageClear). Recreating the worker is done by the orchestrator
   // resetPluginStorage (pluginManage).
   storageClear: (id: string): Promise<void> => callPlugin<void>('PluginStorageClear', id),
+
+  // ---- Store (registry client, spec §5) ----
+  // Catalog for the Store tab. stale=true → served from the on-disk cache
+  // because the registry was unreachable. Go nil slices arrive as null → [].
+  storeCatalog: async (force: boolean): Promise<Catalog> => {
+    const c = await callPlugin<Catalog>('StoreCatalog', force);
+    return { ...c, extensions: c.extensions ?? [] };
+  },
+  // Detail for the store card (README + version history). Errors propagate —
+  // the card shows the catalog entry and a "README unavailable" note.
+  storeDetail: async (id: string): Promise<StoreDetail> => {
+    const d = await callPlugin<StoreDetail>('StoreDetail', id);
+    return { ...d, versions: d.versions ?? [] };
+  },
+  // Download + sha256-verify + install the current catalog version. Always
+  // overwrite semantics (enabled/permissions/storage survive) — no conflict leg.
+  storeInstall: (id: string): Promise<InstallResult> => callPlugin<InstallResult>('StoreInstall', id),
+  storeCheckUpdates: async (): Promise<UpdateInfo[]> =>
+    (await callPlugin<UpdateInfo[] | null>('StoreCheckUpdates')) ?? [],
+  storeAutoUpdate: (): Promise<boolean> => callPlugin<boolean>('StoreAutoUpdate'),
+  storeSetAutoUpdate: (on: boolean): Promise<void> => callPlugin<void>('StoreSetAutoUpdate', on),
+  // Kick the Go 24h auto-update loop; call AFTER subscribing to store:* events.
+  storeStartAutoUpdate: (): Promise<void> => callPlugin<void>('StoreStartAutoUpdate'),
 };

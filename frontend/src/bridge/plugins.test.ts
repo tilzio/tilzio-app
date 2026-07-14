@@ -115,3 +115,44 @@ describe('pluginsBridge', () => {
     expect(h.byName).toHaveBeenLastCalledWith('main.PluginsApp.PluginStorageClear', 'dev.term.git');
   });
 });
+
+describe('store bridge', () => {
+  it('storeCatalog calls StoreCatalog with force and normalizes null extensions', async () => {
+    h.byName.mockResolvedValueOnce([]); // prefix probe (PluginsList)
+    h.byName.mockResolvedValueOnce({ extensions: null, stale: true, fetchedAt: 't' });
+    const cat = await pluginsBridge.storeCatalog(true);
+    expect(h.byName).toHaveBeenLastCalledWith('main.PluginsApp.StoreCatalog', true);
+    expect(cat.extensions).toEqual([]);
+    expect(cat.stale).toBe(true);
+  });
+
+  it('storeCheckUpdates normalizes null to empty list', async () => {
+    h.byName.mockResolvedValueOnce([]);
+    h.byName.mockResolvedValueOnce(null);
+    expect(await pluginsBridge.storeCheckUpdates()).toEqual([]);
+    expect(h.byName).toHaveBeenLastCalledWith('main.PluginsApp.StoreCheckUpdates');
+  });
+
+  it('storeInstall / storeDetail / toggle methods pass through', async () => {
+    h.byName.mockResolvedValueOnce([]); // probe
+    h.byName.mockResolvedValueOnce({ status: 'installed' });
+    await pluginsBridge.storeInstall('a');
+    expect(h.byName).toHaveBeenLastCalledWith('main.PluginsApp.StoreInstall', 'a');
+
+    h.byName.mockResolvedValueOnce({ id: 'a', readme: '', versions: null, permissions: null, exec: null });
+    const d = await pluginsBridge.storeDetail('a');
+    expect(h.byName).toHaveBeenLastCalledWith('main.PluginsApp.StoreDetail', 'a');
+    expect(d.versions).toEqual([]);
+
+    h.byName.mockResolvedValueOnce(true);
+    expect(await pluginsBridge.storeAutoUpdate()).toBe(true);
+
+    h.byName.mockResolvedValueOnce(undefined);
+    await pluginsBridge.storeSetAutoUpdate(false);
+    expect(h.byName).toHaveBeenLastCalledWith('main.PluginsApp.StoreSetAutoUpdate', false);
+
+    h.byName.mockResolvedValueOnce(undefined);
+    await pluginsBridge.storeStartAutoUpdate();
+    expect(h.byName).toHaveBeenLastCalledWith('main.PluginsApp.StoreStartAutoUpdate');
+  });
+});

@@ -12,10 +12,13 @@ import (
 // It is a thin adapter over plugins.Service (string/base64 at the boundary, like
 // App). It holds no core.Core — plugins never touch sessions/PTY (design §9).
 type PluginsApp struct {
-	svc *plugins.Service
+	svc    *plugins.Service
+	market *plugins.Market
 }
 
-func NewPluginsApp(svc *plugins.Service) *PluginsApp { return &PluginsApp{svc: svc} }
+func NewPluginsApp(svc *plugins.Service, market *plugins.Market) *PluginsApp {
+	return &PluginsApp{svc: svc, market: market}
+}
 
 // PluginsList returns every discovered plugin with its manifest and status.
 func (p *PluginsApp) PluginsList() []plugins.PluginInfo {
@@ -91,3 +94,35 @@ func (p *PluginsApp) PluginStorageClear(id string) error {
 func (p *PluginsApp) PluginExec(id string, bin string, args []string, cwd string) (plugins.ExecResult, error) {
 	return p.svc.Exec(id, bin, args, cwd)
 }
+
+// StoreCatalog returns the registry catalog (ETag/TTL cached; Stale=true when
+// the registry is unreachable and the cache was served). force bypasses the TTL.
+func (p *PluginsApp) StoreCatalog(force bool) (plugins.Catalog, error) {
+	return p.market.StoreCatalog(force)
+}
+
+// StoreDetail returns one extension's detail (summary + README + versions).
+func (p *PluginsApp) StoreDetail(id string) (plugins.StoreDetail, error) {
+	return p.market.StoreDetail(id)
+}
+
+// StoreInstall downloads, sha256-verifies and installs id's current catalog
+// version (overwrite semantics — state/storage survive).
+func (p *PluginsApp) StoreInstall(id string) (plugins.InstallResult, error) {
+	return p.market.StoreInstall(id)
+}
+
+// StoreCheckUpdates compares installed manifests against the catalog.
+func (p *PluginsApp) StoreCheckUpdates() ([]plugins.UpdateInfo, error) {
+	return p.market.StoreCheckUpdates()
+}
+
+// StoreAutoUpdate reports the global auto-update toggle (default true).
+func (p *PluginsApp) StoreAutoUpdate() bool { return p.svc.AutoUpdate() }
+
+// StoreSetAutoUpdate persists the global auto-update toggle.
+func (p *PluginsApp) StoreSetAutoUpdate(v bool) error { return p.svc.SetAutoUpdate(v) }
+
+// StoreStartAutoUpdate starts the 24h auto-update loop (idempotent). The
+// frontend calls it once at startup AFTER subscribing to store:* events.
+func (p *PluginsApp) StoreStartAutoUpdate() { p.market.StartAutoUpdate() }

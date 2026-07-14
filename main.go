@@ -38,6 +38,12 @@ func main() {
 		filepath.Join(dir, "plugins"),
 		filepath.Join(dir, "plugins.json"),
 	)
+	market := plugins.NewMarket(
+		pluginsSvc,
+		filepath.Join(dir, "store-cache.json"),
+		plugins.RegistryBaseURL(),
+		wailsEmitter{}.Emit,
+	)
 	draftStore := files.NewDraftStore(filepath.Join(dir, "drafts"))
 
 	app := application.New(application.Options{
@@ -45,7 +51,7 @@ func main() {
 		Description: "Terminal multiplexer",
 		Services: []application.Service{
 			application.NewService(NewApp(c)),
-			application.NewService(NewPluginsApp(pluginsSvc)),
+			application.NewService(NewPluginsApp(pluginsSvc, market)),
 			application.NewService(NewFilesApp(draftStore)),
 		},
 		Assets: application.AssetOptions{

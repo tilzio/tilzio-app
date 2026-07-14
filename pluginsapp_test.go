@@ -11,6 +11,29 @@ import (
 	"github.com/tilzio/tilzio/internal/plugins"
 )
 
+// newTestPluginsAppWithMarket builds the binding layer over a temp Service and
+// a Market pointed at baseURL (use a dead URL when the test never goes online).
+func newTestPluginsAppWithMarket(t *testing.T, baseURL string) *PluginsApp {
+	t.Helper()
+	dir := t.TempDir()
+	svc := plugins.NewService(filepath.Join(dir, "plugins"), filepath.Join(dir, "plugins.json"))
+	market := plugins.NewMarket(svc, filepath.Join(dir, "store-cache.json"), baseURL, func(string, any) {})
+	return NewPluginsApp(svc, market)
+}
+
+func TestStoreAutoUpdateBindingRoundTrip(t *testing.T) {
+	app := newTestPluginsAppWithMarket(t, "http://127.0.0.1:1")
+	if !app.StoreAutoUpdate() {
+		t.Fatal("default must be true")
+	}
+	if err := app.StoreSetAutoUpdate(false); err != nil {
+		t.Fatal(err)
+	}
+	if app.StoreAutoUpdate() {
+		t.Fatal("expected false after StoreSetAutoUpdate(false)")
+	}
+}
+
 func TestPluginsAppReadFileBase64(t *testing.T) {
 	root := t.TempDir()
 	dir := filepath.Join(root, "plugins", "git")
@@ -24,7 +47,8 @@ func TestPluginsAppReadFileBase64(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "main.js"), []byte("CODE"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	app := NewPluginsApp(plugins.NewService(filepath.Join(root, "plugins"), filepath.Join(root, "plugins.json")))
+	svc := plugins.NewService(filepath.Join(root, "plugins"), filepath.Join(root, "plugins.json"))
+	app := NewPluginsApp(svc, plugins.NewMarket(svc, filepath.Join(root, "store-cache.json"), "http://127.0.0.1:1", func(string, any) {}))
 	enc, err := app.PluginReadFile("git", "main.js")
 	if err != nil {
 		t.Fatal(err)
@@ -38,7 +62,7 @@ func TestPluginsAppReadFileBase64(t *testing.T) {
 func TestPluginInstallZipAndUninstallBinding(t *testing.T) {
 	dir := t.TempDir()
 	svc := plugins.NewService(filepath.Join(dir, "plugins"), filepath.Join(dir, "plugins.json"))
-	app := NewPluginsApp(svc)
+	app := NewPluginsApp(svc, plugins.NewMarket(svc, filepath.Join(dir, "store-cache.json"), "http://127.0.0.1:1", func(string, any) {}))
 
 	var buf bytes.Buffer
 	zw := zip.NewWriter(&buf)
@@ -77,7 +101,8 @@ func TestPluginsAppExec(t *testing.T) {
 	if err := os.WriteFile(filepath.Join(dir, "main.js"), []byte("//"), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	app := NewPluginsApp(plugins.NewService(filepath.Join(root, "plugins"), filepath.Join(root, "plugins.json")))
+	svc := plugins.NewService(filepath.Join(root, "plugins"), filepath.Join(root, "plugins.json"))
+	app := NewPluginsApp(svc, plugins.NewMarket(svc, filepath.Join(root, "store-cache.json"), "http://127.0.0.1:1", func(string, any) {}))
 
 	res, err := app.PluginExec("git", "echo", []string{"hi"}, "")
 	if err != nil || res.Stdout != "hi\n" || res.Code != 0 {

@@ -1,6 +1,8 @@
 package plugins
 
 import (
+	"archive/zip"
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -352,6 +354,55 @@ func TestStoreInstallManifestExceedsCatalogPerms(t *testing.T) {
 	}
 	if _, err := os.Stat(filepath.Join(m.svc.pluginsDir, "dev.s")); !os.IsNotExist(err) {
 		t.Fatal("nothing must be installed on manifest mismatch")
+	}
+}
+
+// TestStoreInstallRejectsDuplicateManifestZip builds a zip with TWO
+// manifest.json entries (archive/zip allows duplicate Create() calls). The
+// FIRST declares only the catalog's permissions (would pass the old,
+// first-match gate); the SECOND declares an extra permission beyond the
+// catalog entry — and is what safeUnzip's O_TRUNC extraction would actually
+// leave on disk (last-write-wins). The whole install must be rejected before
+// anything touches disk.
+func TestStoreInstallRejectsDuplicateManifestZip(t *testing.T) {
+	var buf bytes.Buffer
+	zw := zip.NewWriter(&buf)
+	benign, err := zw.Create("manifest.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := benign.Write([]byte(`{"id":"dev.dup","name":"X","version":"1.0.0","engine":"tilzio@1","entry":"main.js","permissions":["state:read"]}`)); err != nil {
+		t.Fatal(err)
+	}
+	overPrivileged, err := zw.Create("manifest.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := overPrivileged.Write([]byte(`{"id":"dev.dup","name":"X","version":"1.0.0","engine":"tilzio@1","entry":"main.js","permissions":["terminal:read"]}`)); err != nil {
+		t.Fatal(err)
+	}
+	mainJS, err := zw.Create("main.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := mainJS.Write([]byte("//x")); err != nil {
+		t.Fatal(err)
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	zipData := buf.Bytes()
+
+	// storeServer's testEntry declares Permissions ["state:read"] — matching the
+	// FIRST (benign) manifest.json exactly, so the old first-match gate would let
+	// this through.
+	srv, _ := storeServer(t, "dev.dup", "1.0.0", zipData, "")
+	m := newTestMarket(t, srv.URL)
+	if _, err := m.StoreInstall("dev.dup"); !errors.Is(err, ErrBadArchive) {
+		t.Fatalf("want ErrBadArchive, got %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(m.svc.pluginsDir, "dev.dup")); !os.IsNotExist(err) {
+		t.Fatal("nothing must be installed for a zip with duplicate manifest.json entries")
 	}
 }
 

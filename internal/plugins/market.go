@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"path"
 	"strings"
 	"sync"
 	"time"
@@ -319,15 +320,21 @@ func (m *Market) StoreInstall(id string) (InstallResult, error) {
 
 // manifestFromZip reads and parses manifest.json out of a not-yet-installed
 // zip so StoreInstall can check it against the catalog entry before handing
-// the zip to InstallZip.
+// the zip to InstallZip. Rejects duplicate archive entries first (see
+// rejectDuplicateEntries) — otherwise a zip could pass this gate against a
+// benign manifest.json while a second, over-privileged manifest.json is what
+// actually lands on disk (safeUnzip/extractFile is last-write-wins).
 func manifestFromZip(data []byte) (*Manifest, error) {
 	zr, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrBadArchive, err)
 	}
+	if err := rejectDuplicateEntries(zr); err != nil {
+		return nil, err
+	}
 	f := findManifestEntry(zr)
 	if f == nil {
-		return nil, fmt.Errorf("%w: no manifest.json in zip", ErrNoManifest)
+		return nil, ErrNoManifest
 	}
 	rc, err := f.Open()
 	if err != nil {
@@ -344,17 +351,44 @@ func manifestFromZip(data []byte) (*Manifest, error) {
 	return ParseManifest(raw)
 }
 
+// rejectDuplicateEntries fails an archive that has two regular-file entries
+// resolving to the same path once cleaned (path.Clean; zip entry names are
+// always "/"-separated, so "./manifest.json" and "manifest.json" collide
+// too). A legitimate zip never contains duplicate paths — the stage-1
+// registry server already rejects them at publish — so this is purely a
+// gate-bypass shape: extraction (install.go extractFile, opened O_TRUNC) is
+// last-write-wins, meaning a benign first copy of manifest.json could pass
+// the catalog-permissions gate while a later, over-privileged copy is what
+// actually gets written to disk.
+func rejectDuplicateEntries(zr *zip.Reader) error {
+	seen := make(map[string]bool, len(zr.File))
+	for _, f := range zr.File {
+		if f.FileInfo().IsDir() {
+			continue
+		}
+		name := path.Clean(f.Name)
+		if seen[name] {
+			return fmt.Errorf("%w: duplicate zip entry %q", ErrBadArchive, name)
+		}
+		seen[name] = true
+	}
+	return nil
+}
+
 // findManifestEntry locates manifest.json in the zip, mirroring
 // locateManifestRoot's on-disk search (install.go): the archive root first,
-// else the archive's single top-level directory.
+// else the archive's single top-level directory. Entry names are cleaned
+// with path.Clean before matching so a "./manifest.json" shape can't evade
+// the root-manifest comparison.
 func findManifestEntry(zr *zip.Reader) *zip.File {
 	topDirs := map[string]bool{}
 	for _, f := range zr.File {
-		if f.Name == "manifest.json" {
+		name := path.Clean(f.Name)
+		if name == "manifest.json" {
 			return f
 		}
-		if i := strings.IndexByte(f.Name, '/'); i > 0 {
-			topDirs[f.Name[:i]] = true
+		if i := strings.IndexByte(name, '/'); i > 0 {
+			topDirs[name[:i]] = true
 		}
 	}
 	if len(topDirs) != 1 {
@@ -366,7 +400,7 @@ func findManifestEntry(zr *zip.Reader) *zip.File {
 	}
 	want := dir + "/manifest.json"
 	for _, f := range zr.File {
-		if f.Name == want {
+		if path.Clean(f.Name) == want {
 			return f
 		}
 	}

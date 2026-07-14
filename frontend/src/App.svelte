@@ -38,8 +38,11 @@
   import { installBytes, installUrl, uninstallPlugin } from './bridge/pluginInstall';
   import { pluginsBridge, type PluginInfo, type ConflictInfo, type StorageInfo, type PluginManifest } from './bridge/plugins';
   import { enablePlugin, disablePlugin, resetPluginStorage } from './bridge/pluginManage';
+  import StoreCard from './components/StoreCard.svelte';
+  import { storeInstall } from './bridge/storeActions';
+  import type { StoreEntry, StoreDetail, UpdateInfo, Catalog } from './bridge/plugins';
   import { declaredPermissions, resolvePermission, needsConsent, type PermLabel } from './state/permissionLabels';
-  import { init as initPluginHost, terminateAll as terminatePlugins, pluginHost, sendUiEvent, broadcastStateChanged } from './bridge/pluginHost.svelte';
+  import { init as initPluginHost, terminateAll as terminatePlugins, pluginHost, sendUiEvent, broadcastStateChanged, activate, deactivate } from './bridge/pluginHost.svelte';
   import { stateSnapshot } from './state/pluginState';
   import { parseOpens } from './state/pluginOpens';
   import { RIGHT_AREA_DEFAULT } from './state/rightArea';
@@ -67,6 +70,40 @@
   let detailStorage = $state<StorageInfo | null>(null);
   let pendingConsent = $state<PluginInfo | null>(null);
   let busyId = $state<string | null>(null);
+
+  // Extension store (spec §5.2). Catalog/updates live here so both the Store tab
+  // and the Installed badges see one source of truth.
+  let extTab = $state<'installed' | 'store'>('installed');
+  let storeCatalog = $state<Catalog | null>(null);
+  let storeLoading = $state(false);
+  let storeError = $state('');
+  let storeBusyId = $state<string | null>(null);
+  let storeActionError = $state('');
+  let updates = $state<Record<string, UpdateInfo>>({});
+  let storeDetailId = $state<string | null>(null);
+  let storeDetailData = $state<StoreDetail | null>(null);
+  let storeDetailErr = $state('');
+  // Consent for a store UPDATE that grows permissions (auto-update refused it).
+  let pendingStoreConsent = $state<{ entry: StoreEntry; update: UpdateInfo } | null>(null);
+  let autoUpdateExt = $state(true);
+
+  const storeEntries = $derived<StoreEntry[]>(storeCatalog?.extensions ?? []);
+  const storeDetailEntry = $derived<StoreEntry | undefined>(
+    storeDetailId === null ? undefined : storeEntries.find((e) => e.id === storeDetailId)
+  );
+  // Plain function: it reads extPlugins ($state) at call time inside the template,
+  // so reactivity flows through the render effect — no $derived wrapper needed.
+  function installedVersionFor(id: string): string {
+    return extPlugins.find((p) => p.manifest?.id === id)?.manifest?.version ?? '';
+  }
+  const storeConsentPerms = $derived<PermLabel[]>(
+    pendingStoreConsent
+      ? (pendingStoreConsent.entry.permissions ?? []).map((p) =>
+          resolvePermission(p, pendingStoreConsent!.entry.exec ?? [])
+        )
+      : []
+  );
+
   let installOpen = $state(false);
   let installStatus = $state<'idle' | 'busy' | 'error' | 'conflict'>('idle');
   let installError = $state('');
@@ -358,7 +395,15 @@
     try { extPlugins = await pluginsBridge.list(); }
     catch { extPlugins = []; }
   }
-  function openExtensions() { extensionsOpen = true; extDetailId = null; void loadExtList(); }
+  function openExtensions() {
+    extensionsOpen = true;
+    extDetailId = null;
+    extTab = 'installed';
+    closeStoreDetail();
+    void loadExtList();
+    void loadStoreCatalog();
+    void refreshUpdates();
+  }
 
   // Detail: we look up PluginInfo by id (manifest.id for a normal one, dir for a broken one) in
   // the fresh list snapshot. If the plugin disappeared (was deleted) — detailInfo becomes undefined.
@@ -441,6 +486,103 @@
     finally { await loadExtList(); await loadStorage(id); busyId = null; }
   }
 
+  async function loadStoreCatalog(force = false) {
+    storeLoading = true;
+    if (force) storeError = '';
+    try {
+      storeCatalog = await pluginsBridge.storeCatalog(force);
+      storeError = '';
+    } catch (e) {
+      storeError = e instanceof Error ? e.message : String(e);
+    } finally {
+      storeLoading = false;
+    }
+  }
+  async function refreshUpdates() {
+    try {
+      const list = await pluginsBridge.storeCheckUpdates();
+      updates = Object.fromEntries(list.map((u) => [u.id, u]));
+    } catch {
+      // Offline: keep whatever we knew; badges are advisory.
+    }
+  }
+  function openStoreDetail(id: string) {
+    storeDetailId = id;
+    storeDetailData = null;
+    storeDetailErr = '';
+    storeActionError = '';
+    void (async () => {
+      try {
+        storeDetailData = await pluginsBridge.storeDetail(id);
+      } catch (e) {
+        storeDetailErr = e instanceof Error ? e.message : String(e);
+      }
+    })();
+  }
+  function closeStoreDetail() {
+    storeDetailId = null;
+    storeDetailData = null;
+    storeDetailErr = '';
+    storeActionError = '';
+  }
+  // Fresh install from the store. Acceptance (spec §9.2): Install also enables —
+  // through the SAME consent path as toggling on (dialog when permissions exist).
+  async function doStoreInstall(id: string) {
+    storeBusyId = id;
+    storeActionError = '';
+    try {
+      const res = await storeInstall(id);
+      await loadExtList();
+      await refreshUpdates();
+      const info = res.status === 'installed' ? (res.info ?? null) : null;
+      if (info && !info.enabled) {
+        if (needsConsent(info.manifest)) pendingConsent = info;
+        else await doEnable(info);
+      }
+    } catch (e) {
+      storeActionError = e instanceof Error ? e.message : String(e);
+    } finally {
+      storeBusyId = null;
+    }
+  }
+  // Update: permission growth → consent dialog first (spec §5.2), else straight in.
+  function onStoreUpdate(id: string) {
+    const u = updates[id];
+    const entry = storeEntries.find((e) => e.id === id);
+    if (!u || !entry) return;
+    if (u.permsChanged) pendingStoreConsent = { entry, update: u };
+    else void doStoreUpdate(id);
+  }
+  async function doStoreUpdate(id: string) {
+    storeBusyId = id;
+    storeActionError = '';
+    try {
+      await storeInstall(id);
+      await loadExtList();
+      await refreshUpdates();
+    } catch (e) {
+      storeActionError = e instanceof Error ? e.message : String(e);
+    } finally {
+      storeBusyId = null;
+    }
+  }
+  function onStoreUninstall(id: string) {
+    const info = extPlugins.find((p) => p.manifest?.id === id);
+    if (info) onExtUninstall(info); // existing confirm → doUninstall path
+  }
+  // A silent auto-update happened in Go: refresh our snapshots and restart the
+  // worker so it runs the new code (Go replaced the folder under a live worker).
+  async function onAutoUpdated(id: string) {
+    const { [id]: _gone, ...rest } = updates;
+    updates = rest;
+    await loadExtList();
+    if (pluginHost.active.some((p) => p.id === id)) {
+      const info = extPlugins.find((p) => p.manifest?.id === id);
+      await deactivate(id);
+      if (info?.manifest && info.enabled) await activate(info.manifest);
+    }
+  }
+
   // Map a resolved §8 hotkey to actions/selectors (design §12.4). "Active" targets
   // come from the current state: active space, its active tab, its active pane.
   function applyHotkey(a: HotkeyAction) {
@@ -505,15 +647,17 @@
   }
 
   function onKeydown(e: KeyboardEvent) {
-    if (pendingConfirm || settingsOpen || extensionsOpen || pendingConsent || installOpen) {
+    if (pendingConfirm || settingsOpen || extensionsOpen || pendingConsent || pendingStoreConsent || installOpen) {
       if (e.key === 'Escape') {
         e.preventDefault();
         // Close the topmost layer: confirm (z115, above everything — the final confirmation)
         // → install (z105, above "Extensions", doesn't coexist with consent; during busy
-        // we don't close) → consent (z110) → screen (z100) → settings.
+        // we don't close) → consent (z110) → store consent → store card → screen (z100) → settings.
         if (pendingConfirm) pendingConfirm = null;
         else if (installOpen) { if (installStatus !== 'busy') closeInstall(); }
         else if (pendingConsent) pendingConsent = null;
+        else if (pendingStoreConsent) pendingStoreConsent = null;
+        else if (storeDetailId) closeStoreDetail();
         else if (extDetailId) closeDetail();
         else if (extensionsOpen) extensionsOpen = false;
         else settingsOpen = false;
@@ -599,6 +743,26 @@
       }
       openPathSomewhere(path); // no coordinates or pane → §5.5 rule
     });
+    // Extension store events (spec §5.1). Payloads: store:updates {updates:[UpdateInfo]},
+    // store:updated {id,version}, store:consent-needed UpdateInfo. Subscribe BEFORE
+    // starting the Go loop so the startup cycle's events are never lost.
+    Events.On('store:updates', (ev) => {
+      const e = ev as unknown as { data: { updates: UpdateInfo[] | null } };
+      updates = Object.fromEntries((e.data?.updates ?? []).map((u) => [u.id, u]));
+    });
+    Events.On('store:updated', (ev) => {
+      const e = ev as unknown as { data: { id: string; version: string } };
+      if (e.data?.id) void onAutoUpdated(e.data.id);
+    });
+    Events.On('store:consent-needed', (ev) => {
+      const e = ev as unknown as { data: UpdateInfo };
+      if (e.data?.id) updates = { ...updates, [e.data.id]: e.data };
+    });
+    void pluginsBridge.storeStartAutoUpdate();
+    void pluginsBridge
+      .storeAutoUpdate()
+      .then((v) => (autoUpdateExt = v))
+      .catch(() => {});
     // Activate the enabled plugins in their Web Workers (spec §4). We don't block
     // ready — the list loads asynchronously, plugins appear as they activate.
     void initPluginHost();
@@ -806,10 +970,30 @@
         onOpenExtensions={() => { settingsOpen = false; openExtensions(); }}
         locale={ui.locale ?? 'en'}
         onLocale={(l) => { actions.setLocalePref(l); setLocale(l as Locale); }}
+        storeAutoUpdate={autoUpdateExt}
+        onStoreAutoUpdate={(on) => {
+          autoUpdateExt = on;
+          void pluginsBridge.storeSetAutoUpdate(on);
+        }}
       />
     {/if}
     {#if extensionsOpen}
-      {#if extDetailId && detailInfo}
+      {#if storeDetailId && storeDetailEntry}
+        {@const sEntry = storeDetailEntry}
+        <StoreCard
+          entry={sEntry}
+          detail={storeDetailData}
+          detailError={storeDetailErr}
+          installedVersion={installedVersionFor(sEntry.id)}
+          update={updates[sEntry.id]}
+          busy={storeBusyId === sEntry.id}
+          error={storeActionError}
+          onInstall={() => void doStoreInstall(sEntry.id)}
+          onUpdate={() => onStoreUpdate(sEntry.id)}
+          onUninstall={() => onStoreUninstall(sEntry.id)}
+          onBack={closeStoreDetail}
+        />
+      {:else if extDetailId && detailInfo}
         {@const detail = detailInfo}
         <PluginDetail
           info={detail}
@@ -832,6 +1016,17 @@
           onInstall={openInstall}
           onUninstall={onExtUninstall}
           onOpenDetail={openDetail}
+          bind:tab={extTab}
+          storeEntries={storeEntries}
+          storeStale={storeCatalog?.stale ?? false}
+          storeLoading={storeLoading}
+          storeError={storeError}
+          {updates}
+          {storeBusyId}
+          onStoreOpen={openStoreDetail}
+          onStoreInstall={(id) => void doStoreInstall(id)}
+          onStoreUpdate={onStoreUpdate}
+          onStoreRefresh={() => void loadStoreCatalog(true)}
         />
       {/if}
     {/if}
@@ -843,6 +1038,20 @@
         permissions={consentPerms}
         onConfirm={() => { const info = pendingConsent!; pendingConsent = null; void doEnable(info); }}
         onCancel={() => (pendingConsent = null)}
+      />
+    {/if}
+    {#if pendingStoreConsent}
+      <PermissionConsentDialog
+        pluginName={pendingStoreConsent.entry.name}
+        pluginId={pendingStoreConsent.entry.id}
+        version={pendingStoreConsent.update.to}
+        permissions={storeConsentPerms}
+        onConfirm={() => {
+          const id = pendingStoreConsent!.update.id;
+          pendingStoreConsent = null;
+          void doStoreUpdate(id);
+        }}
+        onCancel={() => (pendingStoreConsent = null)}
       />
     {/if}
     {#if installOpen}

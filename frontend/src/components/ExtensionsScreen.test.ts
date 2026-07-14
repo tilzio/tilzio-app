@@ -211,3 +211,49 @@ describe('ExtensionsScreen', () => {
     expect(link.disabled).toBe(true);
   });
 });
+
+describe('ExtensionsScreen store tab', () => {
+  const storeEntry = {
+    id: 'a', name: 'Alpha', description: 'd', version: '2.0.0', engine: 'tilzio@1',
+    permissions: [], exec: [], size: 1, sha256: 'aa', publisher: 'tilzio',
+    updatedAt: '2026-07-14T00:00:00Z',
+  };
+
+  it('renders Installed and Store tabs; Store tab shows the catalog', async () => {
+    const { getByRole, getByText } = render(ExtensionsScreen, {
+      props: { ...base, plugins: [git], storeEntries: [storeEntry] },
+    });
+    await fireEvent.click(getByRole('tab', { name: 'Store' }));
+    expect(getByText('Alpha')).toBeTruthy();
+  });
+
+  it('switching back to Installed restores the installed list', async () => {
+    const { getByRole, getByText } = render(ExtensionsScreen, {
+      props: { ...base, plugins: [git], storeEntries: [storeEntry] },
+    });
+    await fireEvent.click(getByRole('tab', { name: 'Store' }));
+    await fireEvent.click(getByRole('tab', { name: 'Installed' }));
+    expect(getByText('Git')).toBeTruthy(); // installed row is back
+  });
+
+  it('installed row shows an Update button when an update exists and fires onStoreUpdate', async () => {
+    const onStoreUpdate = vi.fn();
+    const { container } = render(ExtensionsScreen, {
+      props: {
+        ...base,
+        plugins: [git],
+        updates: { 'dev.term.git': { id: 'dev.term.git', from: '1.0.0', to: '2.0.0', permsChanged: false } },
+        onStoreUpdate,
+      },
+    });
+    const btn = container.querySelector('.upd-badge')!;
+    expect(btn).toBeTruthy();
+    await fireEvent.click(btn);
+    expect(onStoreUpdate).toHaveBeenCalledWith('dev.term.git');
+  });
+
+  it('no Update button without updates', () => {
+    const { container } = render(ExtensionsScreen, { props: { ...base, plugins: [git] } });
+    expect(container.querySelector('.upd-badge')).toBeNull();
+  });
+});

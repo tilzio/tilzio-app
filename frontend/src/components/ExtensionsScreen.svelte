@@ -1,12 +1,20 @@
 <script lang="ts">
-  import type { PluginInfo } from '../bridge/plugins';
+  import type { PluginInfo, StoreEntry, UpdateInfo } from '../bridge/plugins';
   import { declaredPermissions, resolvePermission } from '../state/permissionLabels';
   import { parseContributes } from '../state/pluginContributions';
   import { pluginAccent } from '../state/pluginColor';
   import { focusTrap } from './focusTrap';
   import { t } from '../i18n/index.svelte';
+  import StoreTab from './StoreTab.svelte';
 
-  let { plugins, runtimeErrorFor, busyId, onToggle, onRefresh, onClose, onInstall, onUninstall, onOpenDetail, onOpenFolder = undefined }: {
+  let {
+    plugins, runtimeErrorFor, busyId, onToggle, onRefresh, onClose, onInstall,
+    onUninstall, onOpenDetail, onOpenFolder = undefined,
+    tab = $bindable('installed'),
+    storeEntries = [], storeStale = false, storeLoading = false, storeError = '',
+    updates = {}, storeBusyId = null,
+    onStoreOpen = () => {}, onStoreInstall = () => {}, onStoreUpdate = () => {}, onStoreRefresh = () => {},
+  }: {
     plugins: PluginInfo[];
     runtimeErrorFor: (id: string) => string | null;
     busyId: string | null;
@@ -17,6 +25,17 @@
     onUninstall: (info: PluginInfo) => void;
     onOpenDetail: (id: string) => void;
     onOpenFolder?: () => void;
+    tab?: 'installed' | 'store';
+    storeEntries?: StoreEntry[];
+    storeStale?: boolean;
+    storeLoading?: boolean;
+    storeError?: string;
+    updates?: Record<string, UpdateInfo>;
+    storeBusyId?: string | null;
+    onStoreOpen?: (id: string) => void;
+    onStoreInstall?: (id: string) => void;
+    onStoreUpdate?: (id: string) => void;
+    onStoreRefresh?: () => void;
   } = $props();
 
   interface Row {
@@ -59,6 +78,12 @@
     };
   }));
 
+  const installedVersions = $derived<Record<string, string>>(
+    Object.fromEntries(
+      plugins.filter((p) => p.manifest).map((p) => [p.manifest!.id, p.manifest!.version])
+    )
+  );
+
   // filter row: local query state
   let query = $state('');
 
@@ -97,107 +122,136 @@
       </div>
     </div>
 
-    <!-- Filter row: magnifier + input + results counter -->
-    <div class="filter">
-      <svg class="mag" viewBox="0 0 24 24" aria-hidden="true">
-        <circle cx="11" cy="11" r="6.5"/>
-        <line x1="20" y1="20" x2="15.6" y2="15.6"/>
-      </svg>
-      <input
-        type="text"
-        bind:value={query}
-        aria-label={t('ext.filterAria')}
-        placeholder={t('ext.filterPlaceholder')}
-      />
-      <span class="count">{filtered.length}</span>
+    <div class="tabs" role="tablist">
+      <button class="tabbtn" class:active={tab === 'installed'} role="tab" aria-selected={tab === 'installed'}
+        onclick={() => (tab = 'installed')}>{t('ext.tabInstalled')}</button>
+      <button class="tabbtn" class:active={tab === 'store'} role="tab" aria-selected={tab === 'store'}
+        onclick={() => (tab = 'store')}>{t('ext.tabStore')}</button>
     </div>
 
-    <div class="list">
-      {#if rows.length === 0}
-        <div class="empty">{t('ext.emptyNoExtensions')}</div>
-      {:else if filtered.length === 0}
-        <!-- Filter yielded 0 matches, but plugins exist -->
-        <div class="empty">{t('ext.noMatches')}</div>
-      {/if}
-
-      {#snippet rowTpl(r: Row, isDisabled: boolean)}
-        <div class="row" class:broken={r.broken} class:disabled-row={isDisabled}>
-          <button class="row-open" aria-label={t('ext.detailsAria', { name: r.name })} onclick={() => onOpenDetail(r.id)}>
-            <span class="ico" class:broken={r.broken} aria-hidden="true" style={`--ic: ${r.broken ? 'var(--red)' : r.accent}`}>{r.icon}</span>
-            <span class="meta">
-              <span class="name-line"><b>{r.name}</b> <span class="dim">{r.sub}</span></span>
-              {#if r.broken}
-                <!-- Broken: red dot + inline error in the meta (S8.5) -->
-                <span class="meta-line">
-                  <span class="dot err"></span>
-                  <span class="stat err">{t('ext.error')}: {r.err}</span>
-                </span>
-              {:else}
-                <!-- Second meta line: status dot + word + badges -->
-                <span class="meta-line">
-                  <span class="dot" class:on={r.enabled}></span>
-                  <span class="stat" class:on={r.enabled}>{r.enabled ? t('ext.enabled') : t('ext.disabled')}</span>
-                  {#if r.badges.length}
-                    {#each r.badges as b, i (i)}<span class="badge">{b}</span>{/each}
-                  {:else}
-                    <span class="dim small">{t('ext.requestsNoPermissions')}</span>
-                  {/if}
-                </span>
-              {/if}
-              {#if r.rtErr}<span class="err">⚠ {t('ext.activationError')}: {r.rtErr}</span>{/if}
-            </span>
-          </button>
-          <button
-            class="toggle"
-            class:on={r.enabled && !r.broken}
-            role="switch"
-            aria-checked={r.enabled && !r.broken}
-            aria-label={t('ext.toggleAria', { name: r.name })}
-            disabled={r.broken || busyId === r.id}
-            onclick={() => onToggle(r.info, !r.enabled)}
-          ><span class="knob"></span></button>
-          <button
-            class="trash"
-            aria-label={t('ext.deleteAria', { name: r.name })}
-            disabled={busyId === r.id}
-            onclick={() => onUninstall(r.info)}
-          ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 7 20 7"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
-        </div>
-      {/snippet}
-
-      {#each groups.enabled as r (r.info.dir)}
-        {@render rowTpl(r, false)}
-      {/each}
-
-      {#if groups.disabled.length}
-        <!-- Divider before the disabled group -->
-        <div class="group-divider">
-          <span>{t('ext.disabledGroup')}</span>
-          <span class="rule"></span>
-        </div>
-      {/if}
-
-      {#each groups.disabled as r (r.info.dir)}
-        {@render rowTpl(r, true)}
-      {/each}
-
-      {#each groups.broken as r (r.info.dir)}
-        {@render rowTpl(r, false)}
-      {/each}
-    </div>
-
-    {#if rows.length > 0}
-      <!-- Dialog footer: installed/enabled summary + placeholder link to open the plugins folder -->
-      <div class="footer">
-        <span class="summary">{t('ext.footerSummary', { installed, enabled: enabledCount })}</span>
-        <button
-          class="folder"
-          aria-label={t('ext.openFolderAria')}
-          aria-disabled={!onOpenFolder}
-          disabled={!onOpenFolder}
-          onclick={() => onOpenFolder?.()}
-        >{t('ext.pluginsFolder')} ↗</button>
+    {#if tab === 'installed'}
+      <!-- Filter row: magnifier + input + results counter -->
+      <div class="filter">
+        <svg class="mag" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="11" cy="11" r="6.5"/>
+          <line x1="20" y1="20" x2="15.6" y2="15.6"/>
+        </svg>
+        <input
+          type="text"
+          bind:value={query}
+          aria-label={t('ext.filterAria')}
+          placeholder={t('ext.filterPlaceholder')}
+        />
+        <span class="count">{filtered.length}</span>
       </div>
+
+      <div class="list">
+        {#if rows.length === 0}
+          <div class="empty">{t('ext.emptyNoExtensions')}</div>
+        {:else if filtered.length === 0}
+          <!-- Filter yielded 0 matches, but plugins exist -->
+          <div class="empty">{t('ext.noMatches')}</div>
+        {/if}
+
+        {#snippet rowTpl(r: Row, isDisabled: boolean)}
+          <div class="row" class:broken={r.broken} class:disabled-row={isDisabled}>
+            <button class="row-open" aria-label={t('ext.detailsAria', { name: r.name })} onclick={() => onOpenDetail(r.id)}>
+              <span class="ico" class:broken={r.broken} aria-hidden="true" style={`--ic: ${r.broken ? 'var(--red)' : r.accent}`}>{r.icon}</span>
+              <span class="meta">
+                <span class="name-line"><b>{r.name}</b> <span class="dim">{r.sub}</span></span>
+                {#if r.broken}
+                  <!-- Broken: red dot + inline error in the meta (S8.5) -->
+                  <span class="meta-line">
+                    <span class="dot err"></span>
+                    <span class="stat err">{t('ext.error')}: {r.err}</span>
+                  </span>
+                {:else}
+                  <!-- Second meta line: status dot + word + badges -->
+                  <span class="meta-line">
+                    <span class="dot" class:on={r.enabled}></span>
+                    <span class="stat" class:on={r.enabled}>{r.enabled ? t('ext.enabled') : t('ext.disabled')}</span>
+                    {#if r.badges.length}
+                      {#each r.badges as b, i (i)}<span class="badge">{b}</span>{/each}
+                    {:else}
+                      <span class="dim small">{t('ext.requestsNoPermissions')}</span>
+                    {/if}
+                  </span>
+                {/if}
+                {#if r.rtErr}<span class="err">⚠ {t('ext.activationError')}: {r.rtErr}</span>{/if}
+              </span>
+            </button>
+            {#if updates[r.id]}
+              <button class="upd-badge" aria-label={t('ext.updateAria', { name: r.name })}
+                disabled={busyId === r.id} onclick={() => onStoreUpdate(r.id)}>
+                {t('ext.updateAvailable')}
+              </button>
+            {/if}
+            <button
+              class="toggle"
+              class:on={r.enabled && !r.broken}
+              role="switch"
+              aria-checked={r.enabled && !r.broken}
+              aria-label={t('ext.toggleAria', { name: r.name })}
+              disabled={r.broken || busyId === r.id}
+              onclick={() => onToggle(r.info, !r.enabled)}
+            ><span class="knob"></span></button>
+            <button
+              class="trash"
+              aria-label={t('ext.deleteAria', { name: r.name })}
+              disabled={busyId === r.id}
+              onclick={() => onUninstall(r.info)}
+            ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="4 7 20 7"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>
+          </div>
+        {/snippet}
+
+        {#each groups.enabled as r (r.info.dir)}
+          {@render rowTpl(r, false)}
+        {/each}
+
+        {#if groups.disabled.length}
+          <!-- Divider before the disabled group -->
+          <div class="group-divider">
+            <span>{t('ext.disabledGroup')}</span>
+            <span class="rule"></span>
+          </div>
+        {/if}
+
+        {#each groups.disabled as r (r.info.dir)}
+          {@render rowTpl(r, true)}
+        {/each}
+
+        {#each groups.broken as r (r.info.dir)}
+          {@render rowTpl(r, false)}
+        {/each}
+      </div>
+
+      {#if rows.length > 0}
+        <!-- Dialog footer: installed/enabled summary + placeholder link to open the plugins folder -->
+        <div class="footer">
+          <span class="summary">{t('ext.footerSummary', { installed, enabled: enabledCount })}</span>
+          <button
+            class="folder"
+            aria-label={t('ext.openFolderAria')}
+            aria-disabled={!onOpenFolder}
+            disabled={!onOpenFolder}
+            onclick={() => onOpenFolder?.()}
+          >{t('ext.pluginsFolder')} ↗</button>
+        </div>
+      {/if}
+    {:else}
+      <StoreTab
+        entries={storeEntries}
+        stale={storeStale}
+        loading={storeLoading}
+        error={storeError}
+        installed={installedVersions}
+        {updates}
+        busyId={storeBusyId}
+        onOpen={onStoreOpen}
+        onInstall={onStoreInstall}
+        onUpdate={onStoreUpdate}
+        onRefresh={onStoreRefresh}
+      />
     {/if}
   </div>
 </div>
@@ -281,4 +335,15 @@
   .folder { background: none; border: none; color: var(--text-dim); cursor: pointer; font: inherit; font-size: 11px; padding: 0; }
   .folder:hover:not(:disabled) { color: var(--accent); }
   .folder:disabled { cursor: default; opacity: .6; }
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-top: 10px; }
+  .tabbtn {
+    background: none; border: none; border-bottom: 2px solid transparent; color: var(--text-dim);
+    font: 12px var(--ui-font); padding: 6px 12px; cursor: pointer;
+  }
+  .tabbtn.active { color: var(--text); border-bottom-color: var(--accent); }
+  .upd-badge {
+    background: none; border: 1px solid var(--accent); color: var(--accent);
+    border-radius: 999px; padding: 2px 10px; font: 11px var(--ui-font); cursor: pointer; white-space: nowrap;
+  }
+  .upd-badge:disabled { opacity: 0.5; cursor: default; }
 </style>

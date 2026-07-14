@@ -305,3 +305,9 @@ func (s *Service) StorageInfo(id string) StorageInfo {
 func (s *Service) StorageClear(id string) error {
 	return s.store.StorageClear(id)
 }
+
+// AutoUpdate reports the global store auto-update toggle (plugins.json, default true).
+func (s *Service) AutoUpdate() bool { return s.store.AutoUpdate() }
+
+// SetAutoUpdate persists the global store auto-update toggle.
+func (s *Service) SetAutoUpdate(v bool) error { return s.store.SetAutoUpdate(v) }

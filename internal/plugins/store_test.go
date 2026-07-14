@@ -193,3 +193,58 @@ func TestStoreStorageClearNoStorageRecord(t *testing.T) {
 		t.Fatalf("no-op clear changed the record: ok=%v enabled=%v perms=%v", ok, enabled, perms)
 	}
 }
+
+func TestStoreAutoUpdateDefaultTrue(t *testing.T) {
+	s := NewPluginStore(filepath.Join(t.TempDir(), "plugins.json"))
+	if !s.AutoUpdate() {
+		t.Fatal("missing file must default to autoUpdate=true")
+	}
+}
+
+func TestStoreAutoUpdateLegacyFileDefaultsTrue(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "plugins.json")
+	// A pre-store file has plugins but no autoUpdate field.
+	if err := os.WriteFile(path, []byte(`{"plugins":{"a":{"enabled":true}}}`), 0o644); err != nil {
+		t.Fatal(err)
+	}
+	s := NewPluginStore(path)
+	if !s.AutoUpdate() {
+		t.Fatal("file without the field must default to autoUpdate=true")
+	}
+}
+
+func TestStoreSetAutoUpdateRoundTrip(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "plugins.json")
+	s := NewPluginStore(path)
+	if err := s.SetAutoUpdate(false); err != nil {
+		t.Fatalf("SetAutoUpdate: %v", err)
+	}
+	if s.AutoUpdate() {
+		t.Fatal("expected false after SetAutoUpdate(false)")
+	}
+	// A fresh store over the same file sees the persisted value.
+	if NewPluginStore(path).AutoUpdate() {
+		t.Fatal("persisted false must survive reload")
+	}
+	if err := s.SetAutoUpdate(true); err != nil {
+		t.Fatal(err)
+	}
+	if !s.AutoUpdate() {
+		t.Fatal("expected true after SetAutoUpdate(true)")
+	}
+}
+
+func TestStoreSetAutoUpdateKeepsPlugins(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "plugins.json")
+	s := NewPluginStore(path)
+	if err := s.SetEnabled("a", true, []string{"exec"}); err != nil {
+		t.Fatal(err)
+	}
+	if err := s.SetAutoUpdate(false); err != nil {
+		t.Fatal(err)
+	}
+	enabled, perms, ok := s.State("a")
+	if !ok || !enabled || len(perms) != 1 || perms[0] != "exec" {
+		t.Fatalf("plugin state lost: ok=%v enabled=%v perms=%v", ok, enabled, perms)
+	}
+}

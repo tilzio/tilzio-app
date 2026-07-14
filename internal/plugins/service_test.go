@@ -209,3 +209,16 @@ func TestServiceStorageClear(t *testing.T) {
 		t.Fatalf("storage not cleared via service: %+v", got)
 	}
 }
+
+func TestServiceAutoUpdatePassthrough(t *testing.T) {
+	s := newTestService(t)
+	if !s.AutoUpdate() {
+		t.Fatal("default must be true")
+	}
+	if err := s.SetAutoUpdate(false); err != nil {
+		t.Fatal(err)
+	}
+	if s.AutoUpdate() {
+		t.Fatal("expected false")
+	}
+}

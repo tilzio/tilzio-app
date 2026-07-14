@@ -19,7 +19,10 @@ type pluginState struct {
 }
 
 type storeFile struct {
-	Plugins map[string]*pluginState `json:"plugins"`
+	// AutoUpdate is the GLOBAL store auto-update toggle (spec §5.1). A nil
+	// pointer (missing field: legacy files, first run) means enabled.
+	AutoUpdate *bool                   `json:"autoUpdate,omitempty"`
+	Plugins    map[string]*pluginState `json:"plugins"`
 }
 
 // PluginStore persists plugin state (enabled / granted permissions / storage) to
@@ -237,5 +240,23 @@ func (s *PluginStore) StorageClear(id string) error {
 		return nil
 	}
 	st.Storage = nil
+	return s.save(f)
+}
+
+// AutoUpdate reports the global auto-update toggle; a missing field defaults
+// to true (silent auto-update is the spec §2 default).
+func (s *PluginStore) AutoUpdate() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	f := s.load()
+	return f.AutoUpdate == nil || *f.AutoUpdate
+}
+
+// SetAutoUpdate persists the global auto-update toggle.
+func (s *PluginStore) SetAutoUpdate(v bool) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	f := s.load()
+	f.AutoUpdate = &v
 	return s.save(f)
 }

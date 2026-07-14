@@ -207,7 +207,8 @@
       "readmeUnavailable": "ملف README غير متاح (غير متصل بالإنترنت؟)",
       "noReadme": "لا يوجد ملف README",
       "installedVersion": "مثبَّت: الإصدار v{version}",
-      "updateTo": "التحديث إلى الإصدار v{version}"
+      "updateTo": "التحديث إلى الإصدار v{version}",
+      "actionFailedTitle": "خطأ في متجر الإضافات"
     }
   },
   "plugin": {

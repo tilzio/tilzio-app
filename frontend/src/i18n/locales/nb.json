@@ -207,7 +207,8 @@
       "readmeUnavailable": "README utilgjengelig (frakoblet?)",
       "noReadme": "Ingen README oppgitt",
       "installedVersion": "installert: v{version}",
-      "updateTo": "oppdater til v{version}"
+      "updateTo": "oppdater til v{version}",
+      "actionFailedTitle": "Feil i utvidelsesbutikken"
     }
   },
   "plugin": {

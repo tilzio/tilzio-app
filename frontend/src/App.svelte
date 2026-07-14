@@ -463,7 +463,14 @@
   async function doUninstall(id: string | null, dir: string) {
     busyId = id ?? dir;
     try { await uninstallPlugin(id, dir); }
-    finally { await loadExtList(); busyId = null; }
+    finally {
+      await loadExtList();
+      if (id) {
+        const { [id]: _gone, ...rest } = updates;
+        updates = rest;
+      }
+      busyId = null;
+    }
   }
 
   // Resetting an extension's settings: confirmation → clear storage → (if active)
@@ -541,6 +548,7 @@
       }
     } catch (e) {
       storeActionError = e instanceof Error ? e.message : String(e);
+      pushStoreErrorToast(storeActionError);
     } finally {
       storeBusyId = null;
     }
@@ -562,9 +570,22 @@
       await refreshUpdates();
     } catch (e) {
       storeActionError = e instanceof Error ? e.message : String(e);
+      pushStoreErrorToast(storeActionError);
     } finally {
       storeBusyId = null;
     }
+  }
+  // A visible error toast for a failed store install/update (spec §7); the
+  // inline storeActionError above already covers the open detail/consent
+  // dialog, but a failure while the dialog is closed (e.g. an Installed-tab
+  // update) would otherwise be silent.
+  function pushStoreErrorToast(message: string): void {
+    const id = pushActionToast({
+      title: t('ext.store.actionFailedTitle'),
+      body: message,
+      tone: 'error',
+      actions: [{ label: t('plugin.toastDismiss'), onAct: () => dismissToast(id) }],
+    });
   }
   function onStoreUninstall(id: string) {
     const info = extPlugins.find((p) => p.manifest?.id === id);
@@ -572,14 +593,21 @@
   }
   // A silent auto-update happened in Go: refresh our snapshots and restart the
   // worker so it runs the new code (Go replaced the folder under a live worker).
+  // This runs off a background event (no user action to attach an await to), so
+  // a failure here must not become an unhandled rejection — log and move on,
+  // no toast spam for the background path (spec §7).
   async function onAutoUpdated(id: string) {
-    const { [id]: _gone, ...rest } = updates;
-    updates = rest;
-    await loadExtList();
-    if (pluginHost.active.some((p) => p.id === id)) {
-      const info = extPlugins.find((p) => p.manifest?.id === id);
-      await deactivate(id);
-      if (info?.manifest && info.enabled) await activate(info.manifest);
+    try {
+      const { [id]: _gone, ...rest } = updates;
+      updates = rest;
+      await loadExtList();
+      if (pluginHost.active.some((p) => p.id === id)) {
+        const info = extPlugins.find((p) => p.manifest?.id === id);
+        await deactivate(id);
+        if (info?.manifest && info.enabled) await activate(info.manifest);
+      }
+    } catch (e) {
+      console.error('[store] auto-update reload failed', e);
     }
   }
 

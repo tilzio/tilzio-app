@@ -207,7 +207,8 @@
       "readmeUnavailable": "README មិនអាចប្រើបាន (ក្រៅបណ្ដាញ?)",
       "noReadme": "មិនមាន README ផ្ដល់ជូន",
       "installedVersion": "បានដំឡើង៖ v{version}",
-      "updateTo": "ធ្វើបច្ចុប្បន្នភាពទៅ v{version}"
+      "updateTo": "ធ្វើបច្ចុប្បន្នភាពទៅ v{version}",
+      "actionFailedTitle": "កំហុសហាងកម្មវិធីបន្ថែម"
     }
   },
   "plugin": {

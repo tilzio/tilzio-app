@@ -207,7 +207,8 @@
       "readmeUnavailable": "README indisponível (offline?)",
       "noReadme": "Nenhum README fornecido",
       "installedVersion": "instalada: v{version}",
-      "updateTo": "atualizar para v{version}"
+      "updateTo": "atualizar para v{version}",
+      "actionFailedTitle": "Erro da loja de extensões"
     }
   },
   "plugin": {

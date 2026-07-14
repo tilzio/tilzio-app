@@ -207,7 +207,8 @@
       "readmeUnavailable": "README を利用できません (オフライン？)",
       "noReadme": "README は提供されていません",
       "installedVersion": "インストール済み: v{version}",
-      "updateTo": "v{version} に更新"
+      "updateTo": "v{version} に更新",
+      "actionFailedTitle": "拡張機能ストアエラー"
     }
   },
   "plugin": {

@@ -207,7 +207,8 @@
       "readmeUnavailable": "README kullanılamıyor (çevrimdışı mı?)",
       "noReadme": "README sağlanmadı",
       "installedVersion": "yüklü: v{version}",
-      "updateTo": "v{version} sürümüne güncelle"
+      "updateTo": "v{version} sürümüne güncelle",
+      "actionFailedTitle": "Uzantı mağazası hatası"
     }
   },
   "plugin": {

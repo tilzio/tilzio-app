@@ -182,7 +182,7 @@
             </button>
             {#if updates[r.id]}
               <button class="upd-badge" aria-label={t('ext.updateAria', { name: r.name })}
-                disabled={busyId === r.id} onclick={() => onStoreUpdate(r.id)}>
+                disabled={busyId === r.id || storeBusyId === r.id} onclick={() => onStoreUpdate(r.id)}>
                 {t('ext.updateAvailable')}
               </button>
             {/if}

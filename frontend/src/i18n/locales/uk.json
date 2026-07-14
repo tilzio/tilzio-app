@@ -207,7 +207,8 @@
       "readmeUnavailable": "README недоступний (офлайн?)",
       "noReadme": "README не надано",
       "installedVersion": "встановлено: v{version}",
-      "updateTo": "оновити до v{version}"
+      "updateTo": "оновити до v{version}",
+      "actionFailedTitle": "Помилка магазину розширень"
     }
   },
   "plugin": {

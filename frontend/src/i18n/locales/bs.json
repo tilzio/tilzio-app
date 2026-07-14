@@ -207,7 +207,8 @@
       "readmeUnavailable": "README nije dostupan (bez interneta?)",
       "noReadme": "README nije dostavljen",
       "installedVersion": "instalirano: v{version}",
-      "updateTo": "ažuriraj na v{version}"
+      "updateTo": "ažuriraj na v{version}",
+      "actionFailedTitle": "Greška u prodavnici ekstenzija"
     }
   },
   "plugin": {

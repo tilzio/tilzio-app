@@ -207,7 +207,8 @@
       "readmeUnavailable": "ไม่มี README (ออฟไลน์อยู่หรือไม่?)",
       "noReadme": "ไม่มี README ให้",
       "installedVersion": "ติดตั้งแล้ว: v{version}",
-      "updateTo": "อัปเดตเป็น v{version}"
+      "updateTo": "อัปเดตเป็น v{version}",
+      "actionFailedTitle": "ข้อผิดพลาดของสโตร์ส่วนขยาย"
     }
   },
   "plugin": {

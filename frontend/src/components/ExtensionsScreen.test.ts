@@ -256,4 +256,17 @@ describe('ExtensionsScreen store tab', () => {
     const { container } = render(ExtensionsScreen, { props: { ...base, plugins: [git] } });
     expect(container.querySelector('.upd-badge')).toBeNull();
   });
+
+  it('Update button is disabled while the store install for it is busy', () => {
+    const { container } = render(ExtensionsScreen, {
+      props: {
+        ...base,
+        plugins: [git],
+        updates: { 'dev.term.git': { id: 'dev.term.git', from: '1.0.0', to: '2.0.0', permsChanged: false } },
+        storeBusyId: 'dev.term.git',
+      },
+    });
+    const btn = container.querySelector('.upd-badge') as HTMLButtonElement;
+    expect(btn.disabled).toBe(true);
+  });
 });

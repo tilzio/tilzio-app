@@ -207,7 +207,8 @@
       "readmeUnavailable": "README 無法使用（離線？）",
       "noReadme": "未提供 README",
       "installedVersion": "已安裝：v{version}",
-      "updateTo": "更新至 v{version}"
+      "updateTo": "更新至 v{version}",
+      "actionFailedTitle": "擴充功能商店錯誤"
     }
   },
   "plugin": {

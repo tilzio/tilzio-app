@@ -197,3 +197,44 @@ func TestStoreCatalogErrorWithoutCache(t *testing.T) {
 		t.Fatal("no cache + no network must error")
 	}
 }
+
+func TestStoreDetailFetch(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/v1/extensions/io.tilzio.ai-limits" {
+			http.NotFound(w, r)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"data":{"id":"io.tilzio.ai-limits","name":"AI Limits","description":"d",
+			"version":"1.2.0","engine":"tilzio@1","permissions":["exec"],"exec":["claude"],
+			"size":3,"sha256":"aa","publisher":"tilzio","updatedAt":"2026-07-14T00:00:00Z",
+			"readme":"# AI Limits","versions":[{"version":"1.2.0","sha256":"aa","size":3,"createdAt":"2026-07-14T00:00:00Z"}]}}`))
+	}))
+	t.Cleanup(srv.Close)
+	m := newTestMarket(t, srv.URL)
+	d, err := m.StoreDetail("io.tilzio.ai-limits")
+	if err != nil {
+		t.Fatalf("StoreDetail: %v", err)
+	}
+	if d.ID != "io.tilzio.ai-limits" || d.Readme != "# AI Limits" || len(d.Versions) != 1 {
+		t.Fatalf("bad detail: %+v", d)
+	}
+}
+
+func TestStoreDetailNotFound(t *testing.T) {
+	srv := httptest.NewServer(http.NotFoundHandler())
+	t.Cleanup(srv.Close)
+	m := newTestMarket(t, srv.URL)
+	if _, err := m.StoreDetail("nope"); !errors.Is(err, ErrNotFound) {
+		t.Fatalf("want ErrNotFound, got %v", err)
+	}
+}
+
+func TestStoreDetailNetworkError(t *testing.T) {
+	srv := httptest.NewServer(http.NotFoundHandler())
+	srv.Close()
+	m := newTestMarket(t, srv.URL)
+	if _, err := m.StoreDetail("x"); !errors.Is(err, ErrDownload) {
+		t.Fatalf("want ErrDownload, got %v", err)
+	}
+}

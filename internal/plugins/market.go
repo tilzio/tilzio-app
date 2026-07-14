@@ -226,3 +226,41 @@ func (m *Market) StoreCatalog(force bool) (Catalog, error) {
 	}
 	return Catalog{}, err
 }
+
+// StoreVersion is one row of an extension's published-version history.
+type StoreVersion struct {
+	Version   string `json:"version"`
+	SHA256    string `json:"sha256"`
+	Size      int64  `json:"size"`
+	CreatedAt string `json:"createdAt"`
+}
+
+// StoreDetail is the store card payload: summary + README + version history.
+type StoreDetail struct {
+	StoreEntry
+	Readme   string         `json:"readme"`
+	Versions []StoreVersion `json:"versions"`
+}
+
+// StoreDetail fetches one extension's detail (GET /v1/extensions/{id}, wrapped
+// in {"data":...} per API v1). Not cached — it's a single card open, and the
+// server allows it comfortably within its rate limit.
+func (m *Market) StoreDetail(id string) (StoreDetail, error) {
+	status, body, _, err := m.get("/v1/extensions/"+url.PathEscape(id), "", catalogMaxBytes)
+	if err != nil {
+		return StoreDetail{}, err
+	}
+	if status == http.StatusNotFound {
+		return StoreDetail{}, ErrNotFound
+	}
+	if status != http.StatusOK {
+		return StoreDetail{}, fmt.Errorf("%w: status %d", ErrDownload, status)
+	}
+	var p struct {
+		Data StoreDetail `json:"data"`
+	}
+	if err := json.Unmarshal(body, &p); err != nil {
+		return StoreDetail{}, fmt.Errorf("%w: bad detail JSON: %v", ErrDownload, err)
+	}
+	return p.Data, nil
+}

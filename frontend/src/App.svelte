@@ -462,13 +462,17 @@
   }
   async function doUninstall(id: string | null, dir: string) {
     busyId = id ?? dir;
-    try { await uninstallPlugin(id, dir); }
-    finally {
-      await loadExtList();
+    try {
+      await uninstallPlugin(id, dir);
+      // Only clear the Update badge once the uninstall actually succeeded — a
+      // failed uninstall must leave the plugin (and its badge) exactly as-is.
       if (id) {
         const { [id]: _gone, ...rest } = updates;
         updates = rest;
       }
+    }
+    finally {
+      await loadExtList();
       busyId = null;
     }
   }
@@ -584,6 +588,7 @@
       title: t('ext.store.actionFailedTitle'),
       body: message,
       tone: 'error',
+      persistent: true,
       actions: [{ label: t('plugin.toastDismiss'), onAct: () => dismissToast(id) }],
     });
   }

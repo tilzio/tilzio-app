@@ -35,3 +35,6 @@ var ErrInsecureURL = errors.New("plugins: install URL must be https")
 
 // ErrDownload — failed to download the archive from the URL.
 var ErrDownload = errors.New("plugins: download failed")
+
+// ErrChecksum — the downloaded archive does not match the catalog's sha256.
+var ErrChecksum = errors.New("plugins: downloaded archive checksum mismatch")

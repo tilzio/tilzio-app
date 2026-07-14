@@ -1,6 +1,8 @@
 package plugins
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -236,5 +238,93 @@ func TestStoreDetailNetworkError(t *testing.T) {
 	m := newTestMarket(t, srv.URL)
 	if _, err := m.StoreDetail("x"); !errors.Is(err, ErrDownload) {
 		t.Fatalf("want ErrDownload, got %v", err)
+	}
+}
+
+// storeServer is a fake registry serving a catalog with one entry and its zip.
+// sha controls the advertised sha256 ("" = correct).
+func storeServer(t *testing.T, id, version string, zipData []byte, sha string) (*httptest.Server, StoreEntry) {
+	t.Helper()
+	if sha == "" {
+		sum := sha256.Sum256(zipData)
+		sha = hex.EncodeToString(sum[:])
+	}
+	entry := testEntry(id, version)
+	entry.SHA256 = sha
+	entry.Size = int64(len(zipData))
+	body := catalogJSON(t, []StoreEntry{entry})
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/v1/registry":
+			w.Header().Set("Content-Type", "application/json")
+			_, _ = w.Write(body)
+		case "/v1/extensions/" + id + "/" + version + "/download":
+			w.Header().Set("Content-Type", "application/zip")
+			_, _ = w.Write(zipData)
+		default:
+			http.NotFound(w, r)
+		}
+	}))
+	t.Cleanup(srv.Close)
+	return srv, entry
+}
+
+func TestStoreInstallHappyPath(t *testing.T) {
+	zipData := makeZip(t, map[string]string{"manifest.json": manifestJSON("dev.s", "1.0.0"), "main.js": "//s"})
+	srv, _ := storeServer(t, "dev.s", "1.0.0", zipData, "")
+	m := newTestMarket(t, srv.URL)
+	res, err := m.StoreInstall("dev.s")
+	if err != nil {
+		t.Fatalf("StoreInstall: %v", err)
+	}
+	if res.Status != "installed" || res.Info == nil || res.Info.Manifest.ID != "dev.s" {
+		t.Fatalf("bad result: %+v", res)
+	}
+	if _, err := os.Stat(filepath.Join(m.svc.pluginsDir, "dev.s", "main.js")); err != nil {
+		t.Fatalf("plugin not on disk: %v", err)
+	}
+}
+
+func TestStoreInstallOverwritesKeepingState(t *testing.T) {
+	zipV2 := makeZip(t, map[string]string{"manifest.json": manifestJSON("dev.s", "2.0.0"), "main.js": "//v2"})
+	srv, _ := storeServer(t, "dev.s", "2.0.0", zipV2, "")
+	m := newTestMarket(t, srv.URL)
+	// Pre-install v1 and enable it.
+	v1 := makeZip(t, map[string]string{"manifest.json": manifestJSON("dev.s", "1.0.0"), "main.js": "//v1"})
+	if _, err := m.svc.InstallZip(v1, false); err != nil {
+		t.Fatal(err)
+	}
+	if err := m.svc.SetEnabled("dev.s", true); err != nil {
+		t.Fatal(err)
+	}
+	res, err := m.StoreInstall("dev.s")
+	if err != nil {
+		t.Fatalf("StoreInstall: %v", err)
+	}
+	if res.Status != "installed" || res.Info.Manifest.Version != "2.0.0" {
+		t.Fatalf("bad result: %+v", res)
+	}
+	if !res.Info.Enabled {
+		t.Fatal("enabled state must survive a store update")
+	}
+}
+
+func TestStoreInstallChecksumMismatch(t *testing.T) {
+	zipData := makeZip(t, map[string]string{"manifest.json": manifestJSON("dev.s", "1.0.0"), "main.js": "//s"})
+	srv, _ := storeServer(t, "dev.s", "1.0.0", zipData, "deadbeef")
+	m := newTestMarket(t, srv.URL)
+	if _, err := m.StoreInstall("dev.s"); !errors.Is(err, ErrChecksum) {
+		t.Fatalf("want ErrChecksum, got %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(m.svc.pluginsDir, "dev.s")); !os.IsNotExist(err) {
+		t.Fatal("nothing must be installed on checksum mismatch")
+	}
+}
+
+func TestStoreInstallUnknownID(t *testing.T) {
+	srv := fakeRegistry(t, []StoreEntry{testEntry("a", "1.0.0")}, "", new(atomic.Int64))
+	m := newTestMarket(t, srv.URL)
+	if _, err := m.StoreInstall("missing"); !errors.Is(err, ErrNotFound) {
+		t.Fatalf("want ErrNotFound, got %v", err)
 	}
 }

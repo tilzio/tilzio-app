@@ -1,6 +1,8 @@
 package plugins
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -263,4 +265,38 @@ func (m *Market) StoreDetail(id string) (StoreDetail, error) {
 		return StoreDetail{}, fmt.Errorf("%w: bad detail JSON: %v", ErrDownload, err)
 	}
 	return p.Data, nil
+}
+
+// StoreInstall downloads id's current catalog version, verifies its sha256
+// against the catalog entry and installs it with overwrite semantics (updates
+// keep enabled/permissions/storage — spec §5.1). On any failure nothing on
+// disk is touched.
+func (m *Market) StoreInstall(id string) (InstallResult, error) {
+	cat, err := m.StoreCatalog(false)
+	if err != nil {
+		return InstallResult{}, err
+	}
+	var entry *StoreEntry
+	for i := range cat.Extensions {
+		if cat.Extensions[i].ID == id {
+			entry = &cat.Extensions[i]
+			break
+		}
+	}
+	if entry == nil {
+		return InstallResult{}, ErrNotFound
+	}
+	path := "/v1/extensions/" + url.PathEscape(id) + "/" + url.PathEscape(entry.Version) + "/download"
+	status, data, _, err := m.get(path, "", installMaxBytes)
+	if err != nil {
+		return InstallResult{}, err
+	}
+	if status != http.StatusOK {
+		return InstallResult{}, fmt.Errorf("%w: status %d", ErrDownload, status)
+	}
+	sum := sha256.Sum256(data)
+	if !strings.EqualFold(hex.EncodeToString(sum[:]), entry.SHA256) {
+		return InstallResult{}, fmt.Errorf("%w: %s@%s", ErrChecksum, id, entry.Version)
+	}
+	return m.svc.InstallZip(data, true)
 }

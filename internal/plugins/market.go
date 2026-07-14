@@ -352,25 +352,44 @@ func manifestFromZip(data []byte) (*Manifest, error) {
 }
 
 // rejectDuplicateEntries fails an archive that has two regular-file entries
-// resolving to the same path once cleaned (path.Clean; zip entry names are
-// always "/"-separated, so "./manifest.json" and "manifest.json" collide
-// too). A legitimate zip never contains duplicate paths — the stage-1
-// registry server already rejects them at publish — so this is purely a
-// gate-bypass shape: extraction (install.go extractFile, opened O_TRUNC) is
+// that would land on the same path once actually extracted. The dedupe key
+// must mirror the extraction-collision domain — filepath.Join(destAbs,
+// f.Name) resolved by the OS, not the literal zip entry strings — so it is
+// NOT simply path.Clean(f.Name):
+//
+//   - path.Clean("/"+f.Name) canonicalizes leading slashes, "./", "//" and
+//     ".."-prefixes into one absolute-style form, matching how
+//     filepath.Join collapses a leading "/" in its second argument. So
+//     "manifest.json", "./manifest.json" and "/manifest.json" all become
+//     the same key.
+//   - strings.ToLower folds case, matching macOS's default case-insensitive
+//     APFS volumes: "manifest.json" and "Manifest.json" extract to the same
+//     on-disk file there, even though they are distinct zip entries.
+//
+// A legitimate zip never contains duplicate paths — the stage-1 registry
+// server already rejects them at publish — so this is purely a gate-bypass
+// shape: extraction (install.go extractFile, opened O_TRUNC) is
 // last-write-wins, meaning a benign first copy of manifest.json could pass
-// the catalog-permissions gate while a later, over-privileged copy is what
-// actually gets written to disk.
+// the catalog-permissions gate while a later, over-privileged copy under a
+// different case or leading-slash spelling is what actually gets written to
+// disk.
+//
+// Unicode-normalization variants of a top-level directory name (NFC vs NFD)
+// are NOT folded here and stay as distinct keys — but that shape fails
+// closed rather than open: findManifestEntry's exactly-one-top-dir rule
+// then sees two distinct directories and returns ErrNoManifest, refusing
+// the install outright.
 func rejectDuplicateEntries(zr *zip.Reader) error {
 	seen := make(map[string]bool, len(zr.File))
 	for _, f := range zr.File {
 		if f.FileInfo().IsDir() {
 			continue
 		}
-		name := path.Clean(f.Name)
-		if seen[name] {
-			return fmt.Errorf("%w: duplicate zip entry %q", ErrBadArchive, name)
+		key := strings.ToLower(path.Clean("/" + f.Name))
+		if seen[key] {
+			return fmt.Errorf("%w: duplicate zip entry %q", ErrBadArchive, f.Name)
 		}
-		seen[name] = true
+		seen[key] = true
 	}
 	return nil
 }

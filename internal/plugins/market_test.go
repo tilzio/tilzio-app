@@ -406,6 +406,105 @@ func TestStoreInstallRejectsDuplicateManifestZip(t *testing.T) {
 	}
 }
 
+// TestStoreInstallRejectsCaseVariantManifestZip builds a zip with a benign
+// "manifest.json" entry followed by an over-privileged "Manifest.json"
+// entry. On a case-sensitive dedupe key the two are distinct map entries,
+// but they resolve to the SAME on-disk file under filepath.Join(destAbs,
+// name) on macOS's default case-insensitive APFS volumes — so the second,
+// over-privileged copy is what safeUnzip's O_TRUNC extraction actually
+// leaves on disk (last-write-wins), even though the gate validated the
+// first, benign one. The whole install must be rejected before anything
+// touches disk.
+func TestStoreInstallRejectsCaseVariantManifestZip(t *testing.T) {
+	var buf bytes.Buffer
+	zw := zip.NewWriter(&buf)
+	benign, err := zw.Create("manifest.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := benign.Write([]byte(`{"id":"dev.case","name":"X","version":"1.0.0","engine":"tilzio@1","entry":"main.js"}`)); err != nil {
+		t.Fatal(err)
+	}
+	overPrivileged, err := zw.Create("Manifest.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := overPrivileged.Write([]byte(`{"id":"dev.case","name":"X","version":"1.0.0","engine":"tilzio@1","entry":"main.js","permissions":["terminal:read"]}`)); err != nil {
+		t.Fatal(err)
+	}
+	mainJS, err := zw.Create("main.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := mainJS.Write([]byte("//x")); err != nil {
+		t.Fatal(err)
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	zipData := buf.Bytes()
+
+	// storeServer's testEntry declares Permissions ["state:read"]; the benign
+	// manifest.json declares no permissions at all, a trivial subset — so the
+	// old case-sensitive gate would let this through.
+	srv, _ := storeServer(t, "dev.case", "1.0.0", zipData, "")
+	m := newTestMarket(t, srv.URL)
+	if _, err := m.StoreInstall("dev.case"); !errors.Is(err, ErrBadArchive) {
+		t.Fatalf("want ErrBadArchive, got %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(m.svc.pluginsDir, "dev.case")); !os.IsNotExist(err) {
+		t.Fatal("nothing must be installed for a zip with case-variant manifest.json entries")
+	}
+}
+
+// TestStoreInstallRejectsAbsoluteManifestZip builds a zip with a benign
+// "manifest.json" entry followed by an over-privileged "/manifest.json"
+// entry (a leading-slash zip path). filepath.Join(destAbs, "/manifest.json")
+// collapses the leading slash and lands on the exact same file as
+// filepath.Join(destAbs, "manifest.json") — so on a dedupe key that only
+// path.Clean()s the raw name (never normalizing the leading slash against
+// its absence), the two are distinct map entries even though they are the
+// same extraction target. The whole install must be rejected before
+// anything touches disk.
+func TestStoreInstallRejectsAbsoluteManifestZip(t *testing.T) {
+	var buf bytes.Buffer
+	zw := zip.NewWriter(&buf)
+	benign, err := zw.Create("manifest.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := benign.Write([]byte(`{"id":"dev.abs","name":"X","version":"1.0.0","engine":"tilzio@1","entry":"main.js"}`)); err != nil {
+		t.Fatal(err)
+	}
+	overPrivileged, err := zw.Create("/manifest.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := overPrivileged.Write([]byte(`{"id":"dev.abs","name":"X","version":"1.0.0","engine":"tilzio@1","entry":"main.js","permissions":["terminal:read"]}`)); err != nil {
+		t.Fatal(err)
+	}
+	mainJS, err := zw.Create("main.js")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := mainJS.Write([]byte("//x")); err != nil {
+		t.Fatal(err)
+	}
+	if err := zw.Close(); err != nil {
+		t.Fatal(err)
+	}
+	zipData := buf.Bytes()
+
+	srv, _ := storeServer(t, "dev.abs", "1.0.0", zipData, "")
+	m := newTestMarket(t, srv.URL)
+	if _, err := m.StoreInstall("dev.abs"); !errors.Is(err, ErrBadArchive) {
+		t.Fatalf("want ErrBadArchive, got %v", err)
+	}
+	if _, err := os.Stat(filepath.Join(m.svc.pluginsDir, "dev.abs")); !os.IsNotExist(err) {
+		t.Fatal("nothing must be installed for a zip with a leading-slash manifest.json entry")
+	}
+}
+
 func TestStoreInstallUnknownID(t *testing.T) {
 	srv := fakeRegistry(t, []StoreEntry{testEntry("a", "1.0.0")}, "", new(atomic.Int64))
 	m := newTestMarket(t, srv.URL)

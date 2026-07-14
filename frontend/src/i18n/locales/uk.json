@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "Керуйте плагінами та розширеннями, встановленими в Tilzio.",
-      "open": "Відкрити розширення"
+      "open": "Відкрити розширення",
+      "autoUpdate": "Автоматично оновлювати розширення",
+      "autoUpdateHint": "Автоматично встановлювати оновлення розширень. Оновлення, що запитують нові дозволи, завжди спершу питають підтвердження."
     },
     "about": {
       "tagline": "Термінальні робочі простори"
@@ -180,7 +182,33 @@
     "orFromUrl": "або з URL",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "Завантажити",
-    "installing": "Встановлення…"
+    "installing": "Встановлення…",
+    "tabInstalled": "Встановлені",
+    "tabStore": "Магазин",
+    "updateAvailable": "Оновити",
+    "updateAria": "оновити {name}",
+    "store": {
+      "searchAria": "пошук у магазині розширень",
+      "searchPlaceholder": "Пошук розширень…",
+      "offline": "офлайн (кеш)",
+      "refreshAria": "оновити каталог",
+      "loading": "Завантаження…",
+      "empty": "Каталог порожній",
+      "noMatches": "Немає відповідних розширень",
+      "loadError": "Не вдалося завантажити каталог: {msg}",
+      "openAria": "деталі розширення: {name}",
+      "statusInstalled": "Встановлено",
+      "install": "Встановити",
+      "update": "Оновити",
+      "uninstall": "Видалити",
+      "installing": "Встановлення…",
+      "publisher": "Видавець",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README недоступний (офлайн?)",
+      "noReadme": "README не надано",
+      "installedVersion": "встановлено: v{version}",
+      "updateTo": "оновити до v{version}"
+    }
   },
   "plugin": {
     "consentAria": "Запит дозволу",

@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "Plugins und Erweiterungen verwalten, die in Tilzio installiert sind.",
-      "open": "Erweiterungen öffnen"
+      "open": "Erweiterungen öffnen",
+      "autoUpdate": "Erweiterungen automatisch aktualisieren",
+      "autoUpdateHint": "Installiert Erweiterungs-Updates automatisch. Updates, die neue Berechtigungen anfordern, fragen immer zuerst nach Bestätigung."
     },
     "about": {
       "tagline": "Terminal-Arbeitsbereiche"
@@ -180,7 +182,33 @@
     "orFromUrl": "oder von URL",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "Herunterladen",
-    "installing": "Wird installiert…"
+    "installing": "Wird installiert…",
+    "tabInstalled": "Installiert",
+    "tabStore": "Store",
+    "updateAvailable": "Update",
+    "updateAria": "{name} aktualisieren",
+    "store": {
+      "searchAria": "Erweiterungs-Store durchsuchen",
+      "searchPlaceholder": "Erweiterungen suchen…",
+      "offline": "offline (aus Cache)",
+      "refreshAria": "Katalog aktualisieren",
+      "loading": "Wird geladen…",
+      "empty": "Der Katalog ist leer",
+      "noMatches": "Keine passenden Erweiterungen",
+      "loadError": "Katalog konnte nicht geladen werden: {msg}",
+      "openAria": "Erweiterungsdetails: {name}",
+      "statusInstalled": "Installiert",
+      "install": "Installieren",
+      "update": "Aktualisieren",
+      "uninstall": "Deinstallieren",
+      "installing": "Wird installiert…",
+      "publisher": "Herausgeber",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README nicht verfügbar (offline?)",
+      "noReadme": "Kein README vorhanden",
+      "installedVersion": "installiert: v{version}",
+      "updateTo": "auf v{version} aktualisieren"
+    }
   },
   "plugin": {
     "consentAria": "Berechtigungsanfrage",

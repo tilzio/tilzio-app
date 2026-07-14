@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "Управление плагинами и расширениями, установленными в Tilzio.",
-      "open": "Открыть расширения"
+      "open": "Открыть расширения",
+      "autoUpdate": "Автообновление расширений",
+      "autoUpdateHint": "Устанавливать обновления расширений автоматически. Если обновление запрашивает новые разрешения, оно всегда сначала спросит подтверждение."
     },
     "about": {
       "tagline": "Терминальные рабочие пространства"
@@ -180,7 +182,33 @@
     "orFromUrl": "или по URL",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "Скачать",
-    "installing": "Установка…"
+    "installing": "Установка…",
+    "tabInstalled": "Установлено",
+    "tabStore": "Магазин",
+    "updateAvailable": "Обновить",
+    "updateAria": "обновить {name}",
+    "store": {
+      "searchAria": "поиск в магазине расширений",
+      "searchPlaceholder": "Поиск расширений…",
+      "offline": "офлайн (кэш)",
+      "refreshAria": "обновить каталог",
+      "loading": "Загрузка…",
+      "empty": "Каталог пуст",
+      "noMatches": "Нет подходящих расширений",
+      "loadError": "Не удалось загрузить каталог: {msg}",
+      "openAria": "подробности расширения: {name}",
+      "statusInstalled": "Установлено",
+      "install": "Установить",
+      "update": "Обновить",
+      "uninstall": "Удалить",
+      "installing": "Установка…",
+      "publisher": "Издатель",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README недоступен (нет сети?)",
+      "noReadme": "README не предоставлен",
+      "installedVersion": "установлено: v{version}",
+      "updateTo": "обновить до v{version}"
+    }
   },
   "plugin": {
     "consentAria": "Запрос разрешений",

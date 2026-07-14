@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "Zarządzaj wtyczkami i rozszerzeniami zainstalowanymi w Tilzio.",
-      "open": "Otwórz rozszerzenia"
+      "open": "Otwórz rozszerzenia",
+      "autoUpdate": "Automatycznie aktualizuj rozszerzenia",
+      "autoUpdateHint": "Automatycznie instaluj aktualizacje rozszerzeń. Aktualizacje wymagające nowych uprawnień zawsze najpierw proszą o potwierdzenie."
     },
     "about": {
       "tagline": "Terminalowe przestrzenie robocze"
@@ -180,7 +182,33 @@
     "orFromUrl": "lub z adresu URL",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "Pobierz",
-    "installing": "Instalowanie…"
+    "installing": "Instalowanie…",
+    "tabInstalled": "Zainstalowane",
+    "tabStore": "Sklep",
+    "updateAvailable": "Aktualizuj",
+    "updateAria": "aktualizuj {name}",
+    "store": {
+      "searchAria": "szukaj w sklepie rozszerzeń",
+      "searchPlaceholder": "Szukaj rozszerzeń…",
+      "offline": "offline (z pamięci podręcznej)",
+      "refreshAria": "odśwież katalog",
+      "loading": "Wczytywanie…",
+      "empty": "Katalog jest pusty",
+      "noMatches": "Brak pasujących rozszerzeń",
+      "loadError": "Nie udało się wczytać katalogu: {msg}",
+      "openAria": "szczegóły rozszerzenia: {name}",
+      "statusInstalled": "Zainstalowane",
+      "install": "Zainstaluj",
+      "update": "Aktualizuj",
+      "uninstall": "Odinstaluj",
+      "installing": "Instalowanie…",
+      "publisher": "Wydawca",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README niedostępny (offline?)",
+      "noReadme": "Nie podano README",
+      "installedVersion": "zainstalowano: v{version}",
+      "updateTo": "aktualizuj do v{version}"
+    }
   },
   "plugin": {
     "consentAria": "Prośba o uprawnienia",

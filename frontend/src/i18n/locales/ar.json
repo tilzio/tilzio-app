@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "إدارة المكوّنات الإضافية والإضافات المثبّتة في Tilzio.",
-      "open": "فتح الإضافات"
+      "open": "فتح الإضافات",
+      "autoUpdate": "تحديث الإضافات تلقائيًا",
+      "autoUpdateHint": "تثبيت تحديثات الإضافات تلقائيًا. التحديثات التي تطلب أذونات جديدة تطلب دائمًا التأكيد أولًا."
     },
     "about": {
       "tagline": "مساحات عمل طرفية"
@@ -180,7 +182,33 @@
     "orFromUrl": "أو من عنوان URL",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "تنزيل",
-    "installing": "جارٍ التثبيت…"
+    "installing": "جارٍ التثبيت…",
+    "tabInstalled": "المثبَّتة",
+    "tabStore": "المتجر",
+    "updateAvailable": "تحديث",
+    "updateAria": "تحديث {name}",
+    "store": {
+      "searchAria": "البحث في متجر الإضافات",
+      "searchPlaceholder": "بحث عن الإضافات…",
+      "offline": "غير متصل (مخزَّن مؤقتًا)",
+      "refreshAria": "تحديث الفهرس",
+      "loading": "جارٍ التحميل…",
+      "empty": "الفهرس فارغ",
+      "noMatches": "لا توجد إضافات مطابقة",
+      "loadError": "تعذّر تحميل الفهرس: {msg}",
+      "openAria": "تفاصيل الإضافة: {name}",
+      "statusInstalled": "مثبَّتة",
+      "install": "تثبيت",
+      "update": "تحديث",
+      "uninstall": "إلغاء التثبيت",
+      "installing": "جارٍ التثبيت…",
+      "publisher": "الناشر",
+      "sectionReadme": "README",
+      "readmeUnavailable": "ملف README غير متاح (غير متصل بالإنترنت؟)",
+      "noReadme": "لا يوجد ملف README",
+      "installedVersion": "مثبَّت: الإصدار v{version}",
+      "updateTo": "التحديث إلى الإصدار v{version}"
+    }
   },
   "plugin": {
     "consentAria": "طلب إذن",

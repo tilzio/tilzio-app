@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "Administrer programtillegg og utvidelser installert i Tilzio.",
-      "open": "Åpne utvidelser"
+      "open": "Åpne utvidelser",
+      "autoUpdate": "Oppdater utvidelser automatisk",
+      "autoUpdateHint": "Installer utvidelsesoppdateringer automatisk. Oppdateringer som ber om nye tillatelser, spør alltid om bekreftelse først."
     },
     "about": {
       "tagline": "Terminalarbeidsområder"
@@ -180,7 +182,33 @@
     "orFromUrl": "eller fra URL",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "Last ned",
-    "installing": "Installerer…"
+    "installing": "Installerer…",
+    "tabInstalled": "Installert",
+    "tabStore": "Butikk",
+    "updateAvailable": "Oppdater",
+    "updateAria": "oppdater {name}",
+    "store": {
+      "searchAria": "søk i utvidelsesbutikken",
+      "searchPlaceholder": "Søk etter utvidelser…",
+      "offline": "frakoblet (bufret)",
+      "refreshAria": "oppdater katalog",
+      "loading": "Laster…",
+      "empty": "Katalogen er tom",
+      "noMatches": "Ingen samsvarende utvidelser",
+      "loadError": "Kunne ikke laste katalogen: {msg}",
+      "openAria": "utvidelsesdetaljer: {name}",
+      "statusInstalled": "Installert",
+      "install": "Installer",
+      "update": "Oppdater",
+      "uninstall": "Avinstaller",
+      "installing": "Installerer…",
+      "publisher": "Utgiver",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README utilgjengelig (frakoblet?)",
+      "noReadme": "Ingen README oppgitt",
+      "installedVersion": "installert: v{version}",
+      "updateTo": "oppdater til v{version}"
+    }
   },
   "plugin": {
     "consentAria": "Tillatelsesforespørsel",

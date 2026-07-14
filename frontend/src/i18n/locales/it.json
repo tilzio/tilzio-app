@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "Gestisci plugin ed estensioni installati in Tilzio.",
-      "open": "Apri Estensioni"
+      "open": "Apri Estensioni",
+      "autoUpdate": "Aggiorna automaticamente le estensioni",
+      "autoUpdateHint": "Installa automaticamente gli aggiornamenti delle estensioni. Gli aggiornamenti che richiedono nuovi permessi chiedono sempre conferma prima."
     },
     "about": {
       "tagline": "Spazi di lavoro nel terminale"
@@ -180,7 +182,33 @@
     "orFromUrl": "oppure da URL",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "Scarica",
-    "installing": "Installazione…"
+    "installing": "Installazione…",
+    "tabInstalled": "Installate",
+    "tabStore": "Store",
+    "updateAvailable": "Aggiorna",
+    "updateAria": "aggiorna {name}",
+    "store": {
+      "searchAria": "cerca nello store delle estensioni",
+      "searchPlaceholder": "Cerca estensioni…",
+      "offline": "offline (in cache)",
+      "refreshAria": "aggiorna catalogo",
+      "loading": "Caricamento…",
+      "empty": "Il catalogo è vuoto",
+      "noMatches": "Nessuna estensione corrispondente",
+      "loadError": "Impossibile caricare il catalogo: {msg}",
+      "openAria": "dettagli estensione: {name}",
+      "statusInstalled": "Installata",
+      "install": "Installa",
+      "update": "Aggiorna",
+      "uninstall": "Disinstalla",
+      "installing": "Installazione…",
+      "publisher": "Autore",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README non disponibile (offline?)",
+      "noReadme": "Nessun README fornito",
+      "installedVersion": "installata: v{version}",
+      "updateTo": "aggiorna a v{version}"
+    }
   },
   "plugin": {
     "consentAria": "Richiesta di permesso",

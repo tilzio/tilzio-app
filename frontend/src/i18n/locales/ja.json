@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "Tilzio にインストールされたプラグインと拡張機能を管理します。",
-      "open": "拡張機能を開く"
+      "open": "拡張機能を開く",
+      "autoUpdate": "拡張機能を自動更新",
+      "autoUpdateHint": "拡張機能の更新を自動的にインストールします。新しい権限を要求する更新は、常に先に確認を求めます。"
     },
     "about": {
       "tagline": "ターミナルワークスペース"
@@ -180,7 +182,33 @@
     "orFromUrl": "または URL から",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "ダウンロード",
-    "installing": "インストール中…"
+    "installing": "インストール中…",
+    "tabInstalled": "インストール済み",
+    "tabStore": "ストア",
+    "updateAvailable": "更新",
+    "updateAria": "{name} を更新",
+    "store": {
+      "searchAria": "拡張機能ストアを検索",
+      "searchPlaceholder": "拡張機能を検索…",
+      "offline": "オフライン (キャッシュ)",
+      "refreshAria": "カタログを更新",
+      "loading": "読み込み中…",
+      "empty": "カタログは空です",
+      "noMatches": "一致する拡張機能がありません",
+      "loadError": "カタログを読み込めませんでした: {msg}",
+      "openAria": "拡張機能の詳細: {name}",
+      "statusInstalled": "インストール済み",
+      "install": "インストール",
+      "update": "更新",
+      "uninstall": "アンインストール",
+      "installing": "インストール中…",
+      "publisher": "発行者",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README を利用できません (オフライン？)",
+      "noReadme": "README は提供されていません",
+      "installedVersion": "インストール済み: v{version}",
+      "updateTo": "v{version} に更新"
+    }
   },
   "plugin": {
     "consentAria": "権限リクエスト",

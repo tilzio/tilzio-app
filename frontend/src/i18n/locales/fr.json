@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "Gérer les plugins et extensions installés dans Tilzio.",
-      "open": "Ouvrir les extensions"
+      "open": "Ouvrir les extensions",
+      "autoUpdate": "Mettre à jour les extensions automatiquement",
+      "autoUpdateHint": "Installe automatiquement les mises à jour des extensions. Les mises à jour qui demandent de nouvelles permissions demandent toujours confirmation au préalable."
     },
     "about": {
       "tagline": "Espaces de travail terminal"
@@ -180,7 +182,33 @@
     "orFromUrl": "ou depuis une URL",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "Télécharger",
-    "installing": "Installation…"
+    "installing": "Installation…",
+    "tabInstalled": "Installées",
+    "tabStore": "Boutique",
+    "updateAvailable": "Mettre à jour",
+    "updateAria": "mettre à jour {name}",
+    "store": {
+      "searchAria": "rechercher dans la boutique d'extensions",
+      "searchPlaceholder": "Rechercher des extensions…",
+      "offline": "hors ligne (en cache)",
+      "refreshAria": "actualiser le catalogue",
+      "loading": "Chargement…",
+      "empty": "Le catalogue est vide",
+      "noMatches": "Aucune extension correspondante",
+      "loadError": "Impossible de charger le catalogue : {msg}",
+      "openAria": "détails de l'extension : {name}",
+      "statusInstalled": "Installée",
+      "install": "Installer",
+      "update": "Mettre à jour",
+      "uninstall": "Désinstaller",
+      "installing": "Installation…",
+      "publisher": "Éditeur",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README indisponible (hors ligne ?)",
+      "noReadme": "Aucun README fourni",
+      "installedVersion": "installée : v{version}",
+      "updateTo": "mettre à jour vers v{version}"
+    }
   },
   "plugin": {
     "consentAria": "Demande de permission",

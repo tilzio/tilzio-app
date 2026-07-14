@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "Upravljajte dodacima i ekstenzijama instaliranim u Tilzio.",
-      "open": "Otvori Ekstenzije"
+      "open": "Otvori Ekstenzije",
+      "autoUpdate": "Automatski ažuriraj ekstenzije",
+      "autoUpdateHint": "Automatski instaliraj ažuriranja ekstenzija. Ažuriranja koja zahtijevaju nove dozvole uvijek prvo pitaju za potvrdu."
     },
     "about": {
       "tagline": "Terminalni radni prostori"
@@ -180,7 +182,33 @@
     "orFromUrl": "ili sa URL-a",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "Preuzmi",
-    "installing": "Instaliranje…"
+    "installing": "Instaliranje…",
+    "tabInstalled": "Instalirano",
+    "tabStore": "Prodavnica",
+    "updateAvailable": "Ažuriraj",
+    "updateAria": "ažuriraj {name}",
+    "store": {
+      "searchAria": "pretraga prodavnice ekstenzija",
+      "searchPlaceholder": "Pretraži ekstenzije…",
+      "offline": "van mreže (keširano)",
+      "refreshAria": "osvježi katalog",
+      "loading": "Učitavanje…",
+      "empty": "Katalog je prazan",
+      "noMatches": "Nema odgovarajućih ekstenzija",
+      "loadError": "Nije moguće učitati katalog: {msg}",
+      "openAria": "detalji ekstenzije: {name}",
+      "statusInstalled": "Instalirano",
+      "install": "Instaliraj",
+      "update": "Ažuriraj",
+      "uninstall": "Deinstaliraj",
+      "installing": "Instaliranje…",
+      "publisher": "Izdavač",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README nije dostupan (bez interneta?)",
+      "noReadme": "README nije dostavljen",
+      "installedVersion": "instalirano: v{version}",
+      "updateTo": "ažuriraj na v{version}"
+    }
   },
   "plugin": {
     "consentAria": "Zahtjev za dozvolu",

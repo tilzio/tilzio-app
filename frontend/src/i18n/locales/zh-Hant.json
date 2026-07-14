@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "管理已安裝於 Tilzio 的外掛與擴充功能。",
-      "open": "開啟擴充功能"
+      "open": "開啟擴充功能",
+      "autoUpdate": "自動更新擴充功能",
+      "autoUpdateHint": "自動安裝擴充功能更新。要求新權限的更新一律會先徵求確認。"
     },
     "about": {
       "tagline": "終端機工作區"
@@ -180,7 +182,33 @@
     "orFromUrl": "或從 URL",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "下載",
-    "installing": "安裝中…"
+    "installing": "安裝中…",
+    "tabInstalled": "已安裝",
+    "tabStore": "商店",
+    "updateAvailable": "更新",
+    "updateAria": "更新 {name}",
+    "store": {
+      "searchAria": "搜尋擴充功能商店",
+      "searchPlaceholder": "搜尋擴充功能…",
+      "offline": "離線（快取）",
+      "refreshAria": "重新整理目錄",
+      "loading": "載入中…",
+      "empty": "目錄是空的",
+      "noMatches": "沒有符合的擴充功能",
+      "loadError": "無法載入目錄：{msg}",
+      "openAria": "擴充功能詳情：{name}",
+      "statusInstalled": "已安裝",
+      "install": "安裝",
+      "update": "更新",
+      "uninstall": "解除安裝",
+      "installing": "安裝中…",
+      "publisher": "發行者",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README 無法使用（離線？）",
+      "noReadme": "未提供 README",
+      "installedVersion": "已安裝：v{version}",
+      "updateTo": "更新至 v{version}"
+    }
   },
   "plugin": {
     "consentAria": "權限要求",

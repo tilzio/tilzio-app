@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "Manage plugins and extensions installed in Tilzio.",
-      "open": "Open Extensions"
+      "open": "Open Extensions",
+      "autoUpdate": "Auto-update extensions",
+      "autoUpdateHint": "Install extension updates automatically. Updates that request new permissions always ask first."
     },
     "about": {
       "tagline": "Terminal workspaces"
@@ -180,7 +182,33 @@
     "orFromUrl": "or from URL",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "Download",
-    "installing": "Installing…"
+    "installing": "Installing…",
+    "tabInstalled": "Installed",
+    "tabStore": "Store",
+    "updateAvailable": "Update",
+    "updateAria": "update {name}",
+    "store": {
+      "searchAria": "search the extension store",
+      "searchPlaceholder": "Search extensions…",
+      "offline": "offline (cached)",
+      "refreshAria": "refresh catalog",
+      "loading": "Loading…",
+      "empty": "The catalog is empty",
+      "noMatches": "No matching extensions",
+      "loadError": "Could not load the catalog: {msg}",
+      "openAria": "extension details: {name}",
+      "statusInstalled": "Installed",
+      "install": "Install",
+      "update": "Update",
+      "uninstall": "Uninstall",
+      "installing": "Installing…",
+      "publisher": "Publisher",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README unavailable (offline?)",
+      "noReadme": "No README provided",
+      "installedVersion": "installed: v{version}",
+      "updateTo": "update to v{version}"
+    }
   },
   "plugin": {
     "consentAria": "Permission request",

@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "Gestiona los plugins y extensiones instalados en Tilzio.",
-      "open": "Abrir Extensiones"
+      "open": "Abrir Extensiones",
+      "autoUpdate": "Actualizar extensiones automáticamente",
+      "autoUpdateHint": "Instala las actualizaciones de extensiones automáticamente. Las actualizaciones que solicitan nuevos permisos siempre piden confirmación primero."
     },
     "about": {
       "tagline": "Espacios de trabajo de terminal"
@@ -180,7 +182,33 @@
     "orFromUrl": "o desde una URL",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "Descargar",
-    "installing": "Instalando…"
+    "installing": "Instalando…",
+    "tabInstalled": "Instaladas",
+    "tabStore": "Tienda",
+    "updateAvailable": "Actualizar",
+    "updateAria": "actualizar {name}",
+    "store": {
+      "searchAria": "buscar en la tienda de extensiones",
+      "searchPlaceholder": "Buscar extensiones…",
+      "offline": "sin conexión (en caché)",
+      "refreshAria": "actualizar catálogo",
+      "loading": "Cargando…",
+      "empty": "El catálogo está vacío",
+      "noMatches": "No hay extensiones que coincidan",
+      "loadError": "No se pudo cargar el catálogo: {msg}",
+      "openAria": "detalles de la extensión: {name}",
+      "statusInstalled": "Instalada",
+      "install": "Instalar",
+      "update": "Actualizar",
+      "uninstall": "Desinstalar",
+      "installing": "Instalando…",
+      "publisher": "Editor",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README no disponible (¿sin conexión?)",
+      "noReadme": "No se proporcionó README",
+      "installedVersion": "instalada: v{version}",
+      "updateTo": "actualizar a v{version}"
+    }
   },
   "plugin": {
     "consentAria": "Solicitud de permiso",

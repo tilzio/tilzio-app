@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "Tilzio'da yüklü eklentileri ve uzantıları yönetin.",
-      "open": "Uzantıları aç"
+      "open": "Uzantıları aç",
+      "autoUpdate": "Uzantıları otomatik güncelle",
+      "autoUpdateHint": "Uzantı güncellemelerini otomatik olarak yükler. Yeni izinler isteyen güncellemeler her zaman önce onay ister."
     },
     "about": {
       "tagline": "Terminal çalışma alanları"
@@ -180,7 +182,33 @@
     "orFromUrl": "veya URL'den",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "İndir",
-    "installing": "Yükleniyor…"
+    "installing": "Yükleniyor…",
+    "tabInstalled": "Yüklü",
+    "tabStore": "Mağaza",
+    "updateAvailable": "Güncelle",
+    "updateAria": "{name} güncelle",
+    "store": {
+      "searchAria": "uzantı mağazasında ara",
+      "searchPlaceholder": "Uzantı ara…",
+      "offline": "çevrimdışı (önbellekte)",
+      "refreshAria": "kataloğu yenile",
+      "loading": "Yükleniyor…",
+      "empty": "Katalog boş",
+      "noMatches": "Eşleşen uzantı yok",
+      "loadError": "Katalog yüklenemedi: {msg}",
+      "openAria": "uzantı ayrıntıları: {name}",
+      "statusInstalled": "Yüklü",
+      "install": "Yükle",
+      "update": "Güncelle",
+      "uninstall": "Kaldır",
+      "installing": "Yükleniyor…",
+      "publisher": "Yayımcı",
+      "sectionReadme": "README",
+      "readmeUnavailable": "README kullanılamıyor (çevrimdışı mı?)",
+      "noReadme": "README sağlanmadı",
+      "installedVersion": "yüklü: v{version}",
+      "updateTo": "v{version} sürümüne güncelle"
+    }
   },
   "plugin": {
     "consentAria": "İzin isteği",

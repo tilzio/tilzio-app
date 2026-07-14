@@ -105,7 +105,9 @@
     },
     "ext": {
       "desc": "จัดการปลั๊กอินและส่วนขยายที่ติดตั้งใน Tilzio",
-      "open": "เปิดส่วนขยาย"
+      "open": "เปิดส่วนขยาย",
+      "autoUpdate": "อัปเดตส่วนขยายอัตโนมัติ",
+      "autoUpdateHint": "ติดตั้งการอัปเดตส่วนขยายโดยอัตโนมัติ การอัปเดตที่ขอสิทธิ์ใหม่จะขอการยืนยันก่อนเสมอ"
     },
     "about": {
       "tagline": "พื้นที่ทำงานเทอร์มินัล"
@@ -180,7 +182,33 @@
     "orFromUrl": "หรือจาก URL",
     "urlPlaceholder": "https://…/plugin.zip",
     "download": "ดาวน์โหลด",
-    "installing": "กำลังติดตั้ง…"
+    "installing": "กำลังติดตั้ง…",
+    "tabInstalled": "ติดตั้งแล้ว",
+    "tabStore": "สโตร์",
+    "updateAvailable": "อัปเดต",
+    "updateAria": "อัปเดต {name}",
+    "store": {
+      "searchAria": "ค้นหาในสโตร์ส่วนขยาย",
+      "searchPlaceholder": "ค้นหาส่วนขยาย…",
+      "offline": "ออฟไลน์ (แคชไว้)",
+      "refreshAria": "รีเฟรชแคตตาล็อก",
+      "loading": "กำลังโหลด…",
+      "empty": "แคตตาล็อกว่างเปล่า",
+      "noMatches": "ไม่พบส่วนขยายที่ตรงกัน",
+      "loadError": "ไม่สามารถโหลดแคตตาล็อกได้: {msg}",
+      "openAria": "รายละเอียดส่วนขยาย: {name}",
+      "statusInstalled": "ติดตั้งแล้ว",
+      "install": "ติดตั้ง",
+      "update": "อัปเดต",
+      "uninstall": "ถอนการติดตั้ง",
+      "installing": "กำลังติดตั้ง…",
+      "publisher": "ผู้เผยแพร่",
+      "sectionReadme": "README",
+      "readmeUnavailable": "ไม่มี README (ออฟไลน์อยู่หรือไม่?)",
+      "noReadme": "ไม่มี README ให้",
+      "installedVersion": "ติดตั้งแล้ว: v{version}",
+      "updateTo": "อัปเดตเป็น v{version}"
+    }
   },
   "plugin": {
     "consentAria": "คำขอสิทธิ์",

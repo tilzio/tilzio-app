@@ -13,6 +13,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"golang.org/x/mod/semver"
 )
 
 // DefaultRegistryURL is the production registry endpoint (stage 3 swaps in the
@@ -299,4 +301,74 @@ func (m *Market) StoreInstall(id string) (InstallResult, error) {
 		return InstallResult{}, fmt.Errorf("%w: %s@%s", ErrChecksum, id, entry.Version)
 	}
 	return m.svc.InstallZip(data, true)
+}
+
+// UpdateInfo describes one available update (spec §5.1). PermsChanged gates
+// the silent auto-update: any NEW permission or exec binary requires consent.
+type UpdateInfo struct {
+	ID           string `json:"id"`
+	From         string `json:"from"`
+	To           string `json:"to"`
+	PermsChanged bool   `json:"permsChanged"`
+}
+
+// StoreCheckUpdates compares installed manifests against the catalog (semver).
+// Broken plugins (no manifest) and plugins absent from the catalog are skipped.
+func (m *Market) StoreCheckUpdates() ([]UpdateInfo, error) {
+	cat, err := m.StoreCatalog(false)
+	if err != nil {
+		return nil, err
+	}
+	byID := make(map[string]StoreEntry, len(cat.Extensions))
+	for _, e := range cat.Extensions {
+		byID[e.ID] = e
+	}
+	updates := []UpdateInfo{}
+	for _, info := range m.svc.List() {
+		if info.Manifest == nil || info.Err != "" {
+			continue
+		}
+		entry, ok := byID[info.Manifest.ID]
+		if !ok || !semverNewer(entry.Version, info.Manifest.Version) {
+			continue
+		}
+		updates = append(updates, UpdateInfo{
+			ID:   entry.ID,
+			From: info.Manifest.Version,
+			To:   entry.Version,
+			PermsChanged: hasNew(info.Manifest.Permissions, entry.Permissions) ||
+				hasNew(info.Manifest.Exec, entry.Exec),
+		})
+	}
+	return updates, nil
+}
+
+// semverNewer reports a > b. Bare versions get the "v" prefix x/mod requires;
+// an invalid version sorts below any valid one (x/mod semver semantics), so a
+// registry entry with valid semver always updates a local dev build with a
+// non-semver version string.
+func semverNewer(a, b string) bool {
+	return semver.Compare(canonV(a), canonV(b)) > 0
+}
+
+func canonV(v string) string {
+	if v == "" || strings.HasPrefix(v, "v") {
+		return v
+	}
+	return "v" + v
+}
+
+// hasNew reports whether add contains an item absent from base (set growth —
+// removals don't gate).
+func hasNew(base, add []string) bool {
+	seen := make(map[string]bool, len(base))
+	for _, b := range base {
+		seen[b] = true
+	}
+	for _, a := range add {
+		if !seen[a] {
+			return true
+		}
+	}
+	return false
 }

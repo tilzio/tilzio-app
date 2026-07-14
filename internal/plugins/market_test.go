@@ -328,3 +328,119 @@ func TestStoreInstallUnknownID(t *testing.T) {
 		t.Fatalf("want ErrNotFound, got %v", err)
 	}
 }
+
+// installPlugin puts a plugin with the given manifest fields on disk via InstallZip.
+func installPlugin(t *testing.T, m *Market, id, version string, perms, exec []string) {
+	t.Helper()
+	mf := map[string]any{"id": id, "name": "X", "version": version, "engine": "tilzio@1", "entry": "main.js"}
+	if perms != nil {
+		mf["permissions"] = perms
+	}
+	if exec != nil {
+		mf["exec"] = exec
+	}
+	b, err := json.Marshal(mf)
+	if err != nil {
+		t.Fatal(err)
+	}
+	data := makeZip(t, map[string]string{"manifest.json": string(b), "main.js": "//x"})
+	if _, err := m.svc.InstallZip(data, true); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestStoreCheckUpdatesFindsNewer(t *testing.T) {
+	e := testEntry("dev.u", "1.1.0")
+	srv := fakeRegistry(t, []StoreEntry{e}, "", new(atomic.Int64))
+	m := newTestMarket(t, srv.URL)
+	installPlugin(t, m, "dev.u", "1.0.0", []string{"state:read"}, nil)
+	ups, err := m.StoreCheckUpdates()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ups) != 1 || ups[0].ID != "dev.u" || ups[0].From != "1.0.0" || ups[0].To != "1.1.0" {
+		t.Fatalf("bad updates: %+v", ups)
+	}
+	if ups[0].PermsChanged {
+		t.Fatal("same permissions must not flag PermsChanged")
+	}
+}
+
+func TestStoreCheckUpdatesSkipsCurrentAndUnknown(t *testing.T) {
+	srv := fakeRegistry(t, []StoreEntry{testEntry("dev.u", "1.0.0")}, "", new(atomic.Int64))
+	m := newTestMarket(t, srv.URL)
+	installPlugin(t, m, "dev.u", "1.0.0", nil, nil)     // same version
+	installPlugin(t, m, "dev.local", "0.1.0", nil, nil) // not in catalog
+	ups, err := m.StoreCheckUpdates()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ups) != 0 {
+		t.Fatalf("want no updates, got %+v", ups)
+	}
+}
+
+func TestStoreCheckUpdatesPermissionGrowthFlags(t *testing.T) {
+	e := testEntry("dev.u", "2.0.0")
+	e.Permissions = []string{"state:read", "terminal:read"} // grew
+	srv := fakeRegistry(t, []StoreEntry{e}, "", new(atomic.Int64))
+	m := newTestMarket(t, srv.URL)
+	installPlugin(t, m, "dev.u", "1.0.0", []string{"state:read"}, nil)
+	ups, err := m.StoreCheckUpdates()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ups) != 1 || !ups[0].PermsChanged {
+		t.Fatalf("permission growth must set PermsChanged: %+v", ups)
+	}
+}
+
+func TestStoreCheckUpdatesExecGrowthFlags(t *testing.T) {
+	e := testEntry("dev.u", "2.0.0")
+	e.Permissions = []string{"state:read"}
+	e.Exec = []string{"git"} // new exec binary — security-relevant
+	srv := fakeRegistry(t, []StoreEntry{e}, "", new(atomic.Int64))
+	m := newTestMarket(t, srv.URL)
+	installPlugin(t, m, "dev.u", "1.0.0", []string{"state:read"}, nil)
+	ups, err := m.StoreCheckUpdates()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ups) != 1 || !ups[0].PermsChanged {
+		t.Fatalf("exec growth must set PermsChanged: %+v", ups)
+	}
+}
+
+func TestStoreCheckUpdatesPermissionRemovalDoesNotFlag(t *testing.T) {
+	e := testEntry("dev.u", "2.0.0")
+	e.Permissions = nil // dropped a permission
+	srv := fakeRegistry(t, []StoreEntry{e}, "", new(atomic.Int64))
+	m := newTestMarket(t, srv.URL)
+	installPlugin(t, m, "dev.u", "1.0.0", []string{"state:read"}, nil)
+	ups, err := m.StoreCheckUpdates()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(ups) != 1 || ups[0].PermsChanged {
+		t.Fatalf("permission removal must not gate: %+v", ups)
+	}
+}
+
+func TestSemverNewer(t *testing.T) {
+	cases := []struct {
+		a, b string
+		want bool
+	}{
+		{"1.1.0", "1.0.0", true},
+		{"1.0.0", "1.1.0", false},
+		{"1.0.0", "1.0.0", false},
+		{"2.0.0", "1.9.9", true},
+		{"1.0.0", "not-semver", true}, // invalid sorts below any valid version
+		{"not-semver", "1.0.0", false},
+	}
+	for _, c := range cases {
+		if got := semverNewer(c.a, c.b); got != c.want {
+			t.Errorf("semverNewer(%q,%q)=%v want %v", c.a, c.b, got, c.want)
+		}
+	}
+}

@@ -6,6 +6,7 @@ require (
 	github.com/creack/pty v1.1.24
 	github.com/cyphar/filepath-securejoin v0.6.1
 	github.com/wailsapp/wails/v3 v3.0.0-alpha.97
+	golang.org/x/mod v0.38.0
 	golang.org/x/sys v0.43.0
 )
 

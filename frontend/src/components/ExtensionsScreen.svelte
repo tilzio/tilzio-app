@@ -13,7 +13,7 @@
     tab = $bindable('installed'),
     storeEntries = [], storeStale = false, storeLoading = false, storeError = '',
     updates = {}, storeBusyId = null,
-    onStoreOpen = () => {}, onStoreInstall = () => {}, onStoreUpdate = () => {}, onStoreRefresh = () => {},
+    onStoreOpen = () => {}, onStoreInstall = () => {}, onStoreUpdate = () => {},
   }: {
     plugins: PluginInfo[];
     runtimeErrorFor: (id: string) => string | null;
@@ -35,7 +35,6 @@
     onStoreOpen?: (id: string) => void;
     onStoreInstall?: (id: string) => void;
     onStoreUpdate?: (id: string) => void;
-    onStoreRefresh?: () => void;
   } = $props();
 
   interface Row {
@@ -248,7 +247,6 @@
         busyId={storeBusyId}
         onOpen={onStoreOpen}
         onInstall={onStoreInstall}
-        onRefresh={onStoreRefresh}
       />
     {/if}
   </div>

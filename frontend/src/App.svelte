@@ -1068,7 +1068,6 @@
           onStoreOpen={openStoreDetail}
           onStoreInstall={(id) => void doStoreInstall(id)}
           onStoreUpdate={onStoreUpdate}
-          onStoreRefresh={() => void refreshExtensions()}
         />
       {/if}
     {/if}

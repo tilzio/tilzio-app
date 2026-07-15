@@ -18,7 +18,7 @@ const base = {
   stale: false, loading: false, error: '',
   installed: {} as Record<string, string>,
   busyId: null as string | null,
-  onOpen: vi.fn(), onInstall: vi.fn(), onRefresh: vi.fn(),
+  onOpen: vi.fn(), onInstall: vi.fn(),
 };
 
 describe('StoreTab', () => {
@@ -50,18 +50,16 @@ describe('StoreTab', () => {
     expect(container.querySelector('.inst')).toBeTruthy();  // c: Install button
   });
 
-  it('fires callbacks: row open, install, refresh', async () => {
-    const onOpen = vi.fn(); const onInstall = vi.fn(); const onRefresh = vi.fn();
+  it('fires callbacks: row open, install', async () => {
+    const onOpen = vi.fn(); const onInstall = vi.fn();
     const props = {
-      ...base, onOpen, onInstall, onRefresh,
+      ...base, onOpen, onInstall,
     };
-    const { container, getByLabelText } = render(StoreTab, { props });
+    const { container } = render(StoreTab, { props });
     await fireEvent.click(container.querySelector('.row-open')!);
     expect(onOpen).toHaveBeenCalledWith('a');
     await fireEvent.click(container.querySelector('.inst')!);
     expect(onInstall).toHaveBeenCalledWith('a');
-    await fireEvent.click(getByLabelText('refresh catalog'));
-    expect(onRefresh).toHaveBeenCalled();
   });
 
   it('busy row disables its action button', () => {

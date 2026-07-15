@@ -4,7 +4,7 @@
 
   // Presentational store catalog list (spec §5.2). All data and mutations come
   // from the parent — mirroring ExtensionsScreen's prop-driven design.
-  let { entries, stale, loading, error, installed, busyId, onOpen, onInstall, onRefresh }: {
+  let { entries, stale, loading, error, installed, busyId, onOpen, onInstall }: {
     entries: StoreEntry[];
     stale: boolean;
     loading: boolean;
@@ -13,7 +13,6 @@
     busyId: string | null;
     onOpen: (id: string) => void;
     onInstall: (id: string) => void;
-    onRefresh: () => void;
   } = $props();
 
   let query = $state('');
@@ -53,7 +52,6 @@
     <span class="count">{filtered.length}</span>
   </div>
   {#if stale}<span class="stale">{t('ext.store.offline')}</span>{/if}
-  <button class="refresh" aria-label={t('ext.store.refreshAria')} onclick={onRefresh}>⟳</button>
 </div>
 
 <div class="list">
@@ -103,11 +101,6 @@
     color: var(--text-dim); border: 1px solid var(--border); border-radius: 999px;
     padding: 2px 8px; font-size: 11px; white-space: nowrap;
   }
-  .refresh {
-    background: none; border: 1px solid var(--border); color: var(--text-dim);
-    border-radius: var(--radius); padding: 4px 8px; cursor: pointer; font-size: 13px;
-  }
-  .refresh:hover { color: var(--text); }
   .list { overflow-y: auto; min-height: 120px; }
   .error-banner { color: var(--red); padding: 14px 4px; font-size: 12px; }
   .empty { color: var(--text-faint); padding: 22px 4px; text-align: center; font-size: 12px; }

@@ -191,7 +191,6 @@
       "searchAria": "search the extension store",
       "searchPlaceholder": "Search extensions…",
       "offline": "offline (cached)",
-      "refreshAria": "refresh catalog",
       "loading": "Loading…",
       "empty": "The catalog is empty",
       "noMatches": "No matching extensions",

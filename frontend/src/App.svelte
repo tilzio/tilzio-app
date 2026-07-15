@@ -517,6 +517,14 @@
       // Offline: keep whatever we knew; badges are advisory.
     }
   }
+  // One "refresh" for the whole Extensions screen (smoke finding #2/#3): disk
+  // rescan + forced catalog fetch + update-check, so both refresh buttons do
+  // the same, complete thing.
+  async function refreshExtensions() {
+    await loadExtList();
+    await loadStoreCatalog(true);
+    await refreshUpdates();
+  }
   function openStoreDetail(id: string) {
     storeDetailId = id;
     storeDetailData = null;
@@ -1044,7 +1052,7 @@
           {runtimeErrorFor}
           {busyId}
           onToggle={onExtToggle}
-          onRefresh={loadExtList}
+          onRefresh={() => void refreshExtensions()}
           onClose={() => { extensionsOpen = false; pendingConsent = null; closeDetail(); }}
           onInstall={openInstall}
           onUninstall={onExtUninstall}
@@ -1059,7 +1067,7 @@
           onStoreOpen={openStoreDetail}
           onStoreInstall={(id) => void doStoreInstall(id)}
           onStoreUpdate={onStoreUpdate}
-          onStoreRefresh={() => void loadStoreCatalog(true)}
+          onStoreRefresh={() => void refreshExtensions()}
         />
       {/if}
     {/if}

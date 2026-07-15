@@ -127,6 +127,7 @@
     font-size: 11px;
     color: var(--text-dim);
     margin-bottom: 9px;
+    overflow-wrap: anywhere;
   }
 
   /* Row of action buttons */

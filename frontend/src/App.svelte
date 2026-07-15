@@ -37,6 +37,7 @@
   import FinderDropOverlay from './components/FinderDropOverlay.svelte';
   import { installBytes, installUrl, uninstallPlugin } from './bridge/pluginInstall';
   import { pluginsBridge, type PluginInfo, type ConflictInfo, type StorageInfo, type PluginManifest } from './bridge/plugins';
+  import { errorMessage } from './bridge/wailsError';
   import { enablePlugin, disablePlugin, resetPluginStorage } from './bridge/pluginManage';
   import StoreCard from './components/StoreCard.svelte';
   import { storeInstall } from './bridge/storeActions';
@@ -504,7 +505,7 @@
       storeCatalog = await pluginsBridge.storeCatalog(force);
       storeError = '';
     } catch (e) {
-      storeError = e instanceof Error ? e.message : String(e);
+      storeError = errorMessage(e);
     } finally {
       storeLoading = false;
     }
@@ -534,7 +535,7 @@
       try {
         storeDetailData = await pluginsBridge.storeDetail(id);
       } catch (e) {
-        storeDetailErr = e instanceof Error ? e.message : String(e);
+        storeDetailErr = errorMessage(e);
       }
     })();
   }
@@ -559,7 +560,7 @@
         else await doEnable(info);
       }
     } catch (e) {
-      storeActionError = e instanceof Error ? e.message : String(e);
+      storeActionError = errorMessage(e);
       pushStoreErrorToast(storeActionError);
     } finally {
       storeBusyId = null;
@@ -581,7 +582,7 @@
       await loadExtList();
       await refreshUpdates();
     } catch (e) {
-      storeActionError = e instanceof Error ? e.message : String(e);
+      storeActionError = errorMessage(e);
       pushStoreErrorToast(storeActionError);
     } finally {
       storeBusyId = null;

@@ -270,7 +270,7 @@
           {/if}
 
           <!-- Task 14: Auto-update extensions toggle -->
-          <div class="frow">
+          <div class="frow ext-au">
             <div class="frow-label">{t('settings.ext.autoUpdate')}</div>
             <button
               class="toggle"
@@ -381,8 +381,11 @@
 
   /* S7.5: Extensions tab */
   .ext-desc { font-size: 12.5px; color: var(--text-dim); margin: 0 0 14px; }
-  .ext-btn { background: var(--bg); border: 1px solid var(--border); color: var(--accent); border-radius: 5px; padding: 7px 14px; cursor: pointer; font: inherit; font-size: 13px; }
+  .ext-btn { background: var(--bg); border: 1px solid var(--border); color: var(--accent); border-radius: 5px; padding: 7px 14px; cursor: pointer; font: inherit; font-size: 13px; margin-bottom: 20px; }
   .ext-btn:hover { background: var(--active-row); }
+  /* Auto-update row: let the label take its natural width (no wrap) and give it air */
+  .ext-au { margin-bottom: 8px; }
+  .ext-au .frow-label { width: auto; white-space: nowrap; }
 
   /* Task 14: Auto-update extensions toggle — canonical switch (ExtensionsScreen .toggle/.knob) */
   .toggle { width: 34px; height: 19px; border-radius: 10px; border: none; background: var(--border); position: relative; cursor: pointer; padding: 0; }

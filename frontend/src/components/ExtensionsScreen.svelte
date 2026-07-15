@@ -319,7 +319,7 @@
   .trash:hover:not(:disabled) { border-color: var(--red); color: var(--red); }
   .trash:disabled { opacity: 0.4; cursor: not-allowed; }
   /* Filter row (S8.6): magnifier + input + counter */
-  .filter { display: flex; align-items: center; gap: 9px; background: var(--sidebar); border: 1px solid var(--border); border-radius: 6px; padding: 7px 11px; margin-bottom: 14px; }
+  .filter { display: flex; align-items: center; gap: 9px; background: var(--sidebar); border: 1px solid var(--border); border-radius: 6px; padding: 7px 11px; margin: 16px 0 14px; }
   .filter:focus-within { border-color: var(--accent); }
   .mag { width: 14px; height: 14px; stroke: var(--text-dim); stroke-width: 1.9; stroke-linecap: round; fill: none; flex: none; }
   .filter input { flex: 1; background: none; border: none; color: var(--text); font: inherit; font-size: 12px; outline: none; }

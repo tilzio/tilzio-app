@@ -89,7 +89,7 @@
 </div>
 
 <style>
-  .toolbar { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+  .toolbar { display: flex; align-items: center; gap: 8px; margin: 16px 0 14px; }
   /* Search pill (item 5): copied from ExtensionsScreen's Installed-tab filter */
   .filter { display: flex; align-items: center; gap: 9px; background: var(--sidebar); border: 1px solid var(--border); border-radius: 6px; padding: 7px 11px; flex: 1; min-width: 0; }
   .filter:focus-within { border-color: var(--accent); }
@@ -101,15 +101,16 @@
     color: var(--text-dim); border: 1px solid var(--border); border-radius: 999px;
     padding: 2px 8px; font-size: 11px; white-space: nowrap;
   }
-  .list { overflow-y: auto; min-height: 120px; }
+  .list { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; min-height: 120px; }
   .error-banner { color: var(--red); padding: 14px 4px; font-size: 12px; }
   .empty { color: var(--text-faint); padding: 22px 4px; text-align: center; font-size: 12px; }
-  .row { display: flex; align-items: center; gap: 8px; padding: 6px 4px; border-bottom: 1px solid var(--border); }
+  .row { display: flex; align-items: center; gap: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 7px; padding: 10px 12px; }
   .row-open {
-    flex: 1; display: flex; align-items: center; gap: 10px; background: none; border: none;
-    color: var(--text); text-align: left; cursor: pointer; padding: 4px; min-width: 0;
+    flex: 1; display: flex; align-items: center; gap: 12px; background: none; border: none;
+    color: var(--text); text-align: left; cursor: pointer; padding: 0; min-width: 0;
   }
-  .ico { font-size: 18px; }
+  .row-open:hover .name { color: var(--accent); }
+  .ico { width: 30px; height: 30px; border-radius: 7px; flex: none; display: flex; align-items: center; justify-content: center; font-size: 15px; line-height: 1; background: var(--sidebar); }
   .meta { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
   .name-line { display: flex; align-items: baseline; gap: 8px; }
   .name { font-weight: 600; font-size: 13px; }

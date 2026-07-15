@@ -186,7 +186,7 @@
     "tabInstalled": "Installeret",
     "tabStore": "Butik",
     "updateAvailable": "Opdatér",
-    "updateAria": "opdatér {name}",
+    "updateAria": "Opdatér {name}",
     "store": {
       "searchAria": "søg i udvidelsesbutikken",
       "searchPlaceholder": "Søg efter udvidelser…",
@@ -199,7 +199,6 @@
       "openAria": "udvidelsesdetaljer: {name}",
       "statusInstalled": "Installeret",
       "install": "Installér",
-      "update": "Opdatér",
       "uninstall": "Afinstallér",
       "installing": "Installerer…",
       "publisher": "Udgiver",

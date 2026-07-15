@@ -186,7 +186,7 @@
     "tabInstalled": "インストール済み",
     "tabStore": "ストア",
     "updateAvailable": "更新",
-    "updateAria": "{name} を更新",
+    "updateAria": "更新 {name}",
     "store": {
       "searchAria": "拡張機能ストアを検索",
       "searchPlaceholder": "拡張機能を検索…",
@@ -199,7 +199,6 @@
       "openAria": "拡張機能の詳細: {name}",
       "statusInstalled": "インストール済み",
       "install": "インストール",
-      "update": "更新",
       "uninstall": "アンインストール",
       "installing": "インストール中…",
       "publisher": "発行者",

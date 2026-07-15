@@ -186,7 +186,7 @@
     "tabInstalled": "Установлено",
     "tabStore": "Магазин",
     "updateAvailable": "Обновить",
-    "updateAria": "обновить {name}",
+    "updateAria": "Обновить {name}",
     "store": {
       "searchAria": "поиск в магазине расширений",
       "searchPlaceholder": "Поиск расширений…",
@@ -199,7 +199,6 @@
       "openAria": "подробности расширения: {name}",
       "statusInstalled": "Установлено",
       "install": "Установить",
-      "update": "Обновить",
       "uninstall": "Удалить",
       "installing": "Установка…",
       "publisher": "Издатель",

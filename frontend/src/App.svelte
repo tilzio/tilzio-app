@@ -1028,7 +1028,7 @@
           detailError={storeDetailErr}
           installedVersion={installedVersionFor(sEntry.id)}
           update={updates[sEntry.id]}
-          busy={storeBusyId === sEntry.id}
+          busy={storeBusyId === sEntry.id || busyId === sEntry.id}
           error={storeActionError}
           onInstall={() => void doStoreInstall(sEntry.id)}
           onUpdate={() => onStoreUpdate(sEntry.id)}

@@ -186,7 +186,7 @@
     "tabInstalled": "Installate",
     "tabStore": "Store",
     "updateAvailable": "Aggiorna",
-    "updateAria": "aggiorna {name}",
+    "updateAria": "Aggiorna {name}",
     "store": {
       "searchAria": "cerca nello store delle estensioni",
       "searchPlaceholder": "Cerca estensioni…",
@@ -199,7 +199,6 @@
       "openAria": "dettagli estensione: {name}",
       "statusInstalled": "Installata",
       "install": "Installa",
-      "update": "Aggiorna",
       "uninstall": "Disinstalla",
       "installing": "Installazione…",
       "publisher": "Autore",

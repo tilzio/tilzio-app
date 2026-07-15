@@ -186,7 +186,7 @@
     "tabInstalled": "Встановлені",
     "tabStore": "Магазин",
     "updateAvailable": "Оновити",
-    "updateAria": "оновити {name}",
+    "updateAria": "Оновити {name}",
     "store": {
       "searchAria": "пошук у магазині розширень",
       "searchPlaceholder": "Пошук розширень…",
@@ -199,7 +199,6 @@
       "openAria": "деталі розширення: {name}",
       "statusInstalled": "Встановлено",
       "install": "Встановити",
-      "update": "Оновити",
       "uninstall": "Видалити",
       "installing": "Встановлення…",
       "publisher": "Видавець",

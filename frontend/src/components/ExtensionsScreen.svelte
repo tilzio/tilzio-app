@@ -245,11 +245,9 @@
         loading={storeLoading}
         error={storeError}
         installed={installedVersions}
-        {updates}
         busyId={storeBusyId}
         onOpen={onStoreOpen}
         onInstall={onStoreInstall}
-        onUpdate={onStoreUpdate}
         onRefresh={onStoreRefresh}
       />
     {/if}

@@ -186,7 +186,7 @@
     "tabInstalled": "Installées",
     "tabStore": "Boutique",
     "updateAvailable": "Mettre à jour",
-    "updateAria": "mettre à jour {name}",
+    "updateAria": "Mettre à jour {name}",
     "store": {
       "searchAria": "rechercher dans la boutique d'extensions",
       "searchPlaceholder": "Rechercher des extensions…",
@@ -199,7 +199,6 @@
       "openAria": "détails de l'extension : {name}",
       "statusInstalled": "Installée",
       "install": "Installer",
-      "update": "Mettre à jour",
       "uninstall": "Désinstaller",
       "installing": "Installation…",
       "publisher": "Éditeur",

@@ -186,7 +186,7 @@
     "tabInstalled": "Instalirano",
     "tabStore": "Prodavnica",
     "updateAvailable": "Ažuriraj",
-    "updateAria": "ažuriraj {name}",
+    "updateAria": "Ažuriraj {name}",
     "store": {
       "searchAria": "pretraga prodavnice ekstenzija",
       "searchPlaceholder": "Pretraži ekstenzije…",
@@ -199,7 +199,6 @@
       "openAria": "detalji ekstenzije: {name}",
       "statusInstalled": "Instalirano",
       "install": "Instaliraj",
-      "update": "Ažuriraj",
       "uninstall": "Deinstaliraj",
       "installing": "Instaliranje…",
       "publisher": "Izdavač",

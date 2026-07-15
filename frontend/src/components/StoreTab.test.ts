@@ -16,9 +16,9 @@ function entry(id: string, name: string, version = '1.0.0', description = 'desc'
 const base = {
   entries: [entry('a', 'Alpha'), entry('b', 'Beta')],
   stale: false, loading: false, error: '',
-  installed: {} as Record<string, string>, updates: {},
+  installed: {} as Record<string, string>,
   busyId: null as string | null,
-  onOpen: vi.fn(), onInstall: vi.fn(), onUpdate: vi.fn(), onRefresh: vi.fn(),
+  onOpen: vi.fn(), onInstall: vi.fn(), onRefresh: vi.fn(),
 };
 
 describe('StoreTab', () => {
@@ -35,33 +35,31 @@ describe('StoreTab', () => {
     expect(queryByText('Beta')).toBeNull();
   });
 
-  it('shows Install for not-installed, Installed for current, Update when an update exists', () => {
+  it('shows Install for not-installed, Installed for installed rows; never an Update button', () => {
     const props = {
       ...base,
       installed: { a: '1.0.0', b: '1.0.0' },
-      updates: { b: { id: 'b', from: '1.0.0', to: '2.0.0', permsChanged: false } },
       entries: [entry('a', 'Alpha'), entry('b', 'Beta', '2.0.0'), entry('c', 'Gamma')],
     };
-    const { container, getByText } = render(StoreTab, { props });
-    expect(getByText('Installed')).toBeTruthy();       // a
-    expect(container.querySelector('.upd')).toBeTruthy();   // b
+    const { container, getAllByText } = render(StoreTab, { props });
+    // a, b are installed — even b, whose entry version (2.0.0) differs from its installed
+    // version, is just "Installed": the Store list never offers Update (that lives on
+    // the Installed-tab badge and the extension card).
+    expect(getAllByText('Installed').length).toBe(2);
+    expect(container.querySelector('.upd')).toBeNull();
     expect(container.querySelector('.inst')).toBeTruthy();  // c: Install button
   });
 
-  it('fires callbacks: row open, install, update, refresh', async () => {
-    const onOpen = vi.fn(); const onInstall = vi.fn(); const onUpdate = vi.fn(); const onRefresh = vi.fn();
+  it('fires callbacks: row open, install, refresh', async () => {
+    const onOpen = vi.fn(); const onInstall = vi.fn(); const onRefresh = vi.fn();
     const props = {
-      ...base, onOpen, onInstall, onUpdate, onRefresh,
-      installed: { b: '1.0.0' },
-      updates: { b: { id: 'b', from: '1.0.0', to: '2.0.0', permsChanged: false } },
+      ...base, onOpen, onInstall, onRefresh,
     };
     const { container, getByLabelText } = render(StoreTab, { props });
     await fireEvent.click(container.querySelector('.row-open')!);
     expect(onOpen).toHaveBeenCalledWith('a');
     await fireEvent.click(container.querySelector('.inst')!);
     expect(onInstall).toHaveBeenCalledWith('a');
-    await fireEvent.click(container.querySelector('.upd')!);
-    expect(onUpdate).toHaveBeenCalledWith('b');
     await fireEvent.click(getByLabelText('refresh catalog'));
     expect(onRefresh).toHaveBeenCalled();
   });

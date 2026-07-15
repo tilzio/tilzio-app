@@ -384,11 +384,11 @@
   .ext-btn { background: var(--bg); border: 1px solid var(--border); color: var(--accent); border-radius: 5px; padding: 7px 14px; cursor: pointer; font: inherit; font-size: 13px; }
   .ext-btn:hover { background: var(--active-row); }
 
-  /* Task 14: Auto-update extensions toggle — mirrors the ExtensionsScreen switch pattern */
-  .toggle { width: 34px; height: 18px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg); position: relative; cursor: pointer; padding: 0; }
-  .toggle .knob { position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: var(--text-dim); transition: left 0.15s ease; }
-  .toggle.on { background: var(--accent); border-color: var(--accent); }
-  .toggle.on .knob { left: 18px; background: var(--bg); }
+  /* Task 14: Auto-update extensions toggle — canonical switch (ExtensionsScreen .toggle/.knob) */
+  .toggle { width: 34px; height: 19px; border-radius: 10px; border: none; background: var(--border); position: relative; cursor: pointer; padding: 0; }
+  .toggle .knob { position: absolute; top: 2px; left: 2px; width: 15px; height: 15px; border-radius: 50%; background: var(--bg); transition: left 0.12s; }
+  .toggle.on { background: var(--green); }
+  .toggle.on .knob { left: 17px; }
   .ext-hint { color: var(--text-faint); font-size: 11px; margin: 6px 0 0; }
 
   /* S7.5: About tab */

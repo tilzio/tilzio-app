@@ -186,7 +186,7 @@
     "tabInstalled": "Yüklü",
     "tabStore": "Mağaza",
     "updateAvailable": "Güncelle",
-    "updateAria": "{name} güncelle",
+    "updateAria": "Güncelle {name}",
     "store": {
       "searchAria": "uzantı mağazasında ara",
       "searchPlaceholder": "Uzantı ara…",
@@ -199,7 +199,6 @@
       "openAria": "uzantı ayrıntıları: {name}",
       "statusInstalled": "Yüklü",
       "install": "Yükle",
-      "update": "Güncelle",
       "uninstall": "Kaldır",
       "installing": "Yükleniyor…",
       "publisher": "Yayımcı",

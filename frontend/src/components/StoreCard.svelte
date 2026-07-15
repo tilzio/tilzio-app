@@ -21,7 +21,7 @@
     onBack: () => void;
   } = $props();
 
-  const perms = $derived((entry.permissions ?? []).map((p) => resolvePermission(p, entry.exec ?? [])));
+  const perms = $derived((entry.permissions ?? []).map((id) => ({ id, label: resolvePermission(id, entry.exec ?? []) })));
   // README goes through the app's single sanitize pipeline (marked+dompurify) —
   // the only allowed {@html} source (security invariant §5.1).
   const readmeHtml = $derived(detail && detail.readme ? renderMarkdown(detail.readme) : '');
@@ -33,7 +33,7 @@
 </script>
 
 <div class="overlay" role="presentation" onclick={(e) => { if (e.target === e.currentTarget) onBack(); }}>
-  <div class="dialog" role="dialog" aria-modal="true" aria-label={t('ext.store.openAria', { name: entry.name })} use:focusTrap>
+  <div class="dialog" role="dialog" aria-modal="true" aria-label={t('ext.store.openAria', { name: entry.name })} tabindex="-1" use:focusTrap>
     <div class="backbar">
       <button class="back" use:autofocus onclick={onBack}>← {t('ext.back')}</button>
     </div>
@@ -70,8 +70,8 @@
       <div class="section">{t('ext.sectionPermissions')}</div>
       {#if perms.length}
         <div class="chips">
-          {#each perms as p (p.title)}
-            <span class="chip" style="background:{p.bg};color:{p.color}">{p.icon} {p.title}</span>
+          {#each perms as { id, label } (id)}
+            <span class="chip" style="background:{label.bg};color:{label.color}">{label.icon} {label.title}</span>
           {/each}
         </div>
       {:else}

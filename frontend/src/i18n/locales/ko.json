@@ -52,8 +52,8 @@
     "sectionPath": "경로", "installTitle": "확장 설치", "closeLabel": "닫기", "conflictTitle": "확장이 이미 설치됨",
     "conflictMsg": "«{id}» 은(는) 이미 설치되어 있습니다. 설치된 버전을 새 버전으로 교체할까요?", "cancel": "취소", "replace": "교체",
     "dropPrefix": "여기에 ", "dropSuffix": " 끌어다 놓기", "dropSub": "또는 클릭하여 파일 선택", "orFromUrl": "또는 URL에서",
-    "urlPlaceholder": "https://…/plugin.zip", "download": "다운로드", "installing": "설치 중…", "tabInstalled": "설치됨", "tabStore": "스토어", "updateAvailable": "업데이트", "updateAria": "{name} 업데이트",
-    "store": { "searchAria": "확장 스토어 검색", "searchPlaceholder": "확장 검색…", "offline": "오프라인 (캐시됨)", "refreshAria": "카탈로그 새로고침", "loading": "로드 중…", "empty": "카탈로그가 비어 있습니다", "noMatches": "일치하는 확장 없음", "loadError": "카탈로그를 불러올 수 없습니다: {msg}", "openAria": "확장 세부 정보: {name}", "statusInstalled": "설치됨", "install": "설치", "update": "업데이트", "uninstall": "제거", "installing": "설치 중…", "publisher": "게시자", "sectionReadme": "README", "readmeUnavailable": "README를 사용할 수 없음 (오프라인?)", "noReadme": "제공된 README 없음", "installedVersion": "설치됨: v{version}", "updateTo": "v{version}(으)로 업데이트", "actionFailedTitle": "확장 스토어 오류" }
+    "urlPlaceholder": "https://…/plugin.zip", "download": "다운로드", "installing": "설치 중…", "tabInstalled": "설치됨", "tabStore": "스토어", "updateAvailable": "업데이트", "updateAria": "업데이트 {name}",
+    "store": { "searchAria": "확장 스토어 검색", "searchPlaceholder": "확장 검색…", "offline": "오프라인 (캐시됨)", "refreshAria": "카탈로그 새로고침", "loading": "로드 중…", "empty": "카탈로그가 비어 있습니다", "noMatches": "일치하는 확장 없음", "loadError": "카탈로그를 불러올 수 없습니다: {msg}", "openAria": "확장 세부 정보: {name}", "statusInstalled": "설치됨", "install": "설치", "uninstall": "제거", "installing": "설치 중…", "publisher": "게시자", "sectionReadme": "README", "readmeUnavailable": "README를 사용할 수 없음 (오프라인?)", "noReadme": "제공된 README 없음", "installedVersion": "설치됨: v{version}", "updateTo": "v{version}(으)로 업데이트", "actionFailedTitle": "확장 스토어 오류" }
   },
   "plugin": {
     "consentAria": "권한 요청", "consentTitle": "확장 «{name}» 을(를) 사용할까요?", "consentPermissions": "요청된 권한",

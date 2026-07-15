@@ -186,7 +186,7 @@
     "tabInstalled": "Zainstalowane",
     "tabStore": "Sklep",
     "updateAvailable": "Aktualizuj",
-    "updateAria": "aktualizuj {name}",
+    "updateAria": "Aktualizuj {name}",
     "store": {
       "searchAria": "szukaj w sklepie rozszerzeń",
       "searchPlaceholder": "Szukaj rozszerzeń…",
@@ -199,7 +199,6 @@
       "openAria": "szczegóły rozszerzenia: {name}",
       "statusInstalled": "Zainstalowane",
       "install": "Zainstaluj",
-      "update": "Aktualizuj",
       "uninstall": "Odinstaluj",
       "installing": "Instalowanie…",
       "publisher": "Wydawca",
